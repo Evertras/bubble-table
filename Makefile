@@ -6,5 +6,7 @@ default:
 test:
 	go test ./table
 
+.PHONY: fmt
 fmt:
 	@go fmt ./...
+
