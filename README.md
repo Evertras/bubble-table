@@ -5,6 +5,8 @@ A table component for the [Bubble Tea framework](https://github.com/charmbracele
 This is currently messy as it's in early development and came out of a different
 project, and should be cleaned up over time.
 
+![Table](sample.png)
+
 ## Features
 
 Displays a table with a header and borders.
