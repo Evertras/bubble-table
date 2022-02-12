@@ -7,6 +7,8 @@ project, and should be cleaned up over time.
 
 ![Table](sample.png)
 
+[View sample source code](./examples/features/main.go)
+
 ## Features
 
 Displays a table with a header and borders.
@@ -14,16 +16,6 @@ Displays a table with a header and borders.
 Can be focused to highlight a row and navigate with up/down (and j/k).
 
 Can make rows selectable, and fetch the current selections.
-
-## Future plans
-
-Add pagination.
-
-Add sorting.
-
-Add cell selection.
-
-Add search filters.
 
 ## Contributing
 
