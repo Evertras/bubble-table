@@ -1,0 +1,24 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/bin
+
+# Test binary, built with `go test -c`
+*.test
+
+# Outputs of the go coverage tool, specifically when used with LiteIDE
+*.out
+*.coverage
+
+# Go vendor folder
+vendor/
+
+# Mac stuff
+.DS_Store
+
+# Envrc with direnv
+.envrc
+
