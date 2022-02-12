@@ -123,7 +123,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 
 		case " ", "enter":
-			if !m.selectableRows {
+			if !m.selectableRows || len(m.rows) == 0 {
 				break
 			}
 
