@@ -46,11 +46,11 @@ type Model struct {
 }
 
 func NewModel() Model {
-	headers := []table.Header{
-		table.NewHeader(columnKeyID, "ID", 5),
-		table.NewHeader(columnKeyName, "Name", 10),
-		table.NewHeader(columnKeyDescription, "Description", 30),
-		table.NewHeader(columnKeyCount, "#", 5),
+	columns := []table.Column{
+		table.NewColumn(columnKeyID, "ID", 5),
+		table.NewColumn(columnKeyName, "Name", 10),
+		table.NewColumn(columnKeyDescription, "Description", 30),
+		table.NewColumn(columnKeyCount, "#", 5),
 	}
 
 	rows := []table.Row{
@@ -75,7 +75,7 @@ func NewModel() Model {
 	}
 
 	return Model{
-		tableModel: table.New(headers).
+		tableModel: table.New(columns).
 			WithRows(rows).
 			HeaderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Bold(true)).
 			SelectableRows(true).

@@ -8,8 +8,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type MovementMode int
-
 const (
 	columnKeySelect = "___select___"
 )
@@ -18,8 +16,9 @@ var (
 	defaultHighlightStyle = lipgloss.NewStyle().Background(lipgloss.Color("#334"))
 )
 
+// Model is the main table model.  Create using New()
 type Model struct {
-	headers     []Header
+	columns     []Column
 	headerStyle lipgloss.Style
 
 	rows []Row
@@ -37,47 +36,53 @@ type Model struct {
 	border Border
 }
 
-func New(headers []Header) Model {
+// New creates a new table ready for further modifications
+func New(columns []Column) Model {
 	m := Model{
-		headers:        make([]Header, len(headers)),
+		columns:        make([]Column, len(columns)),
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
 	}
 
 	// Do a full deep copy to avoid unexpected edits
-	copy(m.headers, headers)
+	copy(m.columns, columns)
 
 	return m
 }
 
+// HeaderStyle sets the style to apply to the header text, such as color or bold
 func (m Model) HeaderStyle(style lipgloss.Style) Model {
 	m.headerStyle = style.Copy()
 	return m
 }
 
+// WithRows sets the rows to show as data in the table
 func (m Model) WithRows(rows []Row) Model {
 	m.rows = rows
 	return m
 }
 
+// SelectableRows sets whether or not rows are selectable.  If set, adds a column
+// in the front that acts as a checkbox and responds to controls if Focused
 func (m Model) SelectableRows(selectable bool) Model {
 	m.selectableRows = selectable
 
-	hasSelectHeader := m.headers[0].Key == columnKeySelect
+	hasSelectColumn := m.columns[0].Key == columnKeySelect
 
-	if hasSelectHeader != selectable {
+	if hasSelectColumn != selectable {
 		if selectable {
-			m.headers = append([]Header{
-				NewHeader(columnKeySelect, "[x]", 3),
-			}, m.headers...)
+			m.columns = append([]Column{
+				NewColumn(columnKeySelect, "[x]", 3),
+			}, m.columns...)
 		} else {
-			m.headers = m.headers[1:]
+			m.columns = m.columns[1:]
 		}
 	}
 
 	return m
 }
 
+// HighlightedRow returns the full Row that's currently highlighted by the user
 func (m Model) HighlightedRow() Row {
 	if len(m.rows) > 0 {
 		return m.rows[m.rowCursorIndex]
@@ -87,24 +92,31 @@ func (m Model) HighlightedRow() Row {
 	return Row{}
 }
 
+// SelectedRows returns all rows that have been set as selected by the user
 func (m Model) SelectedRows() []Row {
 	return m.selectedRows
 }
 
+// HighlightStyle sets a custom style to use when the row is being highlighted
+// by the cursor
 func (m Model) HighlightStyle(style lipgloss.Style) Model {
 	m.highlightStyle = style
 	return m
 }
 
+// Focused allows the table to show highlighted rows and take in controls of
+// up/down/space/etc to let the user navigate the table and interact with it
 func (m Model) Focused(focused bool) Model {
 	m.focused = focused
 	return m
 }
 
+// Init initializes the table per the Bubble Tea architecture
 func (m Model) Init() tea.Cmd {
 	return nil
 }
 
+// Update responds to input from the user or other messages from Bubble Tea
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focused {
 		return m, nil
@@ -153,12 +165,14 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, nil
 }
 
+// View renders the table.  It does not end in a newline, so that it can be
+// composed with other elements more consistently.
 func (m Model) View() string {
-	numHeaders := len(m.headers)
+	numColumns := len(m.columns)
 	hasRows := len(m.rows) > 0
 
 	// Safety valve for empty tables
-	if numHeaders == 0 {
+	if numColumns == 0 {
 		return ""
 	}
 
@@ -172,7 +186,7 @@ func (m Model) View() string {
 		headerStyleRight lipgloss.Style
 	)
 
-	if numHeaders == 1 {
+	if numColumns == 1 {
 		if hasRows {
 			headerStyleLeft = m.border.styleSingleColumnTop
 		} else {
@@ -196,13 +210,13 @@ func (m Model) View() string {
 		headerStyleRight = headerStyleRight.Copy().Inherit(m.headerStyle)
 	}
 
-	for i, header := range m.headers {
+	for i, header := range m.columns {
 		headerSection := fmt.Sprintf(header.fmtString, header.Title)
 		var borderStyle lipgloss.Style
 
 		if i == 0 {
 			borderStyle = headerStyleLeft
-		} else if i < len(m.headers)-1 {
+		} else if i < len(m.columns)-1 {
 			borderStyle = headerStyleInner
 		} else {
 			borderStyle = headerStyleRight
