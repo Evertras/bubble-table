@@ -44,6 +44,9 @@ type Border struct {
 	styleSingleRowLeft  lipgloss.Style
 	styleSingleRowInner lipgloss.Style
 	styleSingleRowRight lipgloss.Style
+
+	// Style for a table with only one cell
+	styleSingleCell lipgloss.Style
 }
 
 var (
@@ -189,6 +192,56 @@ func (b *Border) generateStyles() {
 			BottomRight: b.BottomRight,
 		},
 	).BorderRight(true).BorderLeft(true).BorderBottom(true)
+
+	b.styleSingleRowLeft = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Top:    b.Top,
+			Left:   b.Left,
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomLeft:  b.BottomLeft,
+			BottomRight: b.BottomJunction,
+			TopRight:    b.TopJunction,
+			TopLeft:     b.TopLeft,
+		},
+	)
+
+	b.styleSingleRowInner = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Top:    b.Top,
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomRight: b.BottomJunction,
+			TopRight:    b.TopJunction,
+		},
+	).BorderTop(true).BorderBottom(true).BorderRight(true)
+
+	b.styleSingleRowRight = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Top:    b.Top,
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomRight: b.BottomRight,
+			TopRight:    b.TopRight,
+		},
+	).BorderTop(true).BorderBottom(true).BorderRight(true)
+
+	b.styleSingleCell = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Top:    b.Top,
+			Left:   b.Left,
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomLeft:  b.BottomLeft,
+			BottomRight: b.BottomRight,
+			TopRight:    b.TopRight,
+			TopLeft:     b.TopLeft,
+		},
+	)
 }
 
 func (m Model) BorderDefault() Model {

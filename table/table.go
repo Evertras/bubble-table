@@ -86,7 +86,7 @@ func (m Model) HighlightedRow() Row {
 		return m.rows[m.rowCursorIndex]
 	}
 
-	// This shouldn't really happen... better indication?
+	// TODO: Better way to do this without pointers/nil?  Or should it be nil?
 	return Row{}
 }
 
@@ -158,6 +158,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m Model) View() string {
 	numHeaders := len(m.headers)
+	hasRows := len(m.rows) > 0
 
 	// Safety valve for empty tables
 	if numHeaders == 0 {
@@ -169,17 +170,27 @@ func (m Model) View() string {
 	headerStrings := []string{}
 
 	var (
-		headerStyleFirst  lipgloss.Style
-		headerStyleMiddle lipgloss.Style
-		headerStyleLast   lipgloss.Style
+		headerStyleLeft  lipgloss.Style
+		headerStyleInner lipgloss.Style
+		headerStyleRight lipgloss.Style
 	)
 
 	if numHeaders == 1 {
-		headerStyleFirst = m.border.styleSingleColumnTop
+		if hasRows {
+			headerStyleLeft = m.border.styleSingleColumnTop
+		} else {
+			headerStyleLeft = m.border.styleSingleCell
+		}
 	} else {
-		headerStyleFirst = m.border.styleMultiTopLeft
-		headerStyleMiddle = m.border.styleMultiTop
-		headerStyleLast = m.border.styleMultiTopRight
+		if hasRows {
+			headerStyleLeft = m.border.styleMultiTopLeft
+			headerStyleInner = m.border.styleMultiTop
+			headerStyleRight = m.border.styleMultiTopRight
+		} else {
+			headerStyleLeft = m.border.styleSingleRowLeft
+			headerStyleInner = m.border.styleSingleRowInner
+			headerStyleRight = m.border.styleSingleRowRight
+		}
 	}
 
 	for i, header := range m.headers {
@@ -187,11 +198,11 @@ func (m Model) View() string {
 		var borderStyle lipgloss.Style
 
 		if i == 0 {
-			borderStyle = headerStyleFirst
+			borderStyle = headerStyleLeft
 		} else if i < len(m.headers)-1 {
-			borderStyle = headerStyleMiddle
+			borderStyle = headerStyleInner
 		} else {
-			borderStyle = headerStyleLast
+			borderStyle = headerStyleRight
 		}
 
 		headerStrings = append(headerStrings, borderStyle.Render(header.Style.Render(headerSection)))
