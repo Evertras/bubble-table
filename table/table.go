@@ -34,14 +34,14 @@ type Model struct {
 
 	selectedRows []Row
 
-	borderHeader BorderHeader
+	border Border
 }
 
 func New(headers []Header) Model {
 	m := Model{
 		headers:        make([]Header, len(headers)),
 		highlightStyle: defaultHighlightStyle.Copy(),
-		borderHeader:   borderHeaderDefault,
+		border:         borderDefault,
 	}
 
 	// Do a full deep copy to avoid unexpected edits
@@ -161,30 +161,17 @@ func (m Model) View() string {
 
 	headerStrings := []string{}
 
-	hasRows := len(m.rows) > 0
-
 	for i, header := range m.headers {
 		headerSection := fmt.Sprintf(header.fmtString, header.Title)
 		var borderStyle lipgloss.Style
 
+		// TODO: Clean this up
 		if i == 0 {
-			if hasRows {
-				borderStyle = m.borderHeader.styleLeftJunction
-			} else {
-				borderStyle = m.borderHeader.styleLeftFlat
-			}
+			borderStyle = m.border.styleMultiTopLeft
 		} else if i < len(m.headers)-1 {
-			if hasRows {
-				borderStyle = m.borderHeader.styleInnerJunction
-			} else {
-				borderStyle = m.borderHeader.styleInnerFlat
-			}
+			borderStyle = m.border.styleMultiTop
 		} else {
-			if hasRows {
-				borderStyle = m.borderHeader.styleRightJunction
-			} else {
-				borderStyle = m.borderHeader.styleRightFlat
-			}
+			borderStyle = m.border.styleMultiTopRight
 		}
 
 		headerStrings = append(headerStrings, borderStyle.Render(header.Style.Render(headerSection)))

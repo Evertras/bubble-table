@@ -28,7 +28,7 @@ func genTable(columnCount int, rowCount int) table.Model {
 
 	rows := []table.Row{}
 
-	for row := 0; row < rowCount; row++ {
+	for row := 1; row < rowCount; row++ {
 		rowData := table.RowData{}
 
 		for column := 0; column < columnCount; column++ {

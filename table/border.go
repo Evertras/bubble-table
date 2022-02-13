@@ -2,156 +2,174 @@ package table
 
 import "github.com/charmbracelet/lipgloss"
 
-// HeaderBorder defines the borders around the header
-type BorderHeader struct {
-	Top      string
-	Left     string
-	Right    string
-	TopRight string
-	TopLeft  string
-	TopInner string
+// Border defines the borders in and around the table
+type Border struct {
+	Top         string
+	Left        string
+	Right       string
+	Bottom      string
+	TopRight    string
+	TopLeft     string
+	BottomRight string
+	BottomLeft  string
 
-	BottomFlat      string
-	BottomRightFlat string
-	BottomLeftFlat  string
-	BottomInnerFlat string
+	TopJunction    string
+	LeftJunction   string
+	RightJunction  string
+	BottomJunction string
 
-	BottomJunction      string
-	BottomLeftJunction  string
-	BottomRightJunction string
-	BottomInnerJunction string
+	InnerJunction string
 
 	InnerDivider string
 
 	BaseStyle lipgloss.Style
 
-	styleLeftFlat  lipgloss.Style
-	styleInnerFlat lipgloss.Style
-	styleRightFlat lipgloss.Style
+	// Styles for 2x2 tables and larger
+	styleMultiTopLeft     lipgloss.Style
+	styleMultiTop         lipgloss.Style
+	styleMultiTopRight    lipgloss.Style
+	styleMultiRight       lipgloss.Style
+	styleMultiBottomRight lipgloss.Style
+	styleMultiBottom      lipgloss.Style
+	styleMultiBottomLeft  lipgloss.Style
+	styleMultiLeft        lipgloss.Style
+	styleMultiInner       lipgloss.Style
 
-	styleLeftJunction  lipgloss.Style
-	styleInnerJunction lipgloss.Style
-	styleRightJunction lipgloss.Style
-}
+	// Styles for a single column table
+	styleSingleColumnTop    lipgloss.Style
+	styleSingleColumnInner  lipgloss.Style
+	styleSingleColumnBottom lipgloss.Style
 
-// BodyBorder defines the row-by-row borders/dividers
-type BorderBody struct {
-	Left    string
-	Right   string
-	Divider string
+	// Styles for a single row table
+	styleSingleRowLeft  lipgloss.Style
+	styleSingleRowInner lipgloss.Style
+	styleSingleRowRight lipgloss.Style
 }
 
 var (
 	// https://www.w3.org/TR/xml-entity-names/025.html
 
-	borderHeaderDefault = BorderHeader{
-		Top:      "━",
-		Left:     "┃",
-		Right:    "┃",
-		TopRight: "┓",
-		TopLeft:  "┏",
+	borderDefault = Border{
+		Top:    "━",
+		Left:   "┃",
+		Right:  "┃",
+		Bottom: "━",
 
-		TopInner:     "┳",
+		TopRight:    "┓",
+		TopLeft:     "┏",
+		BottomRight: "┛",
+		BottomLeft:  "┗",
+
+		TopJunction:    "┳",
+		LeftJunction:   "┣",
+		RightJunction:  "┫",
+		BottomJunction: "┻",
+		InnerJunction:  "╋",
+
 		InnerDivider: "┃",
-
-		BottomFlat:      "━",
-		BottomRightFlat: "┛",
-		BottomLeftFlat:  "┗",
-		BottomInnerFlat: "┻",
-
-		BottomJunction:      "━",
-		BottomInnerJunction: "╋",
-		BottomLeftJunction:  "┣",
-		BottomRightJunction: "┫",
 	}
 )
 
 func init() {
-	borderHeaderDefault.generateStyles()
+	borderDefault.generateStyles()
 }
 
-func (b *BorderHeader) generateStyles() {
-	b.styleLeftFlat = b.BaseStyle.Copy().BorderStyle(
+func (b *Border) generateStyles() {
+	b.styleMultiTopLeft = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Left:   b.Left,
-			Right:  b.InnerDivider,
-			Bottom: b.BottomFlat,
-
 			TopLeft:     b.TopLeft,
-			TopRight:    b.TopInner,
-			BottomLeft:  b.BottomLeftFlat,
-			BottomRight: b.BottomInnerFlat,
+			Top:         b.Top,
+			TopRight:    b.TopJunction,
+			Right:       b.InnerDivider,
+			BottomRight: b.InnerJunction,
+			Bottom:      b.Bottom,
+			BottomLeft:  b.LeftJunction,
+			Left:        b.Left,
 		},
 	)
 
-	b.styleInnerFlat = b.BaseStyle.Copy().BorderStyle(
+	b.styleMultiTop = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Right:  b.InnerDivider,
-			Bottom: b.BottomFlat,
+			Bottom: b.Bottom,
 
-			TopRight:    b.TopInner,
-			BottomRight: b.BottomInnerFlat,
+			TopRight:    b.TopJunction,
+			BottomRight: b.InnerJunction,
 		},
 	).BorderTop(true).BorderBottom(true).BorderRight(true)
 
-	b.styleRightFlat = b.BaseStyle.Copy().BorderStyle(
+	b.styleMultiTopRight = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Right:  b.Right,
-			Bottom: b.BottomFlat,
+			Bottom: b.Bottom,
 
 			TopRight:    b.TopRight,
-			BottomRight: b.BottomRightFlat,
+			BottomRight: b.RightJunction,
 		},
 	).BorderTop(true).BorderBottom(true).BorderRight(true)
 
-	b.styleLeftJunction = b.BaseStyle.Copy().BorderStyle(
+	b.styleMultiLeft = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
+			Left:  b.Left,
+			Right: b.InnerDivider,
+		},
+	).BorderRight(true).BorderLeft(true)
+
+	b.styleMultiRight = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Right: b.Right,
+		},
+	).BorderRight(true)
+
+	b.styleMultiInner = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Right: b.InnerDivider,
+		},
+	).BorderRight(true)
+
+	b.styleMultiBottomLeft = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
 			Left:   b.Left,
-			Right:  b.InnerDivider,
-			Bottom: b.BottomJunction,
-
-			TopLeft:     b.TopLeft,
-			TopRight:    b.TopInner,
-			BottomLeft:  b.BottomLeftJunction,
-			BottomRight: b.BottomInnerJunction,
-		},
-	)
-
-	b.styleInnerJunction = b.BaseStyle.Copy().BorderStyle(
-		lipgloss.Border{
-			Top:    b.Top,
-			Right:  b.InnerDivider,
-			Bottom: b.BottomJunction,
-
-			TopRight:    b.TopInner,
-			BottomRight: b.BottomInnerJunction,
-		},
-	).BorderTop(true).BorderBottom(true).BorderRight(true)
-
-	b.styleRightJunction = b.BaseStyle.Copy().BorderStyle(
-		lipgloss.Border{
-			Top:    b.Top,
 			Right:  b.Right,
-			Bottom: b.BottomFlat,
+			Bottom: b.Bottom,
 
-			TopRight:    b.TopRight,
-			BottomRight: b.BottomRightJunction,
+			BottomLeft:  b.BottomLeft,
+			BottomRight: b.BottomJunction,
 		},
-	).BorderTop(true).BorderBottom(true).BorderRight(true)
+	).BorderLeft(true).BorderBottom(true).BorderRight(true)
+
+	b.styleMultiBottom = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomRight: b.BottomJunction,
+		},
+	).BorderBottom(true).BorderRight(true)
+
+	b.styleMultiBottomRight = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomRight: b.BottomRight,
+		},
+	).BorderBottom(true).BorderRight(true)
 }
 
-func (m Model) BorderHeaderDefault() Model {
+func (m Model) BorderDefault() Model {
 	// Already generated styles
-	m.borderHeader = borderHeaderDefault
+	m.border = borderDefault
+
 	return m
 }
 
-func (m Model) BorderHeader(border BorderHeader) Model {
-	m.borderHeader = border
-	m.borderHeader.generateStyles()
+func (m Model) Border(border Border) Model {
+	border.generateStyles()
+
+	m.border = border
+
 	return m
 }

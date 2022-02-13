@@ -34,26 +34,6 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-var borderRowLeft = lipgloss.Border{
-	Left:        "┃",
-	Right:       "┃",
-	Bottom:      "━",
-	BottomLeft:  "┗",
-	BottomRight: "┻",
-}
-
-var borderRowMiddle = lipgloss.Border{
-	Right:       "┃",
-	Bottom:      "━",
-	BottomRight: "┻",
-}
-
-var borderRowLast = lipgloss.Border{
-	Right:       "┃",
-	Bottom:      "━",
-	BottomRight: "┛",
-}
-
 func (m Model) renderRow(i int) string {
 	row := m.rows[i]
 	last := i == len(m.rows)-1
@@ -82,16 +62,23 @@ func (m Model) renderRow(i int) string {
 
 		cellStyle := baseStyle.Copy()
 
-		if i == 0 {
-			cellStyle = cellStyle.BorderStyle(borderRowLeft).BorderRight(true).BorderLeft(true)
-		} else if i < len(m.headers)-1 {
-			cellStyle = cellStyle.BorderStyle(borderRowMiddle).BorderRight(true)
+		// TODO: Clean this up
+		if !last {
+			if i == 0 {
+				cellStyle = m.border.styleMultiLeft
+			} else if i < len(m.headers)-1 {
+				cellStyle = m.border.styleMultiInner
+			} else {
+				cellStyle = m.border.styleMultiRight
+			}
 		} else {
-			cellStyle = cellStyle.BorderStyle(borderRowLast).BorderRight(true)
-		}
-
-		if last {
-			cellStyle = cellStyle.BorderBottom(true)
+			if i == 0 {
+				cellStyle = m.border.styleMultiBottomLeft
+			} else if i < len(m.headers)-1 {
+				cellStyle = m.border.styleMultiBottom
+			} else {
+				cellStyle = m.border.styleMultiBottomRight
+			}
 		}
 
 		dataStr := row.Style.Render(fmt.Sprintf(header.fmtString, limitStr(str, header.Width)))
