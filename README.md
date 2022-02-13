@@ -37,7 +37,7 @@ To run the examples, clone this repo and run:
 # Run the full feature demo
 make
 
-# Run the example
+# Run dimensions example to see multiple sizes of simple tables in action
 make dimensions
 
 # Or run any of them directly
