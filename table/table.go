@@ -178,6 +178,8 @@ func (m Model) View() string {
 		} else {
 			headerStyleLeft = m.border.styleSingleCell
 		}
+
+		headerStyleLeft = headerStyleLeft.Copy().Inherit(m.headerStyle)
 	} else {
 		if hasRows {
 			headerStyleLeft = m.border.styleMultiTopLeft
@@ -188,6 +190,10 @@ func (m Model) View() string {
 			headerStyleInner = m.border.styleSingleRowInner
 			headerStyleRight = m.border.styleSingleRowRight
 		}
+
+		headerStyleLeft = headerStyleLeft.Copy().Inherit(m.headerStyle)
+		headerStyleInner = headerStyleInner.Copy().Inherit(m.headerStyle)
+		headerStyleRight = headerStyleRight.Copy().Inherit(m.headerStyle)
 	}
 
 	for i, header := range m.headers {
@@ -201,8 +207,6 @@ func (m Model) View() string {
 		} else {
 			borderStyle = headerStyleRight
 		}
-
-		borderStyle = borderStyle.Inherit(m.headerStyle)
 
 		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
 	}
