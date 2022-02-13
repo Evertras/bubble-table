@@ -1,3 +1,5 @@
+// This file contains a full demo of most available features, for both testing
+// and for reference
 package main
 
 import (
@@ -15,6 +17,28 @@ const (
 	columnKeyName        = "name"
 	columnKeyDescription = "description"
 	columnKeyCount       = "count"
+)
+
+var (
+	customBorder = table.Border{
+		Top:    "─",
+		Left:   "│",
+		Right:  "│",
+		Bottom: "─",
+
+		TopRight:    "╮",
+		TopLeft:     "╭",
+		BottomRight: "╯",
+		BottomLeft:  "╰",
+
+		TopJunction:    "╥",
+		LeftJunction:   "├",
+		RightJunction:  "┤",
+		BottomJunction: "╨",
+		InnerJunction:  "╫",
+
+		InnerDivider: "║",
+	}
 )
 
 type Model struct {
@@ -55,7 +79,8 @@ func NewModel() Model {
 			WithRows(rows).
 			HeaderStyle(lipgloss.NewStyle().Bold(true)).
 			SelectableRows(true).
-			Focused(true),
+			Focused(true).
+			Border(customBorder),
 	}
 }
 
@@ -87,7 +112,7 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	highlightedRow := m.tableModel.HighlightedRow()
-	body.WriteString("Table demo with selectable rows!\nPress space/enter to select a row, q or ctrl+c to quit\n")
+	body.WriteString("Table demo with all features enabled!\nPress space/enter to select a row, q or ctrl+c to quit\n")
 
 	body.WriteString(fmt.Sprintf("Currently looking at ID: %s\n", highlightedRow.Data[columnKeyID]))
 
