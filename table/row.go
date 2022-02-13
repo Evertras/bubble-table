@@ -34,37 +34,42 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-var borderRowLeft = lipgloss.Border{
-	Left:        "┃",
-	Right:       "┃",
-	Bottom:      "━",
-	BottomLeft:  "┗",
-	BottomRight: "┻",
-}
-
-var borderRowMiddle = lipgloss.Border{
-	Right:       "┃",
-	Bottom:      "━",
-	BottomRight: "┻",
-}
-
-var borderRowLast = lipgloss.Border{
-	Right:       "┃",
-	Bottom:      "━",
-	BottomRight: "┛",
-}
-
 func (m Model) renderRow(i int) string {
+	numHeaders := len(m.headers)
 	row := m.rows[i]
 	last := i == len(m.rows)-1
 	highlighted := i == m.rowCursorIndex
 
 	columnStrings := []string{}
 
-	baseStyle := lipgloss.NewStyle()
+	baseStyle := row.Style.Copy()
 
 	if m.focused && highlighted {
-		baseStyle = m.highlightStyle
+		baseStyle = baseStyle.Inherit(m.highlightStyle)
+	}
+
+	var (
+		rowStyleLeft  lipgloss.Style
+		rowStyleInner lipgloss.Style
+		rowStyleRight lipgloss.Style
+
+		rowLastStyleLeft  lipgloss.Style
+		rowLastStyleInner lipgloss.Style
+		rowLastStyleRight lipgloss.Style
+	)
+
+	if numHeaders == 1 {
+		rowStyleLeft = m.border.styleSingleColumnInner
+
+		rowLastStyleLeft = m.border.styleSingleColumnBottom
+	} else {
+		rowStyleLeft = m.border.styleMultiLeft
+		rowStyleInner = m.border.styleMultiInner
+		rowStyleRight = m.border.styleMultiRight
+
+		rowLastStyleLeft = m.border.styleMultiBottomLeft
+		rowLastStyleInner = m.border.styleMultiBottom
+		rowLastStyleRight = m.border.styleMultiBottomRight
 	}
 
 	for i, header := range m.headers {
@@ -82,21 +87,27 @@ func (m Model) renderRow(i int) string {
 
 		cellStyle := baseStyle.Copy()
 
-		if i == 0 {
-			cellStyle = cellStyle.BorderStyle(borderRowLeft).BorderRight(true).BorderLeft(true)
-		} else if i < len(m.headers)-1 {
-			cellStyle = cellStyle.BorderStyle(borderRowMiddle).BorderRight(true)
+		if !last {
+			if i == 0 {
+				cellStyle = cellStyle.Inherit(rowStyleLeft)
+			} else if i < numHeaders-1 {
+				cellStyle = cellStyle.Inherit(rowStyleInner)
+			} else {
+				cellStyle = cellStyle.Inherit(rowStyleRight)
+			}
 		} else {
-			cellStyle = cellStyle.BorderStyle(borderRowLast).BorderRight(true)
+			if i == 0 {
+				cellStyle = cellStyle.Inherit(rowLastStyleLeft)
+			} else if i < numHeaders-1 {
+				cellStyle = cellStyle.Inherit(rowLastStyleInner)
+			} else {
+				cellStyle = cellStyle.Inherit(rowLastStyleRight)
+			}
 		}
 
-		if last {
-			cellStyle = cellStyle.BorderBottom(true)
-		}
+		cellStr := cellStyle.Render(fmt.Sprintf(header.fmtString, limitStr(str, header.Width)))
 
-		dataStr := row.Style.Render(fmt.Sprintf(header.fmtString, limitStr(str, header.Width)))
-
-		columnStrings = append(columnStrings, cellStyle.Render(dataStr))
+		columnStrings = append(columnStrings, cellStr)
 	}
 
 	return lipgloss.JoinHorizontal(lipgloss.Bottom, columnStrings...)

@@ -1,3 +1,5 @@
+// This file contains a full demo of most available features, for both testing
+// and for reference
 package main
 
 import (
@@ -17,13 +19,35 @@ const (
 	columnKeyCount       = "count"
 )
 
+var (
+	customBorder = table.Border{
+		Top:    "─",
+		Left:   "│",
+		Right:  "│",
+		Bottom: "─",
+
+		TopRight:    "╮",
+		TopLeft:     "╭",
+		BottomRight: "╯",
+		BottomLeft:  "╰",
+
+		TopJunction:    "╥",
+		LeftJunction:   "├",
+		RightJunction:  "┤",
+		BottomJunction: "╨",
+		InnerJunction:  "╫",
+
+		InnerDivider: "║",
+	}
+)
+
 type Model struct {
 	tableModel table.Model
 }
 
 func NewModel() Model {
 	headers := []table.Header{
-		table.NewHeader(columnKeyID, "ID", 5).WithStyle(lipgloss.NewStyle().Bold(true)),
+		table.NewHeader(columnKeyID, "ID", 5),
 		table.NewHeader(columnKeyName, "Name", 10),
 		table.NewHeader(columnKeyDescription, "Description", 30),
 		table.NewHeader(columnKeyCount, "#", 5),
@@ -53,9 +77,10 @@ func NewModel() Model {
 	return Model{
 		tableModel: table.New(headers).
 			WithRows(rows).
-			HeaderStyle(lipgloss.NewStyle().Bold(true)).
+			HeaderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Bold(true)).
 			SelectableRows(true).
-			Focused(true),
+			Focused(true).
+			Border(customBorder),
 	}
 }
 
@@ -87,7 +112,7 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	highlightedRow := m.tableModel.HighlightedRow()
-	body.WriteString("Table demo with selectable rows!\nPress space/enter to select a row, q or ctrl+c to quit\n")
+	body.WriteString("Table demo with all features enabled!\nPress space/enter to select a row, q or ctrl+c to quit\n")
 
 	body.WriteString(fmt.Sprintf("Currently looking at ID: %s\n", highlightedRow.Data[columnKeyID]))
 
@@ -101,6 +126,8 @@ func (m Model) View() string {
 	body.WriteString(fmt.Sprintf("SelectedIDs: %s\n", strings.Join(selectedIDs, ", ")))
 
 	body.WriteString(m.tableModel.View())
+
+	body.WriteString("\n")
 
 	return body.String()
 }

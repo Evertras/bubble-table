@@ -1,6 +1,7 @@
 package table
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,4 +29,12 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 
 	assert.Contains(t, rendered, firstTitle)
 	assert.Contains(t, rendered, secondTitle)
+
+	assert.False(t, strings.HasSuffix(rendered, "\n"), "Should not end in newline")
+}
+
+func TestNilHeadersSafelyReturnsEmptyView(t *testing.T) {
+	table := New(nil)
+
+	assert.Equal(t, "", table.View())
 }

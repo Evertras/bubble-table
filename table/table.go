@@ -33,19 +33,19 @@ type Model struct {
 	highlightStyle lipgloss.Style
 
 	selectedRows []Row
+
+	border Border
 }
 
 func New(headers []Header) Model {
 	m := Model{
 		headers:        make([]Header, len(headers)),
 		highlightStyle: defaultHighlightStyle.Copy(),
+		border:         borderDefault,
 	}
 
 	// Do a full deep copy to avoid unexpected edits
 	copy(m.headers, headers)
-	for i, header := range m.headers {
-		m.headers[i].Style = header.Style.Copy()
-	}
 
 	return m
 }
@@ -83,7 +83,7 @@ func (m Model) HighlightedRow() Row {
 		return m.rows[m.rowCursorIndex]
 	}
 
-	// This shouldn't really happen... better indication?
+	// TODO: Better way to do this without pointers/nil?  Or should it be nil?
 	return Row{}
 }
 
@@ -154,33 +154,71 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	numHeaders := len(m.headers)
+	hasRows := len(m.rows) > 0
+
+	// Safety valve for empty tables
+	if numHeaders == 0 {
+		return ""
+	}
+
 	body := strings.Builder{}
 
 	headerStrings := []string{}
 
-	for i, header := range m.headers {
-		headerSection := fmt.Sprintf(header.fmtString, header.Title)
-		borderStyle := m.headerStyle.Copy()
+	var (
+		headerStyleLeft  lipgloss.Style
+		headerStyleInner lipgloss.Style
+		headerStyleRight lipgloss.Style
+	)
 
-		if i == 0 {
-			borderStyle = borderStyle.BorderStyle(borderHeaderFirst)
-		} else if i < len(m.headers)-1 {
-			borderStyle = borderStyle.BorderStyle(borderHeaderMiddle).BorderTop(true).BorderBottom(true).BorderRight(true)
+	if numHeaders == 1 {
+		if hasRows {
+			headerStyleLeft = m.border.styleSingleColumnTop
 		} else {
-			borderStyle = borderStyle.BorderStyle(borderHeaderLast).BorderTop(true).BorderBottom(true).BorderRight(true)
+			headerStyleLeft = m.border.styleSingleCell
 		}
 
-		headerStrings = append(headerStrings, borderStyle.Render(header.Style.Render(headerSection)))
+		headerStyleLeft = headerStyleLeft.Copy().Inherit(m.headerStyle)
+	} else {
+		if hasRows {
+			headerStyleLeft = m.border.styleMultiTopLeft
+			headerStyleInner = m.border.styleMultiTop
+			headerStyleRight = m.border.styleMultiTopRight
+		} else {
+			headerStyleLeft = m.border.styleSingleRowLeft
+			headerStyleInner = m.border.styleSingleRowInner
+			headerStyleRight = m.border.styleSingleRowRight
+		}
+
+		headerStyleLeft = headerStyleLeft.Copy().Inherit(m.headerStyle)
+		headerStyleInner = headerStyleInner.Copy().Inherit(m.headerStyle)
+		headerStyleRight = headerStyleRight.Copy().Inherit(m.headerStyle)
 	}
 
-	body.WriteString(lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...))
+	for i, header := range m.headers {
+		headerSection := fmt.Sprintf(header.fmtString, header.Title)
+		var borderStyle lipgloss.Style
 
-	body.WriteString("\n")
+		if i == 0 {
+			borderStyle = headerStyleLeft
+		} else if i < len(m.headers)-1 {
+			borderStyle = headerStyleInner
+		} else {
+			borderStyle = headerStyleRight
+		}
 
+		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
+	}
+
+	headerBlock := lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...)
+
+	rowStrs := []string{headerBlock}
 	for i := range m.rows {
-		body.WriteString(m.renderRow(i))
-		body.WriteString("\n")
+		rowStrs = append(rowStrs, m.renderRow(i))
 	}
+
+	body.WriteString(lipgloss.JoinVertical(lipgloss.Left, rowStrs...))
 
 	return body.String()
 }
