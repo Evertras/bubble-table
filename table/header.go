@@ -28,25 +28,3 @@ func (h Header) WithStyle(style lipgloss.Style) Header {
 	h.Style = style.Copy()
 	return h
 }
-
-var borderHeaderTriangleFirst = lipgloss.Border{
-	Top:         "━",
-	Bottom:      "━",
-	Left:        "┃",
-	Right:       "┃",
-	TopRight:    "┳",
-	TopLeft:     "◤",
-	BottomRight: "╋",
-	BottomLeft:  "◣",
-}
-
-var borderHeaderTriangleLast = lipgloss.Border{
-	Top:         "━",
-	Bottom:      "━",
-	Left:        "",
-	Right:       "┃",
-	TopRight:    "◥",
-	TopLeft:     "",
-	BottomRight: "◢",
-	BottomLeft:  "",
-}
