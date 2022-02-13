@@ -47,7 +47,7 @@ type Model struct {
 
 func NewModel() Model {
 	headers := []table.Header{
-		table.NewHeader(columnKeyID, "ID", 5).WithStyle(lipgloss.NewStyle().Bold(true)),
+		table.NewHeader(columnKeyID, "ID", 5),
 		table.NewHeader(columnKeyName, "Name", 10),
 		table.NewHeader(columnKeyDescription, "Description", 30),
 		table.NewHeader(columnKeyCount, "#", 5),
@@ -77,7 +77,7 @@ func NewModel() Model {
 	return Model{
 		tableModel: table.New(headers).
 			WithRows(rows).
-			HeaderStyle(lipgloss.NewStyle().Bold(true)).
+			HeaderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Bold(true)).
 			SelectableRows(true).
 			Focused(true).
 			Border(customBorder),
@@ -126,6 +126,8 @@ func (m Model) View() string {
 	body.WriteString(fmt.Sprintf("SelectedIDs: %s\n", strings.Join(selectedIDs, ", ")))
 
 	body.WriteString(m.tableModel.View())
+
+	body.WriteString("\n")
 
 	return body.String()
 }

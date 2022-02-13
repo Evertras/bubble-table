@@ -46,9 +46,6 @@ func New(headers []Header) Model {
 
 	// Do a full deep copy to avoid unexpected edits
 	copy(m.headers, headers)
-	for i, header := range m.headers {
-		m.headers[i].Style = header.Style.Copy()
-	}
 
 	return m
 }
@@ -205,7 +202,9 @@ func (m Model) View() string {
 			borderStyle = headerStyleRight
 		}
 
-		headerStrings = append(headerStrings, borderStyle.Render(header.Style.Render(headerSection)))
+		borderStyle = borderStyle.Inherit(m.headerStyle)
+
+		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
 	}
 
 	body.WriteString(lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...))

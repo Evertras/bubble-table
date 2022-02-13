@@ -89,19 +89,19 @@ func (m Model) renderRow(i int) string {
 
 		if !last {
 			if i == 0 {
-				cellStyle = rowStyleLeft
+				cellStyle = cellStyle.Inherit(rowStyleLeft)
 			} else if i < numHeaders-1 {
-				cellStyle = rowStyleInner
+				cellStyle = cellStyle.Inherit(rowStyleInner)
 			} else {
-				cellStyle = rowStyleRight
+				cellStyle = cellStyle.Inherit(rowStyleRight)
 			}
 		} else {
 			if i == 0 {
-				cellStyle = rowLastStyleLeft
+				cellStyle = cellStyle.Inherit(rowLastStyleLeft)
 			} else if i < numHeaders-1 {
-				cellStyle = rowLastStyleInner
+				cellStyle = cellStyle.Inherit(rowLastStyleInner)
 			} else {
-				cellStyle = rowLastStyleRight
+				cellStyle = cellStyle.Inherit(rowLastStyleRight)
 			}
 		}
 
