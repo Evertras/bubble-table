@@ -42,10 +42,10 @@ func (m Model) renderRow(i int) string {
 
 	columnStrings := []string{}
 
-	baseStyle := lipgloss.NewStyle()
+	baseStyle := row.Style.Copy()
 
 	if m.focused && highlighted {
-		baseStyle = m.highlightStyle
+		baseStyle = baseStyle.Inherit(m.highlightStyle)
 	}
 
 	var (
@@ -105,9 +105,9 @@ func (m Model) renderRow(i int) string {
 			}
 		}
 
-		dataStr := row.Style.Render(fmt.Sprintf(header.fmtString, limitStr(str, header.Width)))
+		cellStr := cellStyle.Render(fmt.Sprintf(header.fmtString, limitStr(str, header.Width)))
 
-		columnStrings = append(columnStrings, cellStyle.Render(dataStr))
+		columnStrings = append(columnStrings, cellStr)
 	}
 
 	return lipgloss.JoinHorizontal(lipgloss.Bottom, columnStrings...)
