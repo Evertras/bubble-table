@@ -2,9 +2,6 @@
 
 A table component for the [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
 
-This is currently messy as it's in early development and came out of a different
-project, and should be cleaned up over time.
-
 ![Table](sample.png)
 
 [View sample source code](./examples/features/main.go)
