@@ -12,7 +12,7 @@ For a code reference, please see the [full feature example](./examples/features/
 
 Displays a table with a header, rows, and borders.
 
-Borders are customizable with a basic thick square default.
+Border shape is customizable with a basic thick square default.
 
 Rows can be individually styled.
 
