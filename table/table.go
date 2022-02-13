@@ -79,7 +79,12 @@ func (m Model) SelectableRows(selectable bool) Model {
 }
 
 func (m Model) HighlightedRow() Row {
-	return m.rows[m.rowCursorIndex]
+	if len(m.rows) > 0 {
+		return m.rows[m.rowCursorIndex]
+	}
+
+	// This shouldn't really happen... better indication?
+	return Row{}
 }
 
 func (m Model) SelectedRows() []Row {
