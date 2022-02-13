@@ -4,7 +4,8 @@ import (
 	"fmt"
 )
 
-type Header struct {
+// Column is a column in the table
+type Column struct {
 	Title string
 	Key   string
 	Width int
@@ -12,8 +13,9 @@ type Header struct {
 	fmtString string
 }
 
-func NewHeader(key, title string, width int) Header {
-	return Header{
+// NewColumn creates a new column with the given information
+func NewColumn(key, title string, width int) Column {
+	return Column{
 		Key:       key,
 		Title:     title,
 		Width:     width,

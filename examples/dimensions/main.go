@@ -19,11 +19,11 @@ type Model struct {
 }
 
 func genTable(columnCount int, rowCount int) table.Model {
-	headers := []table.Header{}
+	columns := []table.Column{}
 
 	for column := 0; column < columnCount; column++ {
 		columnStr := fmt.Sprintf("%d", column+1)
-		headers = append(headers, table.NewHeader(columnStr, columnStr, 4))
+		columns = append(columns, table.NewColumn(columnStr, columnStr, 4))
 	}
 
 	rows := []table.Row{}
@@ -39,7 +39,7 @@ func genTable(columnCount int, rowCount int) table.Model {
 		rows = append(rows, table.NewRow(rowData))
 	}
 
-	return table.New(headers).WithRows(rows).HeaderStyle(lipgloss.NewStyle().Bold(true))
+	return table.New(columns).WithRows(rows).HeaderStyle(lipgloss.NewStyle().Bold(true))
 }
 
 func NewModel() Model {

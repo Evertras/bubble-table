@@ -18,12 +18,12 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 		secondWidth = 20
 	)
 
-	headers := []Header{
-		NewHeader(firstKey, firstTitle, firstWidth),
-		NewHeader(secondKey, secondTitle, secondWidth),
+	columns := []Column{
+		NewColumn(firstKey, firstTitle, firstWidth),
+		NewColumn(secondKey, secondTitle, secondWidth),
 	}
 
-	table := New(headers)
+	table := New(columns)
 
 	rendered := table.View()
 
@@ -33,7 +33,7 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 	assert.False(t, strings.HasSuffix(rendered, "\n"), "Should not end in newline")
 }
 
-func TestNilHeadersSafelyReturnsEmptyView(t *testing.T) {
+func TestNilColumnsSafelyReturnsEmptyView(t *testing.T) {
 	table := New(nil)
 
 	assert.Equal(t, "", table.View())

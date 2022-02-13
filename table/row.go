@@ -8,6 +8,8 @@ import (
 
 type RowData map[string]interface{}
 
+// Row represents a row in the table with some data keyed to the table columns>
+// Can have a style applied to it such as color/bold.  Create using NewRow()
 type Row struct {
 	Style lipgloss.Style
 	Data  RowData
@@ -15,6 +17,7 @@ type Row struct {
 	selected bool
 }
 
+// NewRow creates a new row and copies the given row data
 func NewRow(data RowData) Row {
 	d := Row{
 		Data: make(map[string]interface{}),
@@ -28,14 +31,15 @@ func NewRow(data RowData) Row {
 	return d
 }
 
+// WithStyle uses the given style for the text in the row
 func (r Row) WithStyle(style lipgloss.Style) Row {
-	r.Style = style
+	r.Style = style.Copy()
 
 	return r
 }
 
 func (m Model) renderRow(i int) string {
-	numHeaders := len(m.headers)
+	numColumns := len(m.columns)
 	row := m.rows[i]
 	last := i == len(m.rows)-1
 	highlighted := i == m.rowCursorIndex
@@ -58,7 +62,7 @@ func (m Model) renderRow(i int) string {
 		rowLastStyleRight lipgloss.Style
 	)
 
-	if numHeaders == 1 {
+	if numColumns == 1 {
 		rowStyleLeft = m.border.styleSingleColumnInner
 
 		rowLastStyleLeft = m.border.styleSingleColumnBottom
@@ -72,16 +76,16 @@ func (m Model) renderRow(i int) string {
 		rowLastStyleRight = m.border.styleMultiBottomRight
 	}
 
-	for i, header := range m.headers {
+	for i, column := range m.columns {
 		var str string
 
-		if header.Key == columnKeySelect {
+		if column.Key == columnKeySelect {
 			if row.selected {
 				str = "[x]"
 			} else {
 				str = "[ ]"
 			}
-		} else if entry, exists := row.Data[header.Key]; exists {
+		} else if entry, exists := row.Data[column.Key]; exists {
 			str = fmt.Sprintf("%v", entry)
 		}
 
@@ -90,7 +94,7 @@ func (m Model) renderRow(i int) string {
 		if !last {
 			if i == 0 {
 				cellStyle = cellStyle.Inherit(rowStyleLeft)
-			} else if i < numHeaders-1 {
+			} else if i < numColumns-1 {
 				cellStyle = cellStyle.Inherit(rowStyleInner)
 			} else {
 				cellStyle = cellStyle.Inherit(rowStyleRight)
@@ -98,14 +102,14 @@ func (m Model) renderRow(i int) string {
 		} else {
 			if i == 0 {
 				cellStyle = cellStyle.Inherit(rowLastStyleLeft)
-			} else if i < numHeaders-1 {
+			} else if i < numColumns-1 {
 				cellStyle = cellStyle.Inherit(rowLastStyleInner)
 			} else {
 				cellStyle = cellStyle.Inherit(rowLastStyleRight)
 			}
 		}
 
-		cellStr := cellStyle.Render(fmt.Sprintf(header.fmtString, limitStr(str, header.Width)))
+		cellStr := cellStyle.Render(fmt.Sprintf(column.fmtString, limitStr(str, column.Width)))
 
 		columnStrings = append(columnStrings, cellStr)
 	}

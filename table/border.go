@@ -242,6 +242,8 @@ func (b *Border) generateStyles() {
 	)
 }
 
+// BorderDefault uses the basic square border, useful to reset the border if
+// it was changed somehow
 func (m Model) BorderDefault() Model {
 	// Already generated styles
 	m.border = borderDefault
@@ -249,6 +251,7 @@ func (m Model) BorderDefault() Model {
 	return m
 }
 
+// Border uses the given border components to render the table
 func (m Model) Border(border Border) Model {
 	border.generateStyles()
 
