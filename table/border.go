@@ -135,7 +135,7 @@ func (b *Border) generateStyles() {
 	b.styleMultiBottomLeft = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
 			Left:   b.Left,
-			Right:  b.Right,
+			Right:  b.InnerDivider,
 			Bottom: b.Bottom,
 
 			BottomLeft:  b.BottomLeft,
@@ -145,7 +145,7 @@ func (b *Border) generateStyles() {
 
 	b.styleMultiBottom = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
-			Right:  b.Right,
+			Right:  b.InnerDivider,
 			Bottom: b.Bottom,
 
 			BottomRight: b.BottomJunction,
@@ -197,7 +197,7 @@ func (b *Border) generateStyles() {
 		lipgloss.Border{
 			Top:    b.Top,
 			Left:   b.Left,
-			Right:  b.Right,
+			Right:  b.InnerDivider,
 			Bottom: b.Bottom,
 
 			BottomLeft:  b.BottomLeft,
@@ -210,7 +210,7 @@ func (b *Border) generateStyles() {
 	b.styleSingleRowInner = b.BaseStyle.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
-			Right:  b.Right,
+			Right:  b.InnerDivider,
 			Bottom: b.Bottom,
 
 			BottomRight: b.BottomJunction,
