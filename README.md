@@ -2,7 +2,7 @@
 
 <p>
   <a href="https://github.com/Evertras/bubble-table/releases"><img src="https://img.shields.io/github/release/Evertras/bubble-table.svg" alt="Latest Release"></a>
-  <a href="https://pkg.go.dev/github.com/Evertras/bubble-table?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="GoDoc"></a>
+  <a href="https://pkg.go.dev/github.com/Evertras/bubble-table/table?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="GoDoc"></a>
 </p>
 
 A table component for the [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
