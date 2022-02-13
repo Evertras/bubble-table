@@ -33,12 +33,15 @@ type Model struct {
 	highlightStyle lipgloss.Style
 
 	selectedRows []Row
+
+	borderHeader BorderHeader
 }
 
 func New(headers []Header) Model {
 	m := Model{
 		headers:        make([]Header, len(headers)),
 		highlightStyle: defaultHighlightStyle.Copy(),
+		borderHeader:   borderHeaderDefault,
 	}
 
 	// Do a full deep copy to avoid unexpected edits
@@ -158,16 +161,30 @@ func (m Model) View() string {
 
 	headerStrings := []string{}
 
+	hasRows := len(m.rows) > 0
+
 	for i, header := range m.headers {
 		headerSection := fmt.Sprintf(header.fmtString, header.Title)
-		borderStyle := m.headerStyle.Copy()
+		var borderStyle lipgloss.Style
 
 		if i == 0 {
-			borderStyle = borderStyle.BorderStyle(borderHeaderFirst)
+			if hasRows {
+				borderStyle = m.borderHeader.styleLeftJunction
+			} else {
+				borderStyle = m.borderHeader.styleLeftFlat
+			}
 		} else if i < len(m.headers)-1 {
-			borderStyle = borderStyle.BorderStyle(borderHeaderMiddle).BorderTop(true).BorderBottom(true).BorderRight(true)
+			if hasRows {
+				borderStyle = m.borderHeader.styleInnerJunction
+			} else {
+				borderStyle = m.borderHeader.styleInnerFlat
+			}
 		} else {
-			borderStyle = borderStyle.BorderStyle(borderHeaderLast).BorderTop(true).BorderBottom(true).BorderRight(true)
+			if hasRows {
+				borderStyle = m.borderHeader.styleRightJunction
+			} else {
+				borderStyle = m.borderHeader.styleRightFlat
+			}
 		}
 
 		headerStrings = append(headerStrings, borderStyle.Render(header.Style.Render(headerSection)))

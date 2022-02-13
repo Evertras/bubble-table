@@ -29,19 +29,6 @@ func (h Header) WithStyle(style lipgloss.Style) Header {
 	return h
 }
 
-// https://www.w3.org/TR/xml-entity-names/025.html
-
-var borderHeaderFirst = lipgloss.Border{
-	Top:         "━",
-	Bottom:      "━",
-	Left:        "┃",
-	Right:       "┃",
-	TopRight:    "┳",
-	TopLeft:     "┏",
-	BottomRight: "╋",
-	BottomLeft:  "┣",
-}
-
 var borderHeaderTriangleFirst = lipgloss.Border{
 	Top:         "━",
 	Bottom:      "━",
@@ -51,28 +38,6 @@ var borderHeaderTriangleFirst = lipgloss.Border{
 	TopLeft:     "◤",
 	BottomRight: "╋",
 	BottomLeft:  "◣",
-}
-
-var borderHeaderMiddle = lipgloss.Border{
-	Top:         "━",
-	Bottom:      "━",
-	Left:        "",
-	Right:       "┃",
-	TopRight:    "┳",
-	TopLeft:     "",
-	BottomRight: "╋",
-	BottomLeft:  "",
-}
-
-var borderHeaderLast = lipgloss.Border{
-	Top:         "━",
-	Bottom:      "━",
-	Left:        "",
-	Right:       "┃",
-	TopRight:    "┓",
-	TopLeft:     "",
-	BottomRight: "┫",
-	BottomLeft:  "",
 }
 
 var borderHeaderTriangleLast = lipgloss.Border{
