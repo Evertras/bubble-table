@@ -211,16 +211,14 @@ func (m Model) View() string {
 		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
 	}
 
-	body.WriteString(lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...))
+	headerBlock := lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...)
 
-	body.WriteString("\n")
-
-	rowStrs := []string{}
+	rowStrs := []string{headerBlock}
 	for i := range m.rows {
 		rowStrs = append(rowStrs, m.renderRow(i))
 	}
 
-	body.WriteString(strings.Join(rowStrs, "\n"))
+	body.WriteString(lipgloss.JoinVertical(lipgloss.Left, rowStrs...))
 
 	return body.String()
 }
