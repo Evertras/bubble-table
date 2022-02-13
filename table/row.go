@@ -35,6 +35,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 }
 
 func (m Model) renderRow(i int) string {
+	numHeaders := len(m.headers)
 	row := m.rows[i]
 	last := i == len(m.rows)-1
 	highlighted := i == m.rowCursorIndex
@@ -45,6 +46,30 @@ func (m Model) renderRow(i int) string {
 
 	if m.focused && highlighted {
 		baseStyle = m.highlightStyle
+	}
+
+	var (
+		rowStyleLeft  lipgloss.Style
+		rowStyleInner lipgloss.Style
+		rowStyleRight lipgloss.Style
+
+		rowLastStyleLeft  lipgloss.Style
+		rowLastStyleInner lipgloss.Style
+		rowLastStyleRight lipgloss.Style
+	)
+
+	if numHeaders == 1 {
+		rowStyleLeft = m.border.styleSingleColumnInner
+
+		rowLastStyleLeft = m.border.styleSingleColumnBottom
+	} else {
+		rowStyleLeft = m.border.styleMultiLeft
+		rowStyleInner = m.border.styleMultiInner
+		rowStyleRight = m.border.styleMultiRight
+
+		rowLastStyleLeft = m.border.styleMultiBottomLeft
+		rowLastStyleInner = m.border.styleMultiBottom
+		rowLastStyleRight = m.border.styleMultiBottomRight
 	}
 
 	for i, header := range m.headers {
@@ -62,22 +87,21 @@ func (m Model) renderRow(i int) string {
 
 		cellStyle := baseStyle.Copy()
 
-		// TODO: Clean this up
 		if !last {
 			if i == 0 {
-				cellStyle = m.border.styleMultiLeft
-			} else if i < len(m.headers)-1 {
-				cellStyle = m.border.styleMultiInner
+				cellStyle = rowStyleLeft
+			} else if i < numHeaders-1 {
+				cellStyle = rowStyleInner
 			} else {
-				cellStyle = m.border.styleMultiRight
+				cellStyle = rowStyleRight
 			}
 		} else {
 			if i == 0 {
-				cellStyle = m.border.styleMultiBottomLeft
-			} else if i < len(m.headers)-1 {
-				cellStyle = m.border.styleMultiBottom
+				cellStyle = rowLastStyleLeft
+			} else if i < numHeaders-1 {
+				cellStyle = rowLastStyleInner
 			} else {
-				cellStyle = m.border.styleMultiBottomRight
+				cellStyle = rowLastStyleRight
 			}
 		}
 

@@ -157,6 +157,38 @@ func (b *Border) generateStyles() {
 			BottomRight: b.BottomRight,
 		},
 	).BorderBottom(true).BorderRight(true)
+
+	b.styleSingleColumnTop = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Top:    b.Top,
+			Left:   b.Left,
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			TopLeft:     b.TopLeft,
+			TopRight:    b.TopRight,
+			BottomLeft:  b.LeftJunction,
+			BottomRight: b.RightJunction,
+		},
+	)
+
+	b.styleSingleColumnInner = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Left:  b.Left,
+			Right: b.Right,
+		},
+	).BorderRight(true).BorderLeft(true)
+
+	b.styleSingleColumnBottom = b.BaseStyle.Copy().BorderStyle(
+		lipgloss.Border{
+			Left:   b.Left,
+			Right:  b.Right,
+			Bottom: b.Bottom,
+
+			BottomLeft:  b.BottomLeft,
+			BottomRight: b.BottomRight,
+		},
+	).BorderRight(true).BorderLeft(true).BorderBottom(true)
 }
 
 func (m Model) BorderDefault() Model {

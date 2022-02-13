@@ -157,21 +157,41 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	numHeaders := len(m.headers)
+
+	// Safety valve for empty tables
+	if numHeaders == 0 {
+		return ""
+	}
+
 	body := strings.Builder{}
 
 	headerStrings := []string{}
+
+	var (
+		headerStyleFirst  lipgloss.Style
+		headerStyleMiddle lipgloss.Style
+		headerStyleLast   lipgloss.Style
+	)
+
+	if numHeaders == 1 {
+		headerStyleFirst = m.border.styleSingleColumnTop
+	} else {
+		headerStyleFirst = m.border.styleMultiTopLeft
+		headerStyleMiddle = m.border.styleMultiTop
+		headerStyleLast = m.border.styleMultiTopRight
+	}
 
 	for i, header := range m.headers {
 		headerSection := fmt.Sprintf(header.fmtString, header.Title)
 		var borderStyle lipgloss.Style
 
-		// TODO: Clean this up
 		if i == 0 {
-			borderStyle = m.border.styleMultiTopLeft
+			borderStyle = headerStyleFirst
 		} else if i < len(m.headers)-1 {
-			borderStyle = m.border.styleMultiTop
+			borderStyle = headerStyleMiddle
 		} else {
-			borderStyle = m.border.styleMultiTopRight
+			borderStyle = headerStyleLast
 		}
 
 		headerStrings = append(headerStrings, borderStyle.Render(header.Style.Render(headerSection)))
@@ -181,10 +201,12 @@ func (m Model) View() string {
 
 	body.WriteString("\n")
 
+	rowStrs := []string{}
 	for i := range m.rows {
-		body.WriteString(m.renderRow(i))
-		body.WriteString("\n")
+		rowStrs = append(rowStrs, m.renderRow(i))
 	}
+
+	body.WriteString(strings.Join(rowStrs, "\n"))
 
 	return body.String()
 }

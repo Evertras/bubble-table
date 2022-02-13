@@ -11,9 +11,9 @@ import (
 )
 
 type Model struct {
-	table2x2 table.Model
-	table1x2 table.Model
-	table2x1 table.Model
+	table3x3 table.Model
+	table1x3 table.Model
+	table3x1 table.Model
 	table1x1 table.Model
 	table5x5 table.Model
 }
@@ -45,9 +45,9 @@ func genTable(columnCount int, rowCount int) table.Model {
 func NewModel() Model {
 	return Model{
 		table1x1: genTable(1, 1),
-		table2x1: genTable(2, 1),
-		table1x2: genTable(1, 2),
-		table2x2: genTable(2, 2),
+		table3x1: genTable(3, 1),
+		table1x3: genTable(1, 3),
+		table3x3: genTable(3, 3),
 		table5x5: genTable(5, 5),
 	}
 }
@@ -65,13 +65,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.table1x1, cmd = m.table1x1.Update(msg)
 	cmds = append(cmds, cmd)
 
-	m.table2x1, cmd = m.table2x1.Update(msg)
+	m.table3x1, cmd = m.table3x1.Update(msg)
 	cmds = append(cmds, cmd)
 
-	m.table1x2, cmd = m.table1x2.Update(msg)
+	m.table1x3, cmd = m.table1x3.Update(msg)
 	cmds = append(cmds, cmd)
 
-	m.table2x2, cmd = m.table2x2.Update(msg)
+	m.table3x3, cmd = m.table3x3.Update(msg)
 	cmds = append(cmds, cmd)
 
 	m.table5x5, cmd = m.table5x5.Update(msg)
@@ -98,9 +98,9 @@ func (m Model) View() string {
 	tablesSmall := lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		pad.Render(m.table1x1.View()),
-		pad.Render(m.table1x2.View()),
-		pad.Render(m.table2x1.View()),
-		pad.Render(m.table2x2.View()),
+		pad.Render(m.table1x3.View()),
+		pad.Render(m.table3x1.View()),
+		pad.Render(m.table3x3.View()),
 	)
 
 	tableBig := pad.Render(m.table5x5.View())

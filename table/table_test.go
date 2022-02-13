@@ -29,3 +29,9 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 	assert.Contains(t, rendered, firstTitle)
 	assert.Contains(t, rendered, secondTitle)
 }
+
+func TestNilHeadersSafelyReturnsEmptyView(t *testing.T) {
+	table := New(nil)
+
+	assert.Equal(t, "", table.View())
+}
