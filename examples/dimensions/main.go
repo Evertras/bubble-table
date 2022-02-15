@@ -91,7 +91,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("Table demo with various sized tables!\nPress space/enter to select a row, q or ctrl+c to quit\n")
+	body.WriteString("Table demo with various sized tables!\nPress q or ctrl+c to quit\n")
 
 	pad := lipgloss.NewStyle().Padding(1)
 
