@@ -25,6 +25,57 @@ Can be focused to highlight a row and navigate with up/down (and j/k).
 
 Can make rows selectable, and fetch the current selections.
 
+## Defining table data
+
+Each `Column` is associated with a unique string key.  Each `Row` contains a
+`RowData` object which is simply a map of strings to `interface{}`.  When the
+table is rendered, each `Row` is checked for each `Column` key.  If the key
+exists in the `Row`'s `RowData`, it is rendered with `fmt.Sprintf("%v")`.  If it
+does not exist, nothing is rendered.
+
+Extra data in the `RowData` object is ignored.  This can be helpful to simply
+dump data into `RowData` and create columns that select what is interesting to
+view, or to generate different columns based on view options on the fly.
+
+A basic example is given below.  For more detailed examples, see
+[the examples directory](./examples).
+
+```golang
+// This makes it easier/safer to match against values, but isn't necessary
+const (
+  // This value isn't visible anywhere, so a simple lowercase is fine
+  columnKeyID = "id"
+
+  // It's just a string, so it can be whatever, really!  They only must be unique
+  columnKeyName = "何?!"
+)
+
+columns := []table.Column{
+  table.NewColumn(columnKeyID, "ID", 5),
+  table.NewColumn(columnKeyName, "Name", 10),
+}
+
+rows := []table.Row{
+  // This row contains both an ID and a name
+  table.NewRow(table.RowData{
+    columnKeyID:          "abc",
+    columnKeyName:        "Hello",
+  }),
+
+  table.NewRow(table.RowData{
+    columnKeyID:          "123",
+    columnKeyName:        "Oh no",
+    // This field exists in the row data but won't be visible
+    "somethingelse": "Super bold!",
+  }),
+
+  table.NewRow(table.RowData{
+    columnKeyID:          "def",
+    // This row is missing the Name column, so it will simply be blank
+  }),
+}
+```
+
 ## Demos
 
 Code examples are located in [the examples directory](./examples).  Run commands
