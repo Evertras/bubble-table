@@ -6,6 +6,10 @@ features:
 dimensions:
 	@go run ./examples/dimensions/main.go
 
+.PHONY: updates
+updates:
+	@go run ./examples/updates/*.go
+
 .PHONY: test
 test:
 	@go test ./table
