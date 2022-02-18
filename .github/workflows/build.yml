@@ -6,14 +6,13 @@ on:
   pull_request:
 
 jobs:
-  test:
+  buildandtest:
+    name: Build and test
     strategy:
       matrix:
         go-version: [~1.13, ^1]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      GO111MODULE: "on"
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
