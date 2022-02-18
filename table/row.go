@@ -6,10 +6,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// RowData is a map of string column keys to interface{} data.
 type RowData map[string]interface{}
 
 // Row represents a row in the table with some data keyed to the table columns>
-// Can have a style applied to it such as color/bold.  Create using NewRow()
+// Can have a style applied to it such as color/bold.  Create using NewRow().
 type Row struct {
 	Style lipgloss.Style
 	Data  RowData
@@ -17,32 +18,32 @@ type Row struct {
 	selected bool
 }
 
-// NewRow creates a new row and copies the given row data
+// NewRow creates a new row and copies the given row data.
 func NewRow(data RowData) Row {
-	d := Row{
+	row := Row{
 		Data: make(map[string]interface{}),
 	}
 
 	for key, val := range data {
 		// Doesn't deep copy val, but close enough for now...
-		d.Data[key] = val
+		row.Data[key] = val
 	}
 
-	return d
+	return row
 }
 
-// WithStyle uses the given style for the text in the row
+// WithStyle uses the given style for the text in the row.
 func (r Row) WithStyle(style lipgloss.Style) Row {
 	r.Style = style.Copy()
 
 	return r
 }
 
-func (m Model) renderRow(i int) string {
+func (m Model) renderRow(rowIndex int) string {
 	numColumns := len(m.columns)
-	row := m.rows[i]
-	last := i == len(m.rows)-1
-	highlighted := i == m.rowCursorIndex
+	row := m.rows[rowIndex]
+	last := rowIndex == len(m.rows)-1
+	highlighted := rowIndex == m.rowCursorIndex
 
 	columnStrings := []string{}
 
@@ -76,7 +77,7 @@ func (m Model) renderRow(i int) string {
 		rowLastStyleRight = m.border.styleMultiBottomRight
 	}
 
-	for i, column := range m.columns {
+	for columnIndex, column := range m.columns {
 		var str string
 
 		if column.Key == columnKeySelect {
@@ -92,17 +93,17 @@ func (m Model) renderRow(i int) string {
 		cellStyle := baseStyle.Copy()
 
 		if !last {
-			if i == 0 {
+			if columnIndex == 0 {
 				cellStyle = cellStyle.Inherit(rowStyleLeft)
-			} else if i < numColumns-1 {
+			} else if columnIndex < numColumns-1 {
 				cellStyle = cellStyle.Inherit(rowStyleInner)
 			} else {
 				cellStyle = cellStyle.Inherit(rowStyleRight)
 			}
 		} else {
-			if i == 0 {
+			if columnIndex == 0 {
 				cellStyle = cellStyle.Inherit(rowLastStyleLeft)
-			} else if i < numColumns-1 {
+			} else if columnIndex < numColumns-1 {
 				cellStyle = cellStyle.Inherit(rowLastStyleInner)
 			} else {
 				cellStyle = cellStyle.Inherit(rowLastStyleRight)

@@ -13,7 +13,7 @@ func TestUnfocusedDoesntMove(t *testing.T) {
 		NewColumn("id", "ID", 3),
 	}
 
-	m := New(cols).WithRows([]Row{
+	model := New(cols).WithRows([]Row{
 		NewRow(RowData{
 			"id": "first",
 		}),
@@ -22,13 +22,17 @@ func TestUnfocusedDoesntMove(t *testing.T) {
 		}),
 	})
 
-	m, _ = m.Update(tea.KeyMsg{
+	model, _ = model.Update(tea.KeyMsg{
 		Type: tea.KeyUp,
 	})
 
-	highlighted := m.HighlightedRow()
+	highlighted := model.HighlightedRow()
 
-	assert.Equal(t, "first", highlighted.Data["id"].(string), "Should still be on first row")
+	id, ok := highlighted.Data["id"].(string)
+
+	assert.True(t, ok, "Failed to convert to string")
+
+	assert.Equal(t, "first", id, "Should still be on first row")
 }
 
 func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
@@ -36,7 +40,7 @@ func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
 		NewColumn("id", "ID", 3),
 	}
 
-	m := New(cols).WithRows([]Row{
+	model := New(cols).WithRows([]Row{
 		NewRow(RowData{
 			"id": "first",
 		}),
@@ -53,21 +57,25 @@ func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
 
 	curID := func() string {
-		return m.HighlightedRow().Data["id"].(string)
+		str, ok := model.HighlightedRow().Data["id"].(string)
+
+		assert.True(t, ok, "Failed to convert to string")
+
+		return str
 	}
 
 	assert.Equal(t, "first", curID(), "Should start on first row")
 
-	m, _ = m.Update(keyDown)
+	model, _ = model.Update(keyDown)
 	assert.Equal(t, "second", curID(), "Default key down should move down a row")
 
-	m, _ = m.Update(keyUp)
+	model, _ = model.Update(keyUp)
 	assert.Equal(t, "first", curID(), "Should move back up")
 
-	m, _ = m.Update(keyUp)
+	model, _ = model.Update(keyUp)
 	assert.Equal(t, "third", curID(), "Moving up from top should wrap to bottom")
 
-	m, _ = m.Update(keyDown)
+	model, _ = model.Update(keyDown)
 	assert.Equal(t, "first", curID(), "Moving down from bottom should wrap to top")
 }
 
@@ -83,7 +91,7 @@ func TestFocusedMovesWithCustomKeyMap(t *testing.T) {
 		RowSelectToggle: key.NewBinding(key.WithKeys("ctrl+c")),
 	}
 
-	m := New(cols).WithRows([]Row{
+	model := New(cols).WithRows([]Row{
 		NewRow(RowData{
 			"id": "first",
 		}),
@@ -104,21 +112,25 @@ func TestFocusedMovesWithCustomKeyMap(t *testing.T) {
 	assert.Equal(t, "ctrl+b", keyCtrlB.String(), "Test sanity check failed for ctrl+b")
 
 	curID := func() string {
-		return m.HighlightedRow().Data["id"].(string)
+		str, ok := model.HighlightedRow().Data["id"].(string)
+
+		assert.True(t, ok, "Failed to convert to string")
+
+		return str
 	}
 
 	assert.Equal(t, "first", curID(), "Should start on first row")
 
-	m, _ = m.Update(keyDown)
+	model, _ = model.Update(keyDown)
 	assert.Equal(t, "first", curID(), "Down arrow should do nothing")
 
-	m, _ = m.Update(keyCtrlB)
+	model, _ = model.Update(keyCtrlB)
 	assert.Equal(t, "second", curID(), "Custom key map for down failed")
 
-	m, _ = m.Update(keyUp)
+	model, _ = model.Update(keyUp)
 	assert.Equal(t, "second", curID(), "Up arrow should do nothing")
 
-	m, _ = m.Update(keyCtrlA)
+	model, _ = model.Update(keyCtrlA)
 	assert.Equal(t, "first", curID(), "Custom key map for up failed")
 }
 
@@ -127,7 +139,7 @@ func TestSelectingRowWhenTableUnselectableDoesNothing(t *testing.T) {
 		NewColumn("id", "ID", 3),
 	}
 
-	m := New(cols).WithRows([]Row{
+	model := New(cols).WithRows([]Row{
 		NewRow(RowData{
 			"id": "first",
 		}),
@@ -139,11 +151,11 @@ func TestSelectingRowWhenTableUnselectableDoesNothing(t *testing.T) {
 		}),
 	}).Focused(true)
 
-	assert.False(t, m.rows[0].selected, "Row shouldn't be selected to start")
+	assert.False(t, model.rows[0].selected, "Row shouldn't be selected to start")
 
-	m, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
 
-	assert.False(t, m.rows[0].selected, "Row shouldn't be selected after key press")
+	assert.False(t, model.rows[0].selected, "Row shouldn't be selected after key press")
 }
 
 func TestSelectingRowToggles(t *testing.T) {
@@ -151,7 +163,7 @@ func TestSelectingRowToggles(t *testing.T) {
 		NewColumn("id", "ID", 3),
 	}
 
-	m := New(cols).WithRows([]Row{
+	model := New(cols).WithRows([]Row{
 		NewRow(RowData{
 			"id": "first",
 		}),
@@ -166,15 +178,15 @@ func TestSelectingRowToggles(t *testing.T) {
 	keyEnter := tea.KeyMsg{Type: tea.KeyEnter}
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
 
-	assert.False(t, m.rows[0].selected, "Row shouldn't be selected to start")
+	assert.False(t, model.rows[0].selected, "Row shouldn't be selected to start")
 
-	m, _ = m.Update(keyEnter)
-	assert.True(t, m.rows[0].selected, "Row should be selected after first toggle")
+	model, _ = model.Update(keyEnter)
+	assert.True(t, model.rows[0].selected, "Row should be selected after first toggle")
 
-	m, _ = m.Update(keyEnter)
-	assert.False(t, m.rows[0].selected, "Row should not be selected after second toggle")
+	model, _ = model.Update(keyEnter)
+	assert.False(t, model.rows[0].selected, "Row should not be selected after second toggle")
 
-	m, _ = m.Update(keyDown)
-	m, _ = m.Update(keyEnter)
-	assert.True(t, m.rows[1].selected, "Second row should be selected after moving and toggling")
+	model, _ = model.Update(keyDown)
+	model, _ = model.Update(keyEnter)
+	assert.True(t, model.rows[1].selected, "Second row should be selected after moving and toggling")
 }

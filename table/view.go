@@ -52,13 +52,13 @@ func (m Model) View() string {
 		headerStyleRight = headerStyleRight.Copy().Inherit(m.headerStyle)
 	}
 
-	for i, header := range m.columns {
-		headerSection := fmt.Sprintf(header.fmtString, header.Title)
+	for columnIndex, column := range m.columns {
+		headerSection := fmt.Sprintf(column.fmtString, column.Title)
 		var borderStyle lipgloss.Style
 
-		if i == 0 {
+		if columnIndex == 0 {
 			borderStyle = headerStyleLeft
-		} else if i < len(m.columns)-1 {
+		} else if columnIndex < len(m.columns)-1 {
 			borderStyle = headerStyleInner
 		} else {
 			borderStyle = headerStyleRight

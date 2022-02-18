@@ -2,7 +2,7 @@ package table
 
 import "github.com/charmbracelet/lipgloss"
 
-// Border defines the borders in and around the table
+// Border defines the borders in and around the table.
 type Border struct {
 	Top         string
 	Left        string
@@ -243,7 +243,7 @@ func (b *Border) generateStyles() {
 }
 
 // BorderDefault uses the basic square border, useful to reset the border if
-// it was changed somehow
+// it was changed somehow.
 func (m Model) BorderDefault() Model {
 	// Already generated styles
 	m.border = borderDefault
@@ -251,7 +251,7 @@ func (m Model) BorderDefault() Model {
 	return m
 }
 
-// Border uses the given border components to render the table
+// Border uses the given border components to render the table.
 func (m Model) Border(border Border) Model {
 	border.generateStyles()
 
