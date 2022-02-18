@@ -19,9 +19,10 @@ Displays a table with a header, rows, and borders.
 
 Border shape is customizable with a basic thick square default.
 
-Rows can be individually styled.
+Row text can be individually styled.
 
-Can be focused to highlight a row and navigate with up/down (and j/k).
+Can be focused to highlight a row and navigate with up/down (and j/k).  These
+keys can be customized with a KeyMap.
 
 Can make rows selectable, and fetch the current selections.
 

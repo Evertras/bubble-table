@@ -74,13 +74,19 @@ func NewModel() Model {
 		}),
 	}
 
+	// Start with the default key map and change it slightly, just for demoing
+	keys := table.DefaultKeyMap()
+	keys.RowDown.SetKeys("j", "down", "s")
+	keys.RowUp.SetKeys("j", "down", "w")
+
 	return Model{
 		tableModel: table.New(columns).
 			WithRows(rows).
 			HeaderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Bold(true)).
 			SelectableRows(true).
 			Focused(true).
-			Border(customBorder),
+			Border(customBorder).
+			WithKeyMap(keys),
 	}
 }
 
