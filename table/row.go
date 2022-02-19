@@ -53,29 +53,7 @@ func (m Model) renderRow(rowIndex int) string {
 		baseStyle = baseStyle.Inherit(m.highlightStyle)
 	}
 
-	var (
-		rowStyleLeft  lipgloss.Style
-		rowStyleInner lipgloss.Style
-		rowStyleRight lipgloss.Style
-
-		rowLastStyleLeft  lipgloss.Style
-		rowLastStyleInner lipgloss.Style
-		rowLastStyleRight lipgloss.Style
-	)
-
-	if numColumns == 1 {
-		rowStyleLeft = m.border.styleSingleColumnInner
-
-		rowLastStyleLeft = m.border.styleSingleColumnBottom
-	} else {
-		rowStyleLeft = m.border.styleMultiLeft
-		rowStyleInner = m.border.styleMultiInner
-		rowStyleRight = m.border.styleMultiRight
-
-		rowLastStyleLeft = m.border.styleMultiBottomLeft
-		rowLastStyleInner = m.border.styleMultiBottom
-		rowLastStyleRight = m.border.styleMultiBottomRight
-	}
+	stylesInner, stylesLast := m.styleRows()
 
 	for columnIndex, column := range m.columns {
 		var str string
@@ -91,23 +69,20 @@ func (m Model) renderRow(rowIndex int) string {
 		}
 
 		cellStyle := baseStyle.Copy()
+		var rowStyles borderStyleRow
 
 		if !last {
-			if columnIndex == 0 {
-				cellStyle = cellStyle.Inherit(rowStyleLeft)
-			} else if columnIndex < numColumns-1 {
-				cellStyle = cellStyle.Inherit(rowStyleInner)
-			} else {
-				cellStyle = cellStyle.Inherit(rowStyleRight)
-			}
+			rowStyles = stylesInner
 		} else {
-			if columnIndex == 0 {
-				cellStyle = cellStyle.Inherit(rowLastStyleLeft)
-			} else if columnIndex < numColumns-1 {
-				cellStyle = cellStyle.Inherit(rowLastStyleInner)
-			} else {
-				cellStyle = cellStyle.Inherit(rowLastStyleRight)
-			}
+			rowStyles = stylesLast
+		}
+
+		if columnIndex == 0 {
+			cellStyle = cellStyle.Inherit(rowStyles.left)
+		} else if columnIndex < numColumns-1 {
+			cellStyle = cellStyle.Inherit(rowStyles.inner)
+		} else {
+			cellStyle = cellStyle.Inherit(rowStyles.right)
 		}
 
 		cellStr := cellStyle.Render(fmt.Sprintf(column.fmtString, limitStr(str, column.Width)))

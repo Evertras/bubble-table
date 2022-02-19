@@ -21,24 +21,18 @@ func (m Model) View() string {
 
 	headerStrings := []string{}
 
-	var (
-		headerStyleLeft  lipgloss.Style
-		headerStyleInner lipgloss.Style
-		headerStyleRight lipgloss.Style
-	)
-
-	headerStyleLeft, headerStyleInner, headerStyleRight = m.styleHeaders()
+	headerStyles := m.styleHeaders()
 
 	for columnIndex, column := range m.columns {
 		headerSection := fmt.Sprintf(column.fmtString, column.Title)
 		var borderStyle lipgloss.Style
 
 		if columnIndex == 0 {
-			borderStyle = headerStyleLeft
+			borderStyle = headerStyles.left
 		} else if columnIndex < len(m.columns)-1 {
-			borderStyle = headerStyleInner
+			borderStyle = headerStyles.inner
 		} else {
-			borderStyle = headerStyleRight
+			borderStyle = headerStyles.right
 		}
 
 		headerStrings = append(headerStrings, borderStyle.Render(headerSection))

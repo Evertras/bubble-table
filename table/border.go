@@ -260,37 +260,70 @@ func (m Model) Border(border Border) Model {
 	return m
 }
 
-func (m Model) styleHeaders() (left, inner, right lipgloss.Style) {
+type borderStyleRow struct {
+	left lipgloss.Style
+	inner lipgloss.Style
+	right lipgloss.Style
+}
+
+func (b *borderStyleRow) inherit(s lipgloss.Style) {
+	b.left = b.left.Copy().Inherit(s)
+	b.inner = b.inner.Copy().Inherit(s)
+	b.right = b.right.Copy().Inherit(s)
+}
+
+func (m Model) styleHeaders() borderStyleRow {
 	hasRows := len(m.rows) > 0
 	singleColumn := len(m.columns) == 1
+	styles := borderStyleRow{}
 
 	if singleColumn {
 		if hasRows {
-			left = m.border.styleSingleCell
-			inner = m.border.styleSingleCell
-			right = m.border.styleSingleCell
+			styles.left = m.border.styleSingleCell
+			styles.inner = m.border.styleSingleCell
+			styles.right = m.border.styleSingleCell
 		} else {
-			left = m.border.styleSingleColumnTop
-			inner = m.border.styleSingleColumnTop
-			right = m.border.styleSingleColumnTop
+			styles.left = m.border.styleSingleColumnTop
+			styles.inner = m.border.styleSingleColumnTop
+			styles.right = m.border.styleSingleColumnTop
 		}
 	}
 
 	if hasRows {
 		if hasRows {
-			left = m.border.styleMultiTopLeft
-			inner = m.border.styleMultiTop
-			right = m.border.styleMultiTopRight
+			styles.left = m.border.styleMultiTopLeft
+			styles.inner = m.border.styleMultiTop
+			styles.right = m.border.styleMultiTopRight
 		} else {
-			left = m.border.styleSingleRowLeft
-			inner = m.border.styleSingleRowInner
-			right = m.border.styleSingleRowRight
+			styles.left = m.border.styleSingleRowLeft
+			styles.inner = m.border.styleSingleRowInner
+			styles.right = m.border.styleSingleRowRight
 		}
 	}
 
-	left = left.Copy().Inherit(m.headerStyle)
-	inner = inner.Copy().Inherit(m.headerStyle)
-	right = right.Copy().Inherit(m.headerStyle)
+	styles.inherit(m.headerStyle)
 
-	return left, inner, right
+	return styles
+}
+
+func (m Model) styleRows() (inner borderStyleRow, last borderStyleRow) {
+	if len(m.columns) == 1 {
+		inner.left = m.border.styleSingleColumnInner
+		inner.inner = inner.left
+		inner.right = inner.left
+
+		last.left = m.border.styleSingleColumnBottom
+		last.inner = last.left
+		last.right = last.right
+	} else {
+		inner.left = m.border.styleMultiLeft
+		inner.inner = m.border.styleMultiInner
+		inner.right = m.border.styleMultiRight
+
+		last.left = m.border.styleMultiBottomLeft
+		last.inner = m.border.styleMultiBottom
+		last.right = m.border.styleMultiBottomRight
+	}
+
+	return inner, last
 }
