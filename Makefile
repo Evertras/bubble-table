@@ -18,6 +18,10 @@ test:
 test-coverage: coverage.out
 	@go tool cover -html=coverage.out
 
+.PHONY: benchmark
+benchmark:
+	@go test -run=XXX -bench=. -benchmem ./table
+
 .PHONY: lint
 lint: ./bin/golangci-lint
 	@./bin/golangci-lint run ./table
