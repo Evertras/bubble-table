@@ -259,3 +259,38 @@ func (m Model) Border(border Border) Model {
 
 	return m
 }
+
+func (m Model) styleHeaders() (left, inner, right lipgloss.Style) {
+	hasRows := len(m.rows) > 0
+	singleColumn := len(m.columns) == 1
+
+	if singleColumn {
+		if hasRows {
+			left = m.border.styleSingleCell
+			inner = m.border.styleSingleCell
+			right = m.border.styleSingleCell
+		} else {
+			left = m.border.styleSingleColumnTop
+			inner = m.border.styleSingleColumnTop
+			right = m.border.styleSingleColumnTop
+		}
+	}
+
+	if hasRows {
+		if hasRows {
+			left = m.border.styleMultiTopLeft
+			inner = m.border.styleMultiTop
+			right = m.border.styleMultiTopRight
+		} else {
+			left = m.border.styleSingleRowLeft
+			inner = m.border.styleSingleRowInner
+			right = m.border.styleSingleRowRight
+		}
+	}
+
+	left = left.Copy().Inherit(m.headerStyle)
+	inner = inner.Copy().Inherit(m.headerStyle)
+	right = right.Copy().Inherit(m.headerStyle)
+
+	return left, inner, right
+}

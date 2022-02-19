@@ -11,7 +11,6 @@ import (
 // composed with other elements more consistently.
 func (m Model) View() string {
 	numColumns := len(m.columns)
-	hasRows := len(m.rows) > 0
 
 	// Safety valve for empty tables
 	if numColumns == 0 {
@@ -28,29 +27,7 @@ func (m Model) View() string {
 		headerStyleRight lipgloss.Style
 	)
 
-	if numColumns == 1 {
-		if hasRows {
-			headerStyleLeft = m.border.styleSingleColumnTop
-		} else {
-			headerStyleLeft = m.border.styleSingleCell
-		}
-
-		headerStyleLeft = headerStyleLeft.Copy().Inherit(m.headerStyle)
-	} else {
-		if hasRows {
-			headerStyleLeft = m.border.styleMultiTopLeft
-			headerStyleInner = m.border.styleMultiTop
-			headerStyleRight = m.border.styleMultiTopRight
-		} else {
-			headerStyleLeft = m.border.styleSingleRowLeft
-			headerStyleInner = m.border.styleSingleRowInner
-			headerStyleRight = m.border.styleSingleRowRight
-		}
-
-		headerStyleLeft = headerStyleLeft.Copy().Inherit(m.headerStyle)
-		headerStyleInner = headerStyleInner.Copy().Inherit(m.headerStyle)
-		headerStyleRight = headerStyleRight.Copy().Inherit(m.headerStyle)
-	}
+	headerStyleLeft, headerStyleInner, headerStyleRight = m.styleHeaders()
 
 	for columnIndex, column := range m.columns {
 		headerSection := fmt.Sprintf(column.fmtString, column.Title)
