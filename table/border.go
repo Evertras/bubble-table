@@ -76,6 +76,13 @@ func init() {
 }
 
 func (b *Border) generateStyles() {
+	b.generateMultiStyles()
+	b.generateSingleColumnStyles()
+	b.generateSingleRowStyles()
+	b.generateSingleCellStyle()
+}
+
+func (b *Border) generateMultiStyles() {
 	b.styleMultiTopLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
 			TopLeft:     b.TopLeft,
@@ -158,7 +165,9 @@ func (b *Border) generateStyles() {
 			BottomRight: b.BottomRight,
 		},
 	).BorderBottom(true).BorderRight(true)
+}
 
+func (b *Border) generateSingleColumnStyles() {
 	b.styleSingleColumnTop = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
@@ -190,7 +199,9 @@ func (b *Border) generateStyles() {
 			BottomRight: b.BottomRight,
 		},
 	).BorderRight(true).BorderLeft(true).BorderBottom(true)
+}
 
+func (b *Border) generateSingleRowStyles() {
 	b.styleSingleRowLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
@@ -226,7 +237,9 @@ func (b *Border) generateStyles() {
 			TopRight:    b.TopRight,
 		},
 	).BorderTop(true).BorderBottom(true).BorderRight(true)
+}
 
+func (b *Border) generateSingleCellStyle() {
 	b.styleSingleCell = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
@@ -277,28 +290,34 @@ func (m Model) styleHeaders() borderStyleRow {
 	singleColumn := len(m.columns) == 1
 	styles := borderStyleRow{}
 
+	// Possible configurations:
+	// - Single cell
+	// - Single row
+	// - Single column
+	// - Multi
+
 	if singleColumn {
 		if hasRows {
-			styles.left = m.border.styleSingleCell
-			styles.inner = m.border.styleSingleCell
-			styles.right = m.border.styleSingleCell
-		} else {
+			// Single column
 			styles.left = m.border.styleSingleColumnTop
 			styles.inner = m.border.styleSingleColumnTop
 			styles.right = m.border.styleSingleColumnTop
-		}
-	}
-
-	if hasRows {
-		if hasRows {
-			styles.left = m.border.styleMultiTopLeft
-			styles.inner = m.border.styleMultiTop
-			styles.right = m.border.styleMultiTopRight
 		} else {
-			styles.left = m.border.styleSingleRowLeft
-			styles.inner = m.border.styleSingleRowInner
-			styles.right = m.border.styleSingleRowRight
+			// Single cell
+			styles.left = m.border.styleSingleCell
+			styles.inner = m.border.styleSingleCell
+			styles.right = m.border.styleSingleCell
 		}
+	} else if !hasRows {
+		// Single row
+		styles.left = m.border.styleSingleRowLeft
+		styles.inner = m.border.styleSingleRowInner
+		styles.right = m.border.styleSingleRowRight
+	} else {
+		// Multi
+		styles.left = m.border.styleMultiTopLeft
+		styles.inner = m.border.styleMultiTop
+		styles.right = m.border.styleMultiTopRight
 	}
 
 	styles.inherit(m.headerStyle)
