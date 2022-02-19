@@ -82,6 +82,8 @@ func (b *Border) generateStyles() {
 	b.generateSingleCellStyle()
 }
 
+// This function is long, but it's just repetitive...
+// nolint:funlen
 func (b *Border) generateMultiStyles() {
 	b.styleMultiTopLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
