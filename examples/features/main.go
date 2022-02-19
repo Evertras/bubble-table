@@ -77,7 +77,7 @@ func NewModel() Model {
 	// Start with the default key map and change it slightly, just for demoing
 	keys := table.DefaultKeyMap()
 	keys.RowDown.SetKeys("j", "down", "s")
-	keys.RowUp.SetKeys("j", "down", "w")
+	keys.RowUp.SetKeys("k", "up", "w")
 
 	return Model{
 		tableModel: table.New(columns).
