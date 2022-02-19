@@ -13,7 +13,7 @@ var (
 	defaultHighlightStyle = lipgloss.NewStyle().Background(lipgloss.Color("#334"))
 )
 
-// Model is the main table model.  Create using New()
+// Model is the main table model.  Create using New().
 type Model struct {
 	keyMap      KeyMap
 	columns     []Column
@@ -34,9 +34,9 @@ type Model struct {
 	border Border
 }
 
-// New creates a new table ready for further modifications
+// New creates a new table ready for further modifications.
 func New(columns []Column) Model {
-	m := Model{
+	model := Model{
 		columns:        make([]Column, len(columns)),
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
@@ -44,12 +44,12 @@ func New(columns []Column) Model {
 	}
 
 	// Do a full deep copy to avoid unexpected edits
-	copy(m.columns, columns)
+	copy(model.columns, columns)
 
-	return m
+	return model
 }
 
-// Init initializes the table per the Bubble Tea architecture
+// Init initializes the table per the Bubble Tea architecture.
 func (m Model) Init() tea.Cmd {
 	return nil
 }
