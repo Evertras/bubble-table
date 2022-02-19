@@ -261,7 +261,7 @@ func (m Model) Border(border Border) Model {
 }
 
 type borderStyleRow struct {
-	left lipgloss.Style
+	left  lipgloss.Style
 	inner lipgloss.Style
 	right lipgloss.Style
 }
@@ -314,7 +314,7 @@ func (m Model) styleRows() (inner borderStyleRow, last borderStyleRow) {
 
 		last.left = m.border.styleSingleColumnBottom
 		last.inner = last.left
-		last.right = last.right
+		last.right = last.left
 	} else {
 		inner.left = m.border.styleMultiLeft
 		inner.inner = m.border.styleMultiInner
