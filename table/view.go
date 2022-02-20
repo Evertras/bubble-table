@@ -45,6 +45,12 @@ func (m Model) View() string {
 		rowStrs = append(rowStrs, m.renderRow(i))
 	}
 
+	footer := m.renderFooter()
+
+	if footer != "" {
+		rowStrs = append(rowStrs, footer)
+	}
+
 	body.WriteString(lipgloss.JoinVertical(lipgloss.Left, rowStrs...))
 
 	return body.String()

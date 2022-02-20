@@ -45,6 +45,9 @@ type Border struct {
 
 	// Style for a table with only one cell
 	styleSingleCell lipgloss.Style
+
+	// Style for the footer
+	styleFooter lipgloss.Style
 }
 
 var (
@@ -80,6 +83,34 @@ func (b *Border) generateStyles() {
 	b.generateSingleColumnStyles()
 	b.generateSingleRowStyles()
 	b.generateSingleCellStyle()
+
+	// For now a footer is just the same as a single column's last row
+	b.styleFooter = b.styleSingleColumnBottom.Copy().Align(lipgloss.Right)
+}
+
+func (b *Border) styleLeftWithFooter(original lipgloss.Style) lipgloss.Style {
+	border := original.GetBorderStyle()
+
+	border.BottomLeft = b.LeftJunction
+
+	return original.Copy().BorderStyle(border)
+}
+
+func (b *Border) styleRightWithFooter(original lipgloss.Style) lipgloss.Style {
+	border := original.GetBorderStyle()
+
+	border.BottomRight = b.RightJunction
+
+	return original.Copy().BorderStyle(border)
+}
+
+func (b *Border) styleBothWithFooter(original lipgloss.Style) lipgloss.Style {
+	border := original.GetBorderStyle()
+
+	border.BottomLeft = b.LeftJunction
+	border.BottomRight = b.RightJunction
+
+	return original.Copy().BorderStyle(border)
 }
 
 // This function is long, but it's just repetitive...
@@ -287,6 +318,9 @@ func (b *borderStyleRow) inherit(s lipgloss.Style) {
 	b.right = b.right.Copy().Inherit(s)
 }
 
+// There's a lot of branches here, but splitting it up further would make it
+// harder to follow.  So just be careful with comments and make sure it's tested!
+// nolint:nestif
 func (m Model) styleHeaders() borderStyleRow {
 	hasRows := len(m.rows) > 0
 	singleColumn := len(m.columns) == 1
@@ -302,19 +336,28 @@ func (m Model) styleHeaders() borderStyleRow {
 		if hasRows {
 			// Single column
 			styles.left = m.border.styleSingleColumnTop
-			styles.inner = m.border.styleSingleColumnTop
-			styles.right = m.border.styleSingleColumnTop
+			styles.inner = styles.left
+			styles.right = styles.left
 		} else {
 			// Single cell
 			styles.left = m.border.styleSingleCell
-			styles.inner = m.border.styleSingleCell
-			styles.right = m.border.styleSingleCell
+			styles.inner = styles.left
+			styles.right = styles.left
+
+			if m.hasFooter() {
+				styles.left = m.border.styleBothWithFooter(styles.left)
+			}
 		}
 	} else if !hasRows {
 		// Single row
 		styles.left = m.border.styleSingleRowLeft
 		styles.inner = m.border.styleSingleRowInner
 		styles.right = m.border.styleSingleRowRight
+
+		if m.hasFooter() {
+			styles.left = m.border.styleLeftWithFooter(styles.left)
+			styles.right = m.border.styleRightWithFooter(styles.right)
+		}
 	} else {
 		// Multi
 		styles.left = m.border.styleMultiTopLeft
@@ -334,6 +377,11 @@ func (m Model) styleRows() (inner borderStyleRow, last borderStyleRow) {
 		inner.right = inner.left
 
 		last.left = m.border.styleSingleColumnBottom
+
+		if m.hasFooter() {
+			last.left = m.border.styleBothWithFooter(last.left)
+		}
+
 		last.inner = last.left
 		last.right = last.left
 	} else {
@@ -344,6 +392,11 @@ func (m Model) styleRows() (inner borderStyleRow, last borderStyleRow) {
 		last.left = m.border.styleMultiBottomLeft
 		last.inner = m.border.styleMultiBottom
 		last.right = m.border.styleMultiBottomRight
+
+		if m.hasFooter() {
+			last.left = m.border.styleLeftWithFooter(last.left)
+			last.right = m.border.styleRightWithFooter(last.right)
+		}
 	}
 
 	return inner, last
