@@ -247,3 +247,85 @@ func TestPaginationHighlightFirstOnPageDown(t *testing.T) {
 
 	assert.Equal(t, 11, paginationRowID(model.HighlightedRow()), "Did not highlight expected row")
 }
+
+// This is long because of various test cases, not because of logic
+// nolint: funlen
+func TestExpectedPageForRowIndex(t *testing.T) {
+	tests := []struct {
+		name         string
+		totalRows    int
+		pageSize     int
+		rowIndex     int
+		expectedPage int
+	}{
+		{
+			name: "Empty",
+		},
+		{
+			name:         "No pages",
+			totalRows:    50,
+			pageSize:     0,
+			rowIndex:     37,
+			expectedPage: 0,
+		},
+		{
+			name:         "One page",
+			totalRows:    50,
+			pageSize:     50,
+			rowIndex:     37,
+			expectedPage: 0,
+		},
+		{
+			name:         "First page",
+			totalRows:    50,
+			pageSize:     30,
+			rowIndex:     17,
+			expectedPage: 0,
+		},
+		{
+			name:         "Second page",
+			totalRows:    50,
+			pageSize:     30,
+			rowIndex:     37,
+			expectedPage: 1,
+		},
+		{
+			name:         "First page first row",
+			totalRows:    50,
+			pageSize:     30,
+			rowIndex:     0,
+			expectedPage: 0,
+		},
+		{
+			name:         "First page last row",
+			totalRows:    50,
+			pageSize:     30,
+			rowIndex:     29,
+			expectedPage: 0,
+		},
+		{
+			name:         "Second page first row",
+			totalRows:    50,
+			pageSize:     30,
+			rowIndex:     30,
+			expectedPage: 1,
+		},
+		{
+			name:         "Second page last row",
+			totalRows:    50,
+			pageSize:     30,
+			rowIndex:     49,
+			expectedPage: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			model := genPaginationTable(test.totalRows, test.pageSize)
+
+			page := model.expectedPageForRowIndex(test.rowIndex)
+
+			assert.Equal(t, test.expectedPage, page)
+		})
+	}
+}

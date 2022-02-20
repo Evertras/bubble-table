@@ -11,6 +11,8 @@ func (m *Model) moveHighlightUp() {
 	if m.rowCursorIndex < 0 {
 		m.rowCursorIndex = len(m.rows) - 1
 	}
+
+	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
 }
 
 func (m *Model) moveHighlightDown() {
@@ -19,6 +21,8 @@ func (m *Model) moveHighlightDown() {
 	if m.rowCursorIndex >= len(m.rows) {
 		m.rowCursorIndex = 0
 	}
+
+	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
 }
 
 func (m *Model) toggleSelect() {

@@ -90,3 +90,13 @@ func (m *Model) pageUp() {
 
 	m.rowCursorIndex = m.currentPage * m.pageSize
 }
+
+func (m *Model) expectedPageForRowIndex(rowIndex int) int {
+	if m.pageSize == 0 {
+		return 0
+	}
+
+	expectedPage := rowIndex / m.pageSize
+
+	return expectedPage
+}
