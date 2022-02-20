@@ -27,6 +27,9 @@ keys can be customized with a KeyMap.
 
 Can make rows selectable, and fetch the current selections.
 
+Pagination can be set with a given page size, which automatically generates a
+simple footer to show the current page and total pages.
+
 ## Defining table data
 
 Each `Column` is associated with a unique string key.  Each `Row` contains a
@@ -91,10 +94,10 @@ To run the examples, clone this repo and run:
 make
 
 # Run dimensions example to see multiple sizes of simple tables in action
-make dimensions
+make example-dimensions
 
 # Or run any of them directly
-go run ./examples/features/main.go
+go run ./examples/pagination/main.go
 ```
 
 ## Contributing
