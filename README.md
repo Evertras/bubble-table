@@ -20,7 +20,8 @@ Displays a table with a header, rows, footer, and borders.
 
 Border shape is customizable with a basic thick square default.
 
-Styles can be applied to columns, rows, and individual cells.
+Styles can be applied to columns, rows, and individual cells.  Column style is
+applied first, then row, then cell when determining overrides.
 
 Can be focused to highlight a row and navigate with up/down (and j/k).  These
 keys can be customized with a KeyMap.
