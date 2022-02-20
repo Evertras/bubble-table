@@ -8,7 +8,7 @@
 
 A table component for the [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
 
-![Table](sample.png)
+![Table with all features](https://user-images.githubusercontent.com/5923958/154826826-226346a7-96f9-43ca-a484-49e81b3ab45d.png)
 
 [View sample source code](./examples/features/main.go)
 
