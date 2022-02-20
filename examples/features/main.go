@@ -47,7 +47,7 @@ type Model struct {
 
 func NewModel() Model {
 	columns := []table.Column{
-		table.NewColumn(columnKeyID, "ID", 5),
+		table.NewColumn(columnKeyID, "ID", 5).WithStyle(lipgloss.NewStyle().Faint(true).Foreground(lipgloss.Color("#88f"))),
 		table.NewColumn(columnKeyName, "Name", 10),
 		table.NewColumn(columnKeyDescription, "Description", 30),
 		table.NewColumn(columnKeyCount, "#", 5),
@@ -67,10 +67,11 @@ func NewModel() Model {
 			columnKeyCount:       17,
 		}).WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Bold(true)),
 		table.NewRow(table.RowData{
-			columnKeyID:          "def",
-			columnKeyName:        "Yay",
+			columnKeyID: "def",
+			// Apply a style to this cell
+			columnKeyName:        table.NewStyledCell("Styled", lipgloss.NewStyle().Foreground(lipgloss.Color("#8ff"))),
 			columnKeyDescription: "This is a really, really, really long description that will get cut off",
-			columnKeyCount:       "N/A",
+			columnKeyCount:       table.NewStyledCell(0, lipgloss.NewStyle().Faint(true)),
 		}),
 		table.NewRow(table.RowData{
 			columnKeyID:          "2pg",

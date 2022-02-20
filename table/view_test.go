@@ -12,7 +12,7 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 	const (
 		firstKey   = "first-key"
 		firstTitle = "First Title"
-		firstWidth = 10
+		firstWidth = 13
 
 		secondKey   = "second-key"
 		secondTitle = "Second Title"
@@ -30,6 +30,32 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 
 	assert.Contains(t, rendered, firstTitle)
 	assert.Contains(t, rendered, secondTitle)
+
+	assert.False(t, strings.HasSuffix(rendered, "\n"), "Should not end in newline")
+}
+
+func TestBasicTableTruncatesLongHeaders(t *testing.T) {
+	const (
+		firstKey   = "first-key"
+		firstTitle = "First Title"
+		firstWidth = 3
+
+		secondKey   = "second-key"
+		secondTitle = "Second Title"
+		secondWidth = 3
+	)
+
+	columns := []Column{
+		NewColumn(firstKey, firstTitle, firstWidth),
+		NewColumn(secondKey, secondTitle, secondWidth),
+	}
+
+	model := New(columns)
+
+	rendered := model.View()
+
+	assert.Contains(t, rendered, "Fi…")
+	assert.Contains(t, rendered, "Se…")
 
 	assert.False(t, strings.HasSuffix(rendered, "\n"), "Should not end in newline")
 }
