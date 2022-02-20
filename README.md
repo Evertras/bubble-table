@@ -47,7 +47,7 @@ Extra data in the `RowData` object is ignored.  This can be helpful to simply
 dump data into `RowData` and create columns that select what is interesting to
 view, or to generate different columns based on view options on the fly.
 
-A basic example is given below.  For more detailed examples, see
+An example is given below.  For more detailed examples, see
 [the examples directory](./examples).
 
 ```golang
@@ -60,6 +60,8 @@ const (
   columnKeyName = "何?!"
 )
 
+// Note that there's nothing special about "ID" or "Name", these are completely
+// arbitrary columns
 columns := []table.Column{
   table.NewColumn(columnKeyID, "ID", 5),
   table.NewColumn(columnKeyName, "Name", 10),
@@ -92,7 +94,7 @@ rows := []table.Row{
     columnKeyName:        "Bolded",
   }).WithStyle(lipgloss.NewStyle().Bold(true),
 
-  // This row has individual styling to make it bold
+  // This row also has individual styling to make it bold
   table.NewRow(table.RowData{
     columnKeyID:          "alert",
     // This cell has styling applied on top of the bold
