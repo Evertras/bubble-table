@@ -25,7 +25,8 @@ func NewColumn(key, title string, width int) Column {
 
 // WithStyle applies a style to the column as a whole.
 func (c Column) WithStyle(style lipgloss.Style) Column {
-	c.style = lipgloss.NewStyle().Width(c.Width).Align(lipgloss.Right).Inherit(style)
+	//c.style = lipgloss.NewStyle().Width(c.Width).Align(lipgloss.Right).Inherit(style)
+	c.style = style.Copy().Inherit(lipgloss.NewStyle().Width(c.Width).Align(lipgloss.Right))
 
 	return c
 }

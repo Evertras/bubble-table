@@ -72,7 +72,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 			switch entry := entry.(type) {
 			case StyledCell:
 				str = fmt.Sprintf("%v", entry.Data)
-				cellStyle = cellStyle.Inherit(entry.Style)
+				cellStyle = entry.Style.Copy().Inherit(cellStyle)
 			default:
 				str = fmt.Sprintf("%v", entry)
 			}
