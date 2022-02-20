@@ -335,3 +335,18 @@ func TestExpectedPageForRowIndex(t *testing.T) {
 		})
 	}
 }
+
+func TestClearPagination(t *testing.T) {
+	const (
+		pageSize = 10
+		numRows  = 20
+	)
+
+	model := genPaginationTable(numRows, pageSize)
+
+	assert.Equal(t, 1, model.expectedPageForRowIndex(11))
+
+	model = model.WithNoPagination()
+
+	assert.Equal(t, 0, model.expectedPageForRowIndex(11))
+}
