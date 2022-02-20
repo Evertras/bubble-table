@@ -40,7 +40,7 @@ func getVisibleRows(m *Model) []Row {
 
 func TestPaginationAccessors(t *testing.T) {
 	const (
-		numRows = 100
+		numRows  = 100
 		pageSize = 20
 	)
 
