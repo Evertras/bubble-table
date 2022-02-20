@@ -10,9 +10,13 @@ example-dimensions:
 example-updates:
 	@go run ./examples/updates/*.go
 
-.PHONY: example-updates
+.PHONY: example-pagination
 example-pagination:
 	@go run ./examples/pagination/*.go
+
+.PHONY: example-simplest
+example-simplest:
+	@go run ./examples/simplest/*.go
 
 .PHONY: test
 test:

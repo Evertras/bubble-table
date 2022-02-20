@@ -10,11 +10,12 @@ A table component for the [Bubble Tea framework](https://github.com/charmbracele
 
 ![Table with all features](https://user-images.githubusercontent.com/5923958/154851497-78a28031-db82-4a95-a4c7-dae5b0d6cf00.png)
 
-[View sample source code](./examples/features/main.go)
+[View above sample source code](./examples/features/main.go)
 
 ## Features
 
-For a code reference, please see the [full feature example](./examples/features/main.go).
+For a code reference of all available features, please see the [full feature example](./examples/features/main.go).
+If you want to get started with a simple default table, [check the simplest example](./examples/simplest/main.go).
 
 Displays a table with a header, rows, footer, and borders.
 
