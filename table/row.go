@@ -39,10 +39,9 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-func (m Model) renderRow(rowIndex int) string {
+func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.rows[rowIndex]
-	last := rowIndex == len(m.rows)-1
 	highlighted := rowIndex == m.rowCursorIndex
 
 	columnStrings := []string{}

@@ -72,6 +72,18 @@ func NewModel() Model {
 			columnKeyDescription: "This is a really, really, really long description that will get cut off",
 			columnKeyCount:       "N/A",
 		}),
+		table.NewRow(table.RowData{
+			columnKeyID:          "2pg",
+			columnKeyName:        "Page 2",
+			columnKeyDescription: "Second page",
+			columnKeyCount:       2,
+		}),
+		table.NewRow(table.RowData{
+			columnKeyID:          "2pg2",
+			columnKeyName:        "Page 2.1",
+			columnKeyDescription: "Second page again",
+			columnKeyCount:       4,
+		}),
 	}
 
 	// Start with the default key map and change it slightly, just for demoing
@@ -87,7 +99,8 @@ func NewModel() Model {
 			Focused(true).
 			Border(customBorder).
 			WithKeyMap(keys).
-			WithStaticFooter("Footer!"),
+			WithStaticFooter("Footer!").
+			WithPageSize(3),
 	}
 
 	model.updateFooter()
@@ -101,7 +114,15 @@ func (m Model) Init() tea.Cmd {
 
 func (m *Model) updateFooter() {
 	highlightedRow := m.tableModel.HighlightedRow()
-	m.tableModel = m.tableModel.WithStaticFooter(fmt.Sprintf("Currently looking at ID: %s", highlightedRow.Data[columnKeyID]))
+
+	footerText := fmt.Sprintf(
+		"Pg. %d/%d - Currently looking at ID: %s",
+		m.tableModel.CurrentPage(),
+		m.tableModel.MaxPages(),
+		highlightedRow.Data[columnKeyID],
+	)
+
+	m.tableModel = m.tableModel.WithStaticFooter(footerText)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -130,7 +151,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("Table demo with all features enabled!\nPress space/enter to select a row, q or ctrl+c to quit\n")
+	body.WriteString("Table demo with all features enabled!\n")
+	body.WriteString("Press left/right or page up/down to move pages\n")
+	body.WriteString("Press space/enter to select a row, q or ctrl+c to quit\n")
 
 	selectedIDs := []string{}
 

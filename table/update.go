@@ -59,6 +59,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keyMap.RowSelectToggle):
 			m.toggleSelect()
+
+		case key.Matches(msg, m.keyMap.PageDown):
+			m.pageDown()
+
+		case key.Matches(msg, m.keyMap.PageUp):
+			m.pageUp()
 		}
 	}
 

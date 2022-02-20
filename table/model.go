@@ -34,6 +34,10 @@ type Model struct {
 	// Footers
 	staticFooter string
 
+	// Pagination
+	pageSize    int
+	currentPage int
+
 	// Internal cached calculations for reference
 	totalWidth int
 }

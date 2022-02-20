@@ -88,3 +88,17 @@ func (m Model) WithStaticFooter(footer string) Model {
 
 	return m
 }
+
+// WithPageSize enables pagination using the given page size.
+func (m Model) WithPageSize(pageSize int) Model {
+	m.pageSize = pageSize
+
+	return m
+}
+
+// WithNoPagination disable pagination in the table.
+func (m Model) WithNoPagination() Model {
+	m.pageSize = 0
+
+	return m
+}

@@ -1,14 +1,18 @@
-.PHONY: features
-features:
+.PHONY: example-features
+example-features:
 	@go run ./examples/features/main.go
 
-.PHONY: dimensions
-dimensions:
+.PHONY: example-dimensions
+example-dimensions:
 	@go run ./examples/dimensions/main.go
 
-.PHONY: updates
-updates:
+.PHONY: example-updates
+example-updates:
 	@go run ./examples/updates/*.go
+
+.PHONY: example-updates
+example-pagination:
+	@go run ./examples/pagination/*.go
 
 .PHONY: test
 test:
