@@ -15,7 +15,7 @@ func (m *Model) CurrentPage() int {
 // MaxPages returns the maximum number of pages that are visible.
 func (m *Model) MaxPages() int {
 	if m.pageSize == 0 || len(m.rows) == 0 {
-		return 0
+		return 1
 	}
 
 	return (len(m.rows)-1)/m.pageSize + 1

@@ -38,6 +38,18 @@ func getVisibleRows(m *Model) []Row {
 	return m.rows[start : end+1]
 }
 
+func TestPaginationAccessors(t *testing.T) {
+	const (
+		numRows = 100
+		pageSize = 20
+	)
+
+	model := genPaginationTable(numRows, pageSize)
+
+	assert.Equal(t, numRows, model.TotalRows())
+	assert.Equal(t, pageSize, model.PageSize())
+}
+
 func TestPaginationNoPageSizeReturnsAll(t *testing.T) {
 	const (
 		numRows  = 100
@@ -49,6 +61,7 @@ func TestPaginationNoPageSizeReturnsAll(t *testing.T) {
 	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows)
+	assert.Equal(t, 1, model.MaxPages())
 }
 
 func TestPaginationEmptyTableReturnsNoRows(t *testing.T) {
