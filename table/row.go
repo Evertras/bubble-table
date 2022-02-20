@@ -39,6 +39,9 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
+// This is somewhat complicated but at the moment splitting this out feels like
+// it would just make things harder to read.  May revisit later.
+// nolint: cyclop
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.rows[rowIndex]
@@ -55,6 +58,8 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 	stylesInner, stylesLast := m.styleRows()
 
 	for columnIndex, column := range m.columns {
+		cellStyle := baseStyle.Copy().Inherit(column.style)
+
 		var str string
 
 		if column.Key == columnKeySelect {
@@ -64,10 +69,15 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 				str = "[ ]"
 			}
 		} else if entry, exists := row.Data[column.Key]; exists {
-			str = fmt.Sprintf("%v", entry)
+			switch entry := entry.(type) {
+			case StyledCell:
+				str = fmt.Sprintf("%v", entry.Data)
+				cellStyle = entry.Style.Copy().Inherit(cellStyle)
+			default:
+				str = fmt.Sprintf("%v", entry)
+			}
 		}
 
-		cellStyle := baseStyle.Copy()
 		var rowStyles borderStyleRow
 
 		if !last {
@@ -84,7 +94,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 			cellStyle = cellStyle.Inherit(rowStyles.right)
 		}
 
-		cellStr := cellStyle.Render(fmt.Sprintf(column.fmtString, limitStr(str, column.Width)))
+		cellStr := cellStyle.Render(limitStr(str, column.Width))
 
 		columnStrings = append(columnStrings, cellStr)
 	}

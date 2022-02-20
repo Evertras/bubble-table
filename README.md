@@ -8,7 +8,7 @@
 
 A table component for the [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
 
-![Table with all features](https://user-images.githubusercontent.com/5923958/154826826-226346a7-96f9-43ca-a484-49e81b3ab45d.png)
+![Table with all features](https://user-images.githubusercontent.com/5923958/154851497-78a28031-db82-4a95-a4c7-dae5b0d6cf00.png)
 
 [View sample source code](./examples/features/main.go)
 
@@ -20,7 +20,8 @@ Displays a table with a header, rows, footer, and borders.
 
 Border shape is customizable with a basic thick square default.
 
-Row text can be individually styled.
+Styles can be applied to columns, rows, and individual cells.  Column style is
+applied first, then row, then cell when determining overrides.
 
 Can be focused to highlight a row and navigate with up/down (and j/k).  These
 keys can be customized with a KeyMap.
@@ -78,6 +79,21 @@ rows := []table.Row{
     columnKeyID:          "def",
     // This row is missing the Name column, so it will simply be blank
   }),
+
+  // We can also apply styling to the row or to individual cells
+
+  // This row has individual styling to make it bold
+  table.NewRow(table.RowData{
+    columnKeyID:          "bold",
+    columnKeyName:        "Bolded",
+  }).WithStyle(lipgloss.NewStyle().Bold(true),
+
+  // This row has individual styling to make it bold
+  table.NewRow(table.RowData{
+    columnKeyID:          "alert",
+    // This cell has styling applied on top of the bold
+    columnKeyName:        table.NewStyledCell("Alert", lipgloss.NewStyle().Foreground(lipgloss.Color("#f88"))),
+  }).WithStyle(lipgloss.NewStyle().Bold(true),
 }
 ```
 

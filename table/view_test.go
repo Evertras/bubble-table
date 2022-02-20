@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 	const (
 		firstKey   = "first-key"
 		firstTitle = "First Title"
-		firstWidth = 10
+		firstWidth = 13
 
 		secondKey   = "second-key"
 		secondTitle = "Second Title"
@@ -30,6 +31,32 @@ func TestBasicTableShowsAllHeaders(t *testing.T) {
 
 	assert.Contains(t, rendered, firstTitle)
 	assert.Contains(t, rendered, secondTitle)
+
+	assert.False(t, strings.HasSuffix(rendered, "\n"), "Should not end in newline")
+}
+
+func TestBasicTableTruncatesLongHeaders(t *testing.T) {
+	const (
+		firstKey   = "first-key"
+		firstTitle = "First Title"
+		firstWidth = 3
+
+		secondKey   = "second-key"
+		secondTitle = "Second Title"
+		secondWidth = 3
+	)
+
+	columns := []Column{
+		NewColumn(firstKey, firstTitle, firstWidth),
+		NewColumn(secondKey, secondTitle, secondWidth),
+	}
+
+	model := New(columns)
+
+	rendered := model.View()
+
+	assert.Contains(t, rendered, "Fi…")
+	assert.Contains(t, rendered, "Se…")
 
 	assert.False(t, strings.HasSuffix(rendered, "\n"), "Should not end in newline")
 }
@@ -90,7 +117,7 @@ func TestSingleRowView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestSimple3x2(t *testing.T) {
+func TestSimple3x3(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),
 		NewColumn("2", "2", 4),
@@ -287,6 +314,48 @@ func TestPaged3x3WithStaticFooter(t *testing.T) {
 ┣━━━━┻━━━━┻━━━━┫
 ┃      Override┃
 ┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSimple3x3StyleOverridesAsColumnRowCell(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 6),
+		NewColumn("2", "2", 6).WithStyle(lipgloss.NewStyle().Align(lipgloss.Left)),
+		NewColumn("3", "3", 6),
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	// Test overrides with alignment because it's easy to check output string
+	rows[0] = rows[0].WithStyle(lipgloss.NewStyle().Align(lipgloss.Left))
+	rows[0].Data["2"] = NewStyledCell("C", lipgloss.NewStyle().Align(lipgloss.Center))
+
+	rows[2] = rows[2].WithStyle(lipgloss.NewStyle().Align(lipgloss.Right))
+
+	model = model.WithRows(rows)
+
+	const expectedTable = `┏━━━━━━┳━━━━━━┳━━━━━━┓
+┃     1┃2     ┃     3┃
+┣━━━━━━╋━━━━━━╋━━━━━━┫
+┃1,1   ┃  C   ┃3,1   ┃
+┃   1,2┃2,2   ┃   3,2┃
+┃   1,3┃   2,3┃   3,3┃
+┗━━━━━━┻━━━━━━┻━━━━━━┛`
 
 	rendered := model.View()
 

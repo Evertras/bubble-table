@@ -1,7 +1,6 @@
 package table
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -10,10 +9,8 @@ import (
 // View renders the table.  It does not end in a newline, so that it can be
 // composed with other elements more consistently.
 func (m Model) View() string {
-	numColumns := len(m.columns)
-
 	// Safety valve for empty tables
-	if numColumns == 0 {
+	if len(m.columns) == 0 {
 		return ""
 	}
 
@@ -24,16 +21,18 @@ func (m Model) View() string {
 	headerStyles := m.styleHeaders()
 
 	for columnIndex, column := range m.columns {
-		headerSection := fmt.Sprintf(column.fmtString, column.Title)
+		headerSection := limitStr(column.Title, column.Width)
 		var borderStyle lipgloss.Style
 
 		if columnIndex == 0 {
-			borderStyle = headerStyles.left
+			borderStyle = headerStyles.left.Copy()
 		} else if columnIndex < len(m.columns)-1 {
-			borderStyle = headerStyles.inner
+			borderStyle = headerStyles.inner.Copy()
 		} else {
-			borderStyle = headerStyles.right
+			borderStyle = headerStyles.right.Copy()
 		}
+
+		borderStyle = borderStyle.Inherit(column.style)
 
 		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
 	}
