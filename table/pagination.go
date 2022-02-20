@@ -49,16 +49,6 @@ func (m *Model) VisibleIndices() (start, end int) {
 	return start, end
 }
 
-func (m *Model) getVisibleRows() []Row {
-	if len(m.rows) == 0 {
-		return m.rows
-	}
-
-	start, end := m.VisibleIndices()
-
-	return m.rows[start : end+1]
-}
-
 func (m *Model) pageDown() {
 	if m.pageSize == 0 || len(m.rows) <= m.pageSize {
 		return

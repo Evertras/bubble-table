@@ -42,9 +42,9 @@ func (m Model) View() string {
 
 	rowStrs := []string{headerBlock}
 
-	rows := m.getVisibleRows()
-	for i := range rows {
-		rowStrs = append(rowStrs, m.renderRow(i+m.pageSize*m.currentPage, i == len(rows)-1))
+	startRowIndex, endRowIndex := m.VisibleIndices()
+	for i := startRowIndex; i <= endRowIndex; i++ {
+		rowStrs = append(rowStrs, m.renderRow(i, i == endRowIndex))
 	}
 
 	footer := m.renderFooter()

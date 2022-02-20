@@ -32,6 +32,12 @@ func paginationRowID(row Row) int {
 	return rowID
 }
 
+func getVisibleRows(m *Model) []Row {
+	start, end := m.VisibleIndices()
+
+	return m.rows[start : end+1]
+}
+
 func TestPaginationNoPageSizeReturnsAll(t *testing.T) {
 	const (
 		numRows  = 100
@@ -40,7 +46,7 @@ func TestPaginationNoPageSizeReturnsAll(t *testing.T) {
 
 	model := genPaginationTable(numRows, pageSize)
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows)
 }
@@ -53,7 +59,7 @@ func TestPaginationEmptyTableReturnsNoRows(t *testing.T) {
 
 	model := genPaginationTable(numRows, pageSize)
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows)
 }
@@ -63,7 +69,7 @@ func TestPaginationDefaultsToAllRows(t *testing.T) {
 
 	model := genPaginationTable(numRows, 0)
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows)
 }
@@ -76,7 +82,7 @@ func TestPaginationReturnsPartialFirstPage(t *testing.T) {
 
 	model := genPaginationTable(numRows, pageSize)
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows)
 }
@@ -89,7 +95,7 @@ func TestPaginationReturnsFirstFullPage(t *testing.T) {
 
 	model := genPaginationTable(numRows, pageSize)
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, pageSize)
 
@@ -108,7 +114,7 @@ func TestPaginationReturnsSecondFullPageAfterMoving(t *testing.T) {
 
 	model.pageDown()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, pageSize)
 
@@ -127,7 +133,7 @@ func TestPaginationReturnsPartialFinalPage(t *testing.T) {
 
 	model.pageDown()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows-pageSize)
 
@@ -146,7 +152,7 @@ func TestPaginationWrapsUpPartial(t *testing.T) {
 
 	model.pageUp()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows-pageSize)
 
@@ -165,7 +171,7 @@ func TestPaginationWrapsUpFull(t *testing.T) {
 
 	model.pageUp()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows-pageSize)
 
@@ -184,7 +190,7 @@ func TestPaginationWrapsUpSelf(t *testing.T) {
 
 	model.pageUp()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, numRows)
 
@@ -204,7 +210,7 @@ func TestPaginationWrapsDown(t *testing.T) {
 	model.pageDown()
 	model.pageDown()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, pageSize)
 
@@ -224,7 +230,7 @@ func TestPaginationWrapsDownSelf(t *testing.T) {
 	model.pageDown()
 	model.pageDown()
 
-	paginatedRows := model.getVisibleRows()
+	paginatedRows := getVisibleRows(&model)
 
 	assert.Len(t, paginatedRows, pageSize)
 
