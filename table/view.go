@@ -41,8 +41,10 @@ func (m Model) View() string {
 	headerBlock := lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...)
 
 	rowStrs := []string{headerBlock}
-	for i := range m.rows {
-		rowStrs = append(rowStrs, m.renderRow(i))
+
+	startRowIndex, endRowIndex := m.VisibleIndices()
+	for i := startRowIndex; i <= endRowIndex; i++ {
+		rowStrs = append(rowStrs, m.renderRow(i, i == endRowIndex))
 	}
 
 	footer := m.renderFooter()

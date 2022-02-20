@@ -15,26 +15,30 @@ var (
 
 // Model is the main table model.  Create using New().
 type Model struct {
-	keyMap      KeyMap
-	columns     []Column
-	headerStyle lipgloss.Style
+	// Data
+	columns []Column
+	rows    []Row
 
-	staticFooter string
-
-	rows []Row
-
+	// Interaction
+	focused        bool
+	keyMap         KeyMap
 	selectableRows bool
-
+	selectedRows   []Row
 	rowCursorIndex int
 
-	focused bool
-
+	// Styles
 	highlightStyle lipgloss.Style
+	headerStyle    lipgloss.Style
+	border         Border
 
-	selectedRows []Row
+	// Footers
+	staticFooter string
 
-	border Border
+	// Pagination
+	pageSize    int
+	currentPage int
 
+	// Internal cached calculations for reference
 	totalWidth int
 }
 

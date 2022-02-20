@@ -181,7 +181,7 @@ func TestSingleColumnWithFooterView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestSimple3x2WithFooterView(t *testing.T) {
+func TestSimple3x3WithFooterView(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),
 		NewColumn("2", "2", 4),
@@ -212,6 +212,80 @@ func TestSimple3x2WithFooterView(t *testing.T) {
 ┃ 1,3┃ 2,3┃ 3,3┃
 ┣━━━━┻━━━━┻━━━━┫
 ┃        Footer┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestPaged3x3WithNoSpecifiedFooter(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).WithPageSize(2)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃ 2,2┃ 3,2┃
+┣━━━━┻━━━━┻━━━━┫
+┃           1/2┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestPaged3x3WithStaticFooter(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).WithPageSize(2).WithStaticFooter("Override")
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃ 2,2┃ 3,2┃
+┣━━━━┻━━━━┻━━━━┫
+┃      Override┃
 ┗━━━━━━━━━━━━━━┛`
 
 	rendered := model.View()

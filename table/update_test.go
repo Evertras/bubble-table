@@ -50,11 +50,13 @@ func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
 		NewRow(RowData{
 			"id": "third",
 		}),
-	}).Focused(true)
+	}).Focused(true).WithPageSize(2)
 
 	// Note that this is assuming default keymap
 	keyUp := tea.KeyMsg{Type: tea.KeyUp}
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
+	keyLeft := tea.KeyMsg{Type: tea.KeyLeft}
+	keyRight := tea.KeyMsg{Type: tea.KeyRight}
 
 	curID := func() string {
 		str, ok := model.HighlightedRow().Data["id"].(string)
@@ -77,6 +79,18 @@ func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
 
 	model, _ = model.Update(keyDown)
 	assert.Equal(t, "first", curID(), "Moving down from bottom should wrap to top")
+
+	model, _ = model.Update(keyRight)
+	assert.Equal(t, "third", curID(), "Moving right should move to second page")
+
+	model, _ = model.Update(keyRight)
+	assert.Equal(t, "first", curID(), "Moving right again should move to first page")
+
+	model, _ = model.Update(keyLeft)
+	assert.Equal(t, "third", curID(), "Moving left should move to last page")
+
+	model, _ = model.Update(keyLeft)
+	assert.Equal(t, "first", curID(), "Moving left should move back to first page")
 }
 
 func TestFocusedMovesWithCustomKeyMap(t *testing.T) {
