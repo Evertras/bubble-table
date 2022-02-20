@@ -46,6 +46,8 @@ func (m Model) SelectableRows(selectable bool) Model {
 		}
 	}
 
+	m.recalculateWidth()
+
 	return m
 }
 
@@ -76,6 +78,13 @@ func (m Model) HighlightStyle(style lipgloss.Style) Model {
 // up/down/space/etc to let the user navigate the table and interact with it.
 func (m Model) Focused(focused bool) Model {
 	m.focused = focused
+
+	return m
+}
+
+// WithStaticFooter adds a footer that only displays the given text.
+func (m Model) WithStaticFooter(footer string) Model {
+	m.staticFooter = footer
 
 	return m
 }

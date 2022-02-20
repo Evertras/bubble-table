@@ -79,19 +79,29 @@ func NewModel() Model {
 	keys.RowDown.SetKeys("j", "down", "s")
 	keys.RowUp.SetKeys("k", "up", "w")
 
-	return Model{
+	model := Model{
 		tableModel: table.New(columns).
 			WithRows(rows).
 			HeaderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Bold(true)).
 			SelectableRows(true).
 			Focused(true).
 			Border(customBorder).
-			WithKeyMap(keys),
+			WithKeyMap(keys).
+			WithStaticFooter("Footer!"),
 	}
+
+	model.updateFooter()
+
+	return model
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func (m *Model) updateFooter() {
+	highlightedRow := m.tableModel.HighlightedRow()
+	m.tableModel = m.tableModel.WithStaticFooter(fmt.Sprintf("Currently looking at ID: %s", highlightedRow.Data[columnKeyID]))
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -102,6 +112,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	m.tableModel, cmd = m.tableModel.Update(msg)
 	cmds = append(cmds, cmd)
+
+	// We control the footer text, so make sure to update it
+	m.updateFooter()
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -117,10 +130,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	highlightedRow := m.tableModel.HighlightedRow()
 	body.WriteString("Table demo with all features enabled!\nPress space/enter to select a row, q or ctrl+c to quit\n")
-
-	body.WriteString(fmt.Sprintf("Currently looking at ID: %s\n", highlightedRow.Data[columnKeyID]))
 
 	selectedIDs := []string{}
 

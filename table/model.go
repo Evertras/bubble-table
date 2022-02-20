@@ -19,6 +19,8 @@ type Model struct {
 	columns     []Column
 	headerStyle lipgloss.Style
 
+	staticFooter string
+
 	rows []Row
 
 	selectableRows bool
@@ -32,6 +34,8 @@ type Model struct {
 	selectedRows []Row
 
 	border Border
+
+	totalWidth int
 }
 
 // New creates a new table ready for further modifications.
@@ -45,6 +49,8 @@ func New(columns []Column) Model {
 
 	// Do a full deep copy to avoid unexpected edits
 	copy(model.columns, columns)
+
+	model.recalculateWidth()
 
 	return model
 }
