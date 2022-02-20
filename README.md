@@ -16,7 +16,7 @@ A table component for the [Bubble Tea framework](https://github.com/charmbracele
 
 For a code reference, please see the [full feature example](./examples/features/main.go).
 
-Displays a table with a header, rows, and borders.
+Displays a table with a header, rows, footer, and borders.
 
 Border shape is customizable with a basic thick square default.
 
