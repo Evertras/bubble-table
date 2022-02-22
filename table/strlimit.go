@@ -5,8 +5,8 @@ func limitStr(str string, maxLen int) string {
 		return ""
 	}
 
-	if len(str) > maxLen {
-		return str[:maxLen-1] + "…"
+	if len([]rune(str)) > maxLen {
+		return string([]rune(str)[:maxLen-1]) + "…"
 	}
 
 	return str

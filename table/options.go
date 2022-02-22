@@ -1,6 +1,8 @@
 package table
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+)
 
 // HeaderStyle sets the style to apply to the header text, such as color or bold.
 func (m Model) HeaderStyle(style lipgloss.Style) Model {
@@ -31,7 +33,6 @@ func (m Model) KeyMap() KeyMap {
 // SelectableRows sets whether or not rows are selectable.  If set, adds a column
 // in the front that acts as a checkbox and responds to controls if Focused.
 func (m Model) SelectableRows(selectable bool) Model {
-	const selectHeader = "[x]"
 	m.selectableRows = selectable
 
 	hasSelectColumn := m.columns[0].Key == columnKeySelect
@@ -39,7 +40,7 @@ func (m Model) SelectableRows(selectable bool) Model {
 	if hasSelectColumn != selectable {
 		if selectable {
 			m.columns = append([]Column{
-				NewColumn(columnKeySelect, selectHeader, len(selectHeader)),
+				NewColumn(columnKeySelect, m.selectedText, len([]rune(m.selectedText))),
 			}, m.columns...)
 		} else {
 			m.columns = m.columns[1:]
@@ -99,6 +100,20 @@ func (m Model) WithPageSize(pageSize int) Model {
 // WithNoPagination disable pagination in the table.
 func (m Model) WithNoPagination() Model {
 	m.pageSize = 0
+
+	return m
+}
+
+// WithSelectedText describes what text to show when selectable rows are enabled.
+// The selectable column header will use the selected text string.
+func (m Model) WithSelectedText(unselected, selected string) Model {
+	m.selectedText = selected
+	m.unselectedText = unselected
+
+	if len(m.columns) > 0 && m.columns[0].Key == columnKeySelect {
+		m.columns[0] = NewColumn(columnKeySelect, m.selectedText, len([]rune(m.selectedText)))
+		m.recalculateWidth()
+	}
 
 	return m
 }
