@@ -30,6 +30,8 @@ type Model struct {
 	highlightStyle lipgloss.Style
 	headerStyle    lipgloss.Style
 	border         Border
+	selectedText   string
+	unselectedText string
 
 	// Footers
 	staticFooter string
@@ -49,6 +51,9 @@ func New(columns []Column) Model {
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
 		keyMap:         DefaultKeyMap(),
+
+		selectedText:   "[x]",
+		unselectedText: "[ ]",
 	}
 
 	// Do a full deep copy to avoid unexpected edits

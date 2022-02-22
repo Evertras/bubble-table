@@ -44,6 +44,18 @@ func TestLimitStr(t *testing.T) {
 			max:      0,
 			expected: "",
 		},
+		{
+			name:     "Unicode width",
+			input:    "✓",
+			max:      1,
+			expected: "✓",
+		},
+		{
+			name:     "Unicode truncated",
+			input:    "✓✓✓",
+			max:      2,
+			expected: "✓…",
+		},
 	}
 
 	for _, test := range tests {

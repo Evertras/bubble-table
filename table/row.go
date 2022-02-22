@@ -64,9 +64,9 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 		if column.Key == columnKeySelect {
 			if row.selected {
-				str = "[x]"
+				str = m.selectedText
 			} else {
-				str = "[ ]"
+				str = m.unselectedText
 			}
 		} else if entry, exists := row.Data[column.Key]; exists {
 			switch entry := entry.(type) {
