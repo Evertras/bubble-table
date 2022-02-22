@@ -38,6 +38,12 @@ func TestLimitStr(t *testing.T) {
 			max:      8,
 			expected: "Hello t…",
 		},
+		{
+			name:     "Zero max",
+			input:    "Hello",
+			max:      0,
+			expected: "",
+		},
 	}
 
 	for _, test := range tests {
