@@ -1,13 +1,13 @@
 package table
 
-func limitStr(s string, maxLen int) string {
+func limitStr(str string, maxLen int) string {
 	if maxLen == 0 {
 		return ""
 	}
 
-	if len(s) > maxLen {
-		return s[:maxLen-1] + "…"
+	if len(str) > maxLen {
+		return str[:maxLen-1] + "…"
 	}
 
-	return s
+	return str
 }
