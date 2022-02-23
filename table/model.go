@@ -40,6 +40,10 @@ type Model struct {
 	pageSize    int
 	currentPage int
 
+	// Sorting
+	sortOrder  []sortColumn
+	sortedRows []Row
+
 	// Internal cached calculations for reference
 	totalWidth int
 }
