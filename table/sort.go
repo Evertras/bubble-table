@@ -33,7 +33,7 @@ func (m Model) SortByAsc(columnKey string) Model {
 	return m
 }
 
-// SortByAsc sets the main sorting column to the given key, in descending order.
+// SortByDesc sets the main sorting column to the given key, in descending order.
 // If a previous sort was used, it is replaced by the given column each time
 // this function is called.
 func (m Model) SortByDesc(columnKey string) Model {
