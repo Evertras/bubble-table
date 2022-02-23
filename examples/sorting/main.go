@@ -77,7 +77,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "t":
 			m.columnSortKey = columnKeyType
-			m.simpleTable = m.simpleTable.SortByAsc(m.columnSortKey)
+			// Within the same type, order each by wins
+			m.simpleTable = m.simpleTable.SortByAsc(m.columnSortKey).ThenSortByDesc(columnKeyWins)
 
 		case "w":
 			m.columnSortKey = columnKeyWins
