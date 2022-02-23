@@ -11,7 +11,7 @@ import (
 const (
 	columnKeyName = "name"
 	columnKeyType = "type"
-	columnKeyWins = "element"
+	columnKeyWins = "wins"
 )
 
 type Model struct {
@@ -34,14 +34,24 @@ func NewModel() Model {
 				columnKeyWins: 4,
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName: "Alphonse",
+				columnKeyName: "Zapmouse",
 				columnKeyType: "Pikachu",
-				columnKeyWins: 13,
+				columnKeyWins: 3,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Burninator",
 				columnKeyType: "Charmander",
 				columnKeyWins: 8,
+			}),
+			table.NewRow(table.RowData{
+				columnKeyName: "Alphonse",
+				columnKeyType: "Pikachu",
+				columnKeyWins: 13,
+			}),
+			table.NewRow(table.RowData{
+				columnKeyName: "Trogdor",
+				columnKeyType: "Charmander",
+				columnKeyWins: 9,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Dihydrogen Monoxide",
@@ -92,7 +102,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("A sorted simple default table\nSort by (n)ame, (t)ype, or (w)ins\nCurrently sorting by: " + m.columnSortKey + "\nPress q or ctrl+c to quit\n\n")
+	body.WriteString("A sorted simple default table\nSort by (n)ame, (t)ype->wins combo, or (w)ins\nCurrently sorting by: " + m.columnSortKey + "\nPress q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.simpleTable.View())
 

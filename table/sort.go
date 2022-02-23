@@ -17,6 +17,10 @@ type sortColumn struct {
 	direction sortDirection
 }
 
+// SortByAsc sets the main sorting column to the given key, in ascending order.
+// If a previous sort was used, it is replaced by the given column each time
+// this function is called.  Values are sorted as numbers if possible, or just
+// as simple string comparisons if not numbers.
 func (m Model) SortByAsc(columnKey string) Model {
 	m.sortOrder = []sortColumn{
 		{
@@ -30,6 +34,10 @@ func (m Model) SortByAsc(columnKey string) Model {
 	return m
 }
 
+// SortByDesc sets the main sorting column to the given key, in descending order.
+// If a previous sort was used, it is replaced by the given column each time
+// this function is called.  Values are sorted as numbers if possible, or just
+// as simple string comparisons if not numbers.
 func (m Model) SortByDesc(columnKey string) Model {
 	m.sortOrder = []sortColumn{
 		{
@@ -43,6 +51,8 @@ func (m Model) SortByDesc(columnKey string) Model {
 	return m
 }
 
+// ThenSortByAsc provides a secondary sort after the first, in ascending order.
+// Can be chained multiple times, applying to smaller subgroups each time.
 func (m Model) ThenSortByAsc(columnKey string) Model {
 	m.sortOrder = append([]sortColumn{
 		{
@@ -56,6 +66,8 @@ func (m Model) ThenSortByAsc(columnKey string) Model {
 	return m
 }
 
+// ThenSortByDesc provides a secondary sort after the first, in descending order.
+// Can be chained multiple times, applying to smaller subgroups each time.
 func (m Model) ThenSortByDesc(columnKey string) Model {
 	m.sortOrder = append([]sortColumn{
 		{
