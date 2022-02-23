@@ -7,141 +7,88 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSortSingleColumnAsc(t *testing.T) {
+func TestSortSingleColumnAscAndDesc(t *testing.T) {
 	const idColKey = "id"
-	model := New([]Column{
-		NewColumn(idColKey, "ID", 3),
-	}).WithRows([]Row{
+
+	rows := []Row{
 		NewRow(RowData{idColKey: "b"}),
 		NewRow(RowData{idColKey: NewStyledCell("c", lipgloss.NewStyle().Bold(true))}),
 		NewRow(RowData{idColKey: "a"}),
-	}).SortByAsc(idColKey)
-
-	colKeyForRow := func(i int) string {
-		id, ok := model.sortedRows[i].Data[idColKey]
-
-		assert.True(t, ok)
-
-		switch id := id.(type) {
-		case string:
-			return id
-
-		case StyledCell:
-			return id.Data.(string)
-
-		default:
-			assert.FailNowf(t, "Unknown type", "Unknown type in %d", i)
-			return ""
-		}
-	}
-
-	assert.Len(t, model.sortedRows, 3)
-	assert.Equal(t, "a", colKeyForRow(0))
-	assert.Equal(t, "b", colKeyForRow(1))
-	assert.Equal(t, "c", colKeyForRow(2))
-}
-
-func TestSortSingleColumnDesc(t *testing.T) {
-	const idColKey = "id"
-	model := New([]Column{
-		NewColumn(idColKey, "ID", 3),
-	}).WithRows([]Row{
-		NewRow(RowData{idColKey: "b"}),
-		NewRow(RowData{idColKey: NewStyledCell("c", lipgloss.NewStyle().Bold(true))}),
-		NewRow(RowData{idColKey: "a"}),
-	}).SortByDesc(idColKey)
-
-	colKeyForRow := func(i int) string {
-		id, ok := model.sortedRows[i].Data[idColKey]
-
-		assert.True(t, ok)
-
-		switch id := id.(type) {
-		case string:
-			return id
-
-		case StyledCell:
-			return id.Data.(string)
-
-		default:
-			assert.FailNowf(t, "Unknown type", "Unknown type in %d", i)
-			return ""
-		}
-	}
-
-	assert.Len(t, model.sortedRows, 3)
-	assert.Equal(t, "c", colKeyForRow(0))
-	assert.Equal(t, "b", colKeyForRow(1))
-	assert.Equal(t, "a", colKeyForRow(2))
-}
-
-func TestSortSingleColumnMissingValues(t *testing.T) {
-	const idColKey = "id"
-	model := New([]Column{
-		NewColumn(idColKey, "ID", 3),
-	}).WithRows([]Row{
-		NewRow(RowData{idColKey: "b"}),
-		NewRow(RowData{idColKey: NewStyledCell("c", lipgloss.NewStyle().Bold(true))}),
+		// Missing data
 		NewRow(RowData{}),
-	}).SortByAsc(idColKey)
+	}
 
-	colKeyForRow := func(i int) string {
-		id, ok := model.sortedRows[i].Data[idColKey]
+	model := New([]Column{
+		NewColumn(idColKey, "ID", 3),
+	}).WithRows(rows).SortByAsc(idColKey)
 
-		if !ok {
-			id = ""
-		}
+	assertOrder := func(expectedList []string) {
+		for index, expected := range expectedList {
+			idVal, ok := model.sortedRows[index].Data[idColKey]
 
-		switch id := id.(type) {
-		case string:
-			return id
+			if expected != "" {
+				assert.True(t, ok)
+			} else {
+				assert.False(t, ok)
 
-		case StyledCell:
-			return id.Data.(string)
+				continue
+			}
 
-		default:
-			return ""
+			switch idVal := idVal.(type) {
+			case string:
+				assert.Equal(t, expected, idVal)
+
+			case StyledCell:
+				assert.Equal(t, expected, idVal.Data)
+
+			default:
+				assert.Fail(t, "Unknown type")
+			}
 		}
 	}
 
-	assert.Len(t, model.sortedRows, 3)
-	assert.Equal(t, "", colKeyForRow(0))
-	assert.Equal(t, "b", colKeyForRow(1))
-	assert.Equal(t, "c", colKeyForRow(2))
+	assert.Len(t, model.sortedRows, len(rows))
+	assertOrder([]string{"", "a", "b", "c"})
+
+	model = model.SortByDesc(idColKey)
+
+	assertOrder([]string{"c", "b", "a", ""})
 }
 
 func TestSortSingleColumnIntsAsc(t *testing.T) {
 	const idColKey = "id"
-	model := New([]Column{
-		NewColumn(idColKey, "ID", 3),
-	}).WithRows([]Row{
+
+	rows := []Row{
 		NewRow(RowData{idColKey: 13}),
 		NewRow(RowData{idColKey: NewStyledCell(1, lipgloss.NewStyle().Bold(true))}),
 		NewRow(RowData{idColKey: 2}),
-	}).SortByAsc(idColKey)
+	}
 
-	colKeyForRow := func(i int) int {
-		id, ok := model.sortedRows[i].Data[idColKey]
+	model := New([]Column{
+		NewColumn(idColKey, "ID", 3),
+	}).WithRows(rows).SortByAsc(idColKey)
 
-		assert.True(t, ok)
+	assertOrder := func(expectedList []int) {
+		for index, expected := range expectedList {
+			idVal, ok := model.sortedRows[index].Data[idColKey]
 
-		switch id := id.(type) {
-		case int:
-			return id
+			assert.True(t, ok)
 
-		case StyledCell:
-			return id.Data.(int)
+			switch idVal := idVal.(type) {
+			case int:
+				assert.Equal(t, expected, idVal)
 
-		default:
-			assert.FailNowf(t, "Unknown type", "Unknown type in %d", i)
-			return 0
+			case StyledCell:
+				assert.Equal(t, expected, idVal.Data)
+
+			default:
+				assert.Fail(t, "Unknown type")
+			}
 		}
 	}
 
-	assert.Len(t, model.sortedRows, 3)
-	assert.Equal(t, 1, colKeyForRow(0))
-	assert.Equal(t, 2, colKeyForRow(1))
-	assert.Equal(t, 13, colKeyForRow(2))
+	assert.Len(t, model.sortedRows, len(rows))
+	assertOrder([]int{1, 2, 13})
 }
 
 func TestSortTwoColumnsAscDescMix(t *testing.T) {
@@ -167,11 +114,11 @@ func TestSortTwoColumnsAscDescMix(t *testing.T) {
 		makeRow("a", 100),
 	}).SortByAsc(nameKey).ThenSortByDesc(scoreKey)
 
-	assertVals := func(i int, name string, score int) {
-		actualName, ok := model.sortedRows[i].Data[nameKey].(string)
+	assertVals := func(index int, name string, score int) {
+		actualName, ok := model.sortedRows[index].Data[nameKey].(string)
 		assert.True(t, ok)
 
-		actualScore, ok := model.sortedRows[i].Data[scoreKey].(int)
+		actualScore, ok := model.sortedRows[index].Data[scoreKey].(int)
 		assert.True(t, ok)
 
 		assert.Equal(t, name, actualName)
@@ -184,43 +131,8 @@ func TestSortTwoColumnsAscDescMix(t *testing.T) {
 	assertVals(1, "a", 75)
 	assertVals(2, "b", 101)
 	assertVals(3, "c", 50)
-}
 
-func TestSortTwoColumnsDescAscMix(t *testing.T) {
-	const (
-		nameKey  = "name"
-		scoreKey = "score"
-	)
-
-	makeRow := func(name string, score int) Row {
-		return NewRow(RowData{
-			nameKey:  name,
-			scoreKey: score,
-		})
-	}
-
-	model := New([]Column{
-		NewColumn(nameKey, "Name", 8),
-		NewColumn(scoreKey, "Score", 8),
-	}).WithRows([]Row{
-		makeRow("c", 50),
-		makeRow("a", 75),
-		makeRow("b", 101),
-		makeRow("a", 100),
-	}).SortByDesc(nameKey).ThenSortByAsc(scoreKey)
-
-	assertVals := func(i int, name string, score int) {
-		actualName, ok := model.sortedRows[i].Data[nameKey].(string)
-		assert.True(t, ok)
-
-		actualScore, ok := model.sortedRows[i].Data[scoreKey].(int)
-		assert.True(t, ok)
-
-		assert.Equal(t, name, actualName)
-		assert.Equal(t, score, actualScore)
-	}
-
-	assert.Len(t, model.sortedRows, 4)
+	model = model.SortByDesc(nameKey).ThenSortByAsc(scoreKey)
 
 	assertVals(0, "c", 50)
 	assertVals(1, "b", 101)

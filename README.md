@@ -38,6 +38,9 @@ is sorted by the first specified column, then each group within that column is
 sorted in smaller and smaller groups.  [See the sorting example](examples/sorting/main.go)
 for more information.
 
+If a feature is confusing to use or could use a better example, please feel free
+to open an issue.
+
 ## Defining table data
 
 A table is defined by a list of `Column` values that define the columns in the
