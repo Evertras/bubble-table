@@ -36,7 +36,9 @@ Columns can be sorted in either ascending or descending order.  Multiple columns
 can be specified in a row.  If multiple columns are specified, first the table
 is sorted by the first specified column, then each group within that column is
 sorted in smaller and smaller groups.  [See the sorting example](examples/sorting/main.go)
-for more information.
+for more information.  If a column contains numbers (either ints or floats),
+the numbers will be sorted by numeric value.  Otherwise rendered string values
+will be compared.
 
 If a feature is confusing to use or could use a better example, please feel free
 to open an issue.
