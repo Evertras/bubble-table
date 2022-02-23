@@ -18,6 +18,10 @@ example-pagination:
 example-simplest:
 	@go run ./examples/simplest/*.go
 
+.PHONY: example-simplest
+example-sorting:
+	@go run ./examples/sorting/*.go
+
 .PHONY: test
 test:
 	@go test -race -cover ./table
