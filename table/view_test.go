@@ -101,6 +101,26 @@ func TestSingleColumnView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestSingleColumnViewSorted(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": "1"}),
+		NewRow(RowData{"id": "2"}),
+	}).SortByDesc("id")
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃   2┃
+┃   1┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestSingleRowView(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),

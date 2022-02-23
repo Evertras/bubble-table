@@ -47,7 +47,11 @@ type Model struct {
 
 func NewModel() Model {
 	columns := []table.Column{
-		table.NewColumn(columnKeyID, "ID", 5).WithStyle(lipgloss.NewStyle().Faint(true).Foreground(lipgloss.Color("#88f"))),
+		table.NewColumn(columnKeyID, "ID", 5).WithStyle(
+			lipgloss.NewStyle().
+				Faint(true).
+				Foreground(lipgloss.Color("#88f")).
+				Align(lipgloss.Left)),
 		table.NewColumn(columnKeyName, "Name", 10),
 		table.NewColumn(columnKeyDescription, "Description", 30),
 		table.NewColumn(columnKeyCount, "#", 5),
@@ -74,13 +78,13 @@ func NewModel() Model {
 			columnKeyCount:       table.NewStyledCell(0, lipgloss.NewStyle().Faint(true)),
 		}),
 		table.NewRow(table.RowData{
-			columnKeyID:          "2pg",
+			columnKeyID:          "spg",
 			columnKeyName:        "Page 2",
 			columnKeyDescription: "Second page",
 			columnKeyCount:       2,
 		}),
 		table.NewRow(table.RowData{
-			columnKeyID:          "2pg2",
+			columnKeyID:          "spg2",
 			columnKeyName:        "Page 2.1",
 			columnKeyDescription: "Second page again",
 			columnKeyCount:       4,
@@ -103,7 +107,8 @@ func NewModel() Model {
 			WithKeyMap(keys).
 			WithStaticFooter("Footer!").
 			WithPageSize(3).
-			WithSelectedText(" ", "✓"),
+			WithSelectedText(" ", "✓").
+			SortByAsc(columnKeyID),
 	}
 
 	model.updateFooter()

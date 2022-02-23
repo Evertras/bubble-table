@@ -32,6 +32,15 @@ Can make rows selectable, and fetch the current selections.
 Pagination can be set with a given page size, which automatically generates a
 simple footer to show the current page and total pages.
 
+Columns can be sorted in either ascending or descending order.  Multiple columns
+can be specified in a row.  If multiple columns are specified, first the table
+is sorted by the first specified column, then each group within that column is
+sorted in smaller and smaller groups.  [See the sorting example](examples/sorting/main.go)
+for more information.
+
+If a feature is confusing to use or could use a better example, please feel free
+to open an issue.
+
 ## Defining table data
 
 A table is defined by a list of `Column` values that define the columns in the
