@@ -12,13 +12,27 @@ func (m Model) renderFooter() string {
 	}
 
 	var footerText string
+	var pagination string
+	var filter string
 
-	switch {
-	case m.staticFooter != "":
+	if m.staticFooter != "" {
 		footerText = m.staticFooter
-
-	case m.pageSize != 0:
-		footerText = fmt.Sprintf("%d/%d", m.CurrentPage(), m.MaxPages())
+	} else {
+		// paged feature enabled
+		if m.pageSize != 0 {
+			pagination = fmt.Sprintf("%d/%d", m.CurrentPage(), m.MaxPages())
+		}
+		if m.filtered {
+			// filter pressing
+			if m.filterTextInput.Focused() {
+				filter = fmt.Sprintf("/%s", m.filterTextInput.View())
+			} else {
+				if m.filterTextInput.Value() != "" {
+					filter = fmt.Sprintf("/%s", m.filterTextInput.Value())
+				}
+			}
+		}
+		footerText = fmt.Sprintf("%s %s", filter, pagination)
 	}
 
 	return m.border.styleFooter.Width(m.totalWidth).Render(footerText)

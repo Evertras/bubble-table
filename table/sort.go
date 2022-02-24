@@ -2,7 +2,6 @@ package table
 
 import (
 	"fmt"
-	"sort"
 )
 
 type sortDirection int
@@ -29,8 +28,6 @@ func (m Model) SortByAsc(columnKey string) Model {
 		},
 	}
 
-	m.updateSortedRows()
-
 	return m
 }
 
@@ -46,8 +43,6 @@ func (m Model) SortByDesc(columnKey string) Model {
 		},
 	}
 
-	m.updateSortedRows()
-
 	return m
 }
 
@@ -61,8 +56,6 @@ func (m Model) ThenSortByAsc(columnKey string) Model {
 		},
 	}, m.sortOrder...)
 
-	m.updateSortedRows()
-
 	return m
 }
 
@@ -75,8 +68,6 @@ func (m Model) ThenSortByDesc(columnKey string) Model {
 			direction: sortDirectionDesc,
 		},
 	}, m.sortOrder...)
-
-	m.updateSortedRows()
 
 	return m
 }
@@ -145,26 +136,4 @@ func (s *sortableTable) Less(first, second int) bool {
 	}
 
 	return firstVal > secondVal
-}
-
-func (m *Model) updateSortedRows() {
-	if len(m.sortOrder) == 0 {
-		m.sortedRows = m.rows
-
-		return
-	}
-
-	m.sortedRows = make([]Row, len(m.rows))
-	copy(m.sortedRows, m.rows)
-
-	for _, byColumn := range m.sortOrder {
-		sorted := &sortableTable{
-			rows:     m.sortedRows,
-			byColumn: byColumn,
-		}
-
-		sort.Stable(sorted)
-
-		m.sortedRows = sorted.rows
-	}
 }

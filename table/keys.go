@@ -11,6 +11,8 @@ type KeyMap struct {
 
 	PageDown key.Binding
 	PageUp   key.Binding
+
+	Filter key.Binding
 }
 
 // DefaultKeyMap returns a set of sensible defaults for controlling a focused table.
@@ -30,6 +32,9 @@ func DefaultKeyMap() KeyMap {
 		),
 		PageUp: key.NewBinding(
 			key.WithKeys("left", "h", "pgup"),
+		),
+		Filter: key.NewBinding(
+			key.WithKeys("/"),
 		),
 	}
 }

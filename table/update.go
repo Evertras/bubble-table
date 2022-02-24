@@ -9,7 +9,7 @@ func (m *Model) moveHighlightUp() {
 	m.rowCursorIndex--
 
 	if m.rowCursorIndex < 0 {
-		m.rowCursorIndex = len(m.rows) - 1
+		m.rowCursorIndex = len(m.GetRows()) - 1
 	}
 
 	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
@@ -18,7 +18,7 @@ func (m *Model) moveHighlightUp() {
 func (m *Model) moveHighlightDown() {
 	m.rowCursorIndex++
 
-	if m.rowCursorIndex >= len(m.rows) {
+	if m.rowCursorIndex >= len(m.GetRows()) {
 		m.rowCursorIndex = 0
 	}
 
@@ -26,12 +26,12 @@ func (m *Model) moveHighlightDown() {
 }
 
 func (m *Model) toggleSelect() {
-	if !m.selectableRows || len(m.rows) == 0 {
+	if !m.selectableRows || len(m.GetRows()) == 0 {
 		return
 	}
 
-	rows := make([]Row, len(m.rows))
-	copy(rows, m.rows)
+	rows := make([]Row, len(m.GetRows()))
+	copy(rows, m.GetRows())
 
 	rows[m.rowCursorIndex].selected = !rows[m.rowCursorIndex].selected
 
@@ -39,7 +39,7 @@ func (m *Model) toggleSelect() {
 
 	m.selectedRows = []Row{}
 
-	for _, row := range m.rows {
+	for _, row := range m.GetRows() {
 		if row.selected {
 			m.selectedRows = append(m.selectedRows, row)
 		}
@@ -50,6 +50,20 @@ func (m *Model) toggleSelect() {
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focused {
 		return m, nil
+	}
+
+	var cmd tea.Cmd
+	if m.filterTextInput.Focused() {
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			switch msg.Type {
+			case tea.KeyEnter:
+				m.filterTextInput.Blur()
+			default:
+				m.filterTextInput, cmd = m.filterTextInput.Update(msg)
+			}
+		}
+		return m, cmd
 	}
 
 	switch msg := msg.(type) {
@@ -69,6 +83,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keyMap.PageUp):
 			m.pageUp()
+
+		case key.Matches(msg, m.keyMap.Filter):
+			m.filterTextInput.Focus()
 		}
 	}
 
