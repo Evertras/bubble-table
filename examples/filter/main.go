@@ -15,15 +15,14 @@ const (
 )
 
 type Model struct {
-	table           table.Model
-	columnFilterKey string
+	table table.Model
 }
 
 func NewModel() Model {
 	columns := []table.Column{
-		table.NewColumn(columnKeyTitle, "Title", 13).WithFiltered(),
-		table.NewColumn(columnKeyAuthor, "Author", 13),
-		table.NewColumn(columnKeyDescription, "Description", 5),
+		table.NewColumn(columnKeyTitle, "Title", 13).WithFiltered(true),
+		table.NewColumn(columnKeyAuthor, "Author", 13).WithFiltered(true),
+		table.NewColumn(columnKeyDescription, "Description", 50),
 	}
 	return Model{
 		table: table.
@@ -85,7 +84,7 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	body.WriteString("A filtered simple default table\n" +
-		"Currently filter by: " + m.columnFilterKey + "\nPress q or ctrl+c to quit\n\n")
+		"Currently filter by Title and Author, press / to filter.\nPress q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.table.View())
 

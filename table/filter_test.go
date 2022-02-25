@@ -7,7 +7,7 @@ import (
 
 func TestIsRowMatched(t *testing.T) {
 	columns := []Column{
-		NewColumn("title", "title", 10).WithFiltered(),
+		NewColumn("title", "title", 10).WithFiltered(true),
 		NewColumn("description", "description", 10)}
 
 	assert.True(t, isRowMatched(columns,

@@ -24,14 +24,15 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 	}
 
 	for _, column := range columns {
-		if column.Filterable {
-			data, ok := row.Data[column.Key]
-			if !ok {
-				continue
-			}
-			if strings.Contains(strings.ToLower(data.(string)), strings.ToLower(filter)) {
-				return true
-			}
+		if !column.filterable {
+			continue
+		}
+		data, ok := row.Data[column.Key]
+		if !ok {
+			continue
+		}
+		if strings.Contains(strings.ToLower(data.(string)), strings.ToLower(filter)) {
+			return true
 		}
 	}
 	return false

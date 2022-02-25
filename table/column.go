@@ -10,7 +10,7 @@ type Column struct {
 	Key   string
 	Width int
 
-	Filterable bool
+	filterable bool
 	style      lipgloss.Style
 }
 
@@ -32,7 +32,7 @@ func (c Column) WithStyle(style lipgloss.Style) Column {
 	return c
 }
 
-func (c Column) WithFiltered() Column {
-	c.Filterable = true
+func (c Column) WithFiltered(filterable bool) Column {
+	c.filterable = filterable
 	return c
 }

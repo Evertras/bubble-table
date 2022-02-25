@@ -9,7 +9,7 @@ func (m *Model) moveHighlightUp() {
 	m.rowCursorIndex--
 
 	if m.rowCursorIndex < 0 {
-		m.rowCursorIndex = len(m.GetRows()) - 1
+		m.rowCursorIndex = len(m.GetVisibleRows()) - 1
 	}
 
 	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
@@ -18,7 +18,7 @@ func (m *Model) moveHighlightUp() {
 func (m *Model) moveHighlightDown() {
 	m.rowCursorIndex++
 
-	if m.rowCursorIndex >= len(m.GetRows()) {
+	if m.rowCursorIndex >= len(m.GetVisibleRows()) {
 		m.rowCursorIndex = 0
 	}
 
@@ -26,12 +26,12 @@ func (m *Model) moveHighlightDown() {
 }
 
 func (m *Model) toggleSelect() {
-	if !m.selectableRows || len(m.GetRows()) == 0 {
+	if !m.selectableRows || len(m.GetVisibleRows()) == 0 {
 		return
 	}
 
-	rows := make([]Row, len(m.GetRows()))
-	copy(rows, m.GetRows())
+	rows := make([]Row, len(m.GetVisibleRows()))
+	copy(rows, m.GetVisibleRows())
 
 	rows[m.rowCursorIndex].selected = !rows[m.rowCursorIndex].selected
 
@@ -39,7 +39,7 @@ func (m *Model) toggleSelect() {
 
 	m.selectedRows = []Row{}
 
-	for _, row := range m.GetRows() {
+	for _, row := range m.GetVisibleRows() {
 		if row.selected {
 			m.selectedRows = append(m.selectedRows, row)
 		}

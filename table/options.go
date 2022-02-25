@@ -54,8 +54,8 @@ func (m Model) SelectableRows(selectable bool) Model {
 
 // HighlightedRow returns the full Row that's currently highlighted by the user.
 func (m Model) HighlightedRow() Row {
-	if len(m.GetRows()) > 0 {
-		return m.GetRows()[m.rowCursorIndex]
+	if len(m.GetVisibleRows()) > 0 {
+		return m.GetVisibleRows()[m.rowCursorIndex]
 	}
 
 	// TODO: Better way to do this without pointers/nil?  Or should it be nil?
