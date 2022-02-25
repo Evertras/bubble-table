@@ -1,6 +1,9 @@
 package table
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func (m Model) getFilteredRows(rows []Row) []Row {
 	if !m.filtered || m.filterTextInput.Value() == "" {
@@ -31,9 +34,20 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 		if !ok {
 			continue
 		}
-		if strings.Contains(strings.ToLower(data.(string)), strings.ToLower(filter)) {
-			return true
+		switch dataV := data.(type) {
+		case string:
+			if strings.Contains(strings.ToLower(dataV), strings.ToLower(filter)) {
+				return true
+			}
+		case fmt.Stringer:
+			if strings.Contains(strings.ToLower(dataV.String()), strings.ToLower(filter)) {
+				return true
+			}
+			return false
+		default:
+			return false
 		}
 	}
+
 	return false
 }

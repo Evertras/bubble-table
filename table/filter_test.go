@@ -45,5 +45,4 @@ func TestIsRowMatched(t *testing.T) {
 			"title":       "AAA",
 			"description": "BBB",
 		}), "BBB"))
-
 }

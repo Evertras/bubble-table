@@ -34,5 +34,6 @@ func (c Column) WithStyle(style lipgloss.Style) Column {
 
 func (c Column) WithFiltered(filterable bool) Column {
 	c.filterable = filterable
+
 	return c
 }
