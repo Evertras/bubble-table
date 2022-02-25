@@ -2,6 +2,7 @@ package table
 
 import (
 	"fmt"
+	"sort"
 )
 
 type sortDirection int
@@ -136,4 +137,28 @@ func (s *sortableTable) Less(first, second int) bool {
 	}
 
 	return firstVal > secondVal
+}
+
+func getSortedRows(sortOrder []sortColumn, rows []Row) []Row {
+	var sortedRows []Row
+	if len(sortOrder) == 0 {
+		sortedRows = rows
+
+		return sortedRows
+	}
+
+	sortedRows = make([]Row, len(rows))
+	copy(sortedRows, rows)
+
+	for _, byColumn := range sortOrder {
+		sorted := &sortableTable{
+			rows:     sortedRows,
+			byColumn: byColumn,
+		}
+
+		sort.Stable(sorted)
+
+		sortedRows = sorted.rows
+	}
+	return sortedRows
 }
