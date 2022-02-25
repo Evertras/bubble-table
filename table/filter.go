@@ -43,8 +43,10 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 			if strings.Contains(strings.ToLower(dataV.String()), strings.ToLower(filter)) {
 				return true
 			}
+
 			return false
 		default:
+
 			return false
 		}
 	}

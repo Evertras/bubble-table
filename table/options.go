@@ -86,11 +86,13 @@ func (m Model) Focused(focused bool) Model {
 // Filtered allows the table to show rows that match the filter.
 func (m Model) Filtered(filtered bool) Model {
 	m.filtered = filtered
+
 	return m
 }
 
 func (m Model) FilterMode() Model {
 	m.filterTextInput.Focus()
+
 	return m
 }
 

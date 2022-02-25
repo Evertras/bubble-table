@@ -46,24 +46,27 @@ func (m *Model) toggleSelect() {
 	}
 }
 
+func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
+	var cmd tea.Cmd
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.Type == tea.KeyEnter {
+			m.filterTextInput.Blur()
+		}
+	}
+	m.filterTextInput, cmd = m.filterTextInput.Update(msg)
+
+	return m, cmd
+}
+
 // Update responds to input from the user or other messages from Bubble Tea.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focused {
 		return m, nil
 	}
 
-	var cmd tea.Cmd
 	if m.filterTextInput.Focused() {
-		switch msg := msg.(type) {
-		case tea.KeyMsg:
-			switch msg.Type {
-			case tea.KeyEnter:
-				m.filterTextInput.Blur()
-			default:
-				m.filterTextInput, cmd = m.filterTextInput.Update(msg)
-			}
-		}
-		return m, cmd
+		return m.updateFilterTextInput(msg)
 	}
 
 	switch msg := msg.(type) {

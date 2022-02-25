@@ -160,5 +160,6 @@ func getSortedRows(sortOrder []sortColumn, rows []Row) []Row {
 
 		sortedRows = sorted.rows
 	}
+
 	return sortedRows
 }
