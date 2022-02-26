@@ -59,6 +59,8 @@ func New(columns []Column) Model {
 
 		selectedText:   "[x]",
 		unselectedText: "[ ]",
+
+		baseStyle: lipgloss.NewStyle().Align(lipgloss.Right),
 	}
 
 	// Do a full deep copy to avoid unexpected edits

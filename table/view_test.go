@@ -340,12 +340,12 @@ func TestPaged3x3WithStaticFooter(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestSimple3x3StyleOverridesAsColumnRowCell(t *testing.T) {
+func TestSimple3x3StyleOverridesAsBaseColumnRowCell(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 6),
 		NewColumn("2", "2", 6).WithStyle(lipgloss.NewStyle().Align(lipgloss.Left)),
 		NewColumn("3", "3", 6),
-	})
+	}).WithBaseStyle(lipgloss.NewStyle().Align(lipgloss.Center))
 
 	rows := []Row{}
 
@@ -363,17 +363,17 @@ func TestSimple3x3StyleOverridesAsColumnRowCell(t *testing.T) {
 
 	// Test overrides with alignment because it's easy to check output string
 	rows[0] = rows[0].WithStyle(lipgloss.NewStyle().Align(lipgloss.Left))
-	rows[0].Data["2"] = NewStyledCell("C", lipgloss.NewStyle().Align(lipgloss.Center))
+	rows[0].Data["2"] = NewStyledCell("R", lipgloss.NewStyle().Align(lipgloss.Right))
 
 	rows[2] = rows[2].WithStyle(lipgloss.NewStyle().Align(lipgloss.Right))
 
 	model = model.WithRows(rows)
 
 	const expectedTable = `┏━━━━━━┳━━━━━━┳━━━━━━┓
-┃     1┃2     ┃     3┃
+┃  1   ┃2     ┃  3   ┃
 ┣━━━━━━╋━━━━━━╋━━━━━━┫
-┃1,1   ┃  C   ┃3,1   ┃
-┃   1,2┃2,2   ┃   3,2┃
+┃1,1   ┃     R┃3,1   ┃
+┃ 1,2  ┃2,2   ┃ 3,2  ┃
 ┃   1,3┃   2,3┃   3,3┃
 ┗━━━━━━┻━━━━━━┻━━━━━━┛`
 

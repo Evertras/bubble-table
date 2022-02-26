@@ -19,14 +19,13 @@ func NewColumn(key, title string, width int) Column {
 		Key:   key,
 		Title: title,
 		Width: width,
-		style: lipgloss.NewStyle().Width(width).Align(lipgloss.Right),
+		style: lipgloss.NewStyle().Width(width),
 	}
 }
 
 // WithStyle applies a style to the column as a whole.
 func (c Column) WithStyle(style lipgloss.Style) Column {
-	//c.style = lipgloss.NewStyle().Width(c.Width).Align(lipgloss.Right).Inherit(style)
-	c.style = style.Copy().Inherit(lipgloss.NewStyle().Width(c.Width).Align(lipgloss.Right))
+	c.style = style.Copy().Width(c.Width)
 
 	return c
 }
