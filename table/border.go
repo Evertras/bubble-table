@@ -22,6 +22,8 @@ type Border struct {
 
 	InnerDivider string
 
+	StyleBase lipgloss.Style
+
 	// Styles for 2x2 tables and larger
 	styleMultiTopLeft     lipgloss.Style
 	styleMultiTop         lipgloss.Style
@@ -116,7 +118,7 @@ func (b *Border) styleBothWithFooter(original lipgloss.Style) lipgloss.Style {
 // This function is long, but it's just repetitive...
 // nolint:funlen
 func (b *Border) generateMultiStyles() {
-	b.styleMultiTopLeft = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiTopLeft = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			TopLeft:     b.TopLeft,
 			Top:         b.Top,
@@ -129,7 +131,7 @@ func (b *Border) generateMultiStyles() {
 		},
 	)
 
-	b.styleMultiTop = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiTop = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Right:  b.InnerDivider,
@@ -140,7 +142,7 @@ func (b *Border) generateMultiStyles() {
 		},
 	).BorderTop(true).BorderBottom(true).BorderRight(true)
 
-	b.styleMultiTopRight = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiTopRight = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Right:  b.Right,
@@ -151,26 +153,26 @@ func (b *Border) generateMultiStyles() {
 		},
 	).BorderTop(true).BorderBottom(true).BorderRight(true)
 
-	b.styleMultiLeft = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiLeft = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Left:  b.Left,
 			Right: b.InnerDivider,
 		},
 	).BorderRight(true).BorderLeft(true)
 
-	b.styleMultiRight = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiRight = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Right: b.Right,
 		},
 	).BorderRight(true)
 
-	b.styleMultiInner = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiInner = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Right: b.InnerDivider,
 		},
 	).BorderRight(true)
 
-	b.styleMultiBottomLeft = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiBottomLeft = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Left:   b.Left,
 			Right:  b.InnerDivider,
@@ -181,7 +183,7 @@ func (b *Border) generateMultiStyles() {
 		},
 	).BorderLeft(true).BorderBottom(true).BorderRight(true)
 
-	b.styleMultiBottom = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiBottom = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Right:  b.InnerDivider,
 			Bottom: b.Bottom,
@@ -190,7 +192,7 @@ func (b *Border) generateMultiStyles() {
 		},
 	).BorderBottom(true).BorderRight(true)
 
-	b.styleMultiBottomRight = lipgloss.NewStyle().BorderStyle(
+	b.styleMultiBottomRight = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Right:  b.Right,
 			Bottom: b.Bottom,
@@ -201,7 +203,7 @@ func (b *Border) generateMultiStyles() {
 }
 
 func (b *Border) generateSingleColumnStyles() {
-	b.styleSingleColumnTop = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleColumnTop = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Left:   b.Left,
@@ -215,14 +217,14 @@ func (b *Border) generateSingleColumnStyles() {
 		},
 	)
 
-	b.styleSingleColumnInner = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleColumnInner = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Left:  b.Left,
 			Right: b.Right,
 		},
 	).BorderRight(true).BorderLeft(true)
 
-	b.styleSingleColumnBottom = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleColumnBottom = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Left:   b.Left,
 			Right:  b.Right,
@@ -235,7 +237,7 @@ func (b *Border) generateSingleColumnStyles() {
 }
 
 func (b *Border) generateSingleRowStyles() {
-	b.styleSingleRowLeft = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleRowLeft = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Left:   b.Left,
@@ -249,7 +251,7 @@ func (b *Border) generateSingleRowStyles() {
 		},
 	)
 
-	b.styleSingleRowInner = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleRowInner = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Right:  b.InnerDivider,
@@ -260,7 +262,7 @@ func (b *Border) generateSingleRowStyles() {
 		},
 	).BorderTop(true).BorderBottom(true).BorderRight(true)
 
-	b.styleSingleRowRight = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleRowRight = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Right:  b.Right,
@@ -273,7 +275,7 @@ func (b *Border) generateSingleRowStyles() {
 }
 
 func (b *Border) generateSingleCellStyle() {
-	b.styleSingleCell = lipgloss.NewStyle().BorderStyle(
+	b.styleSingleCell = b.StyleBase.Copy().BorderStyle(
 		lipgloss.Border{
 			Top:    b.Top,
 			Left:   b.Left,

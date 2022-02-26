@@ -19,7 +19,8 @@ If you want to get started with a simple default table, [check the simplest exam
 
 Displays a table with a header, rows, footer, and borders.
 
-Border shape is customizable with a basic thick square default.
+Border shape is customizable with a basic thick square default, and style can
+be applied for color.
 
 Styles can be applied to columns, rows, and individual cells.  Column style is
 applied first, then row, then cell when determining overrides.
