@@ -38,6 +38,8 @@ var (
 		InnerJunction:  "╫",
 
 		InnerDivider: "║",
+
+		StyleBase: lipgloss.NewStyle().BorderForeground(lipgloss.Color("#a38")),
 	}
 )
 
