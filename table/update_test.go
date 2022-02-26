@@ -192,15 +192,15 @@ func TestSelectingRowToggles(t *testing.T) {
 	keyEnter := tea.KeyMsg{Type: tea.KeyEnter}
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
 
-	assert.False(t, model.rows[0].selected, "Row shouldn't be selected to start")
+	assert.False(t, model.sortedRows[0].selected, "Row shouldn't be selected to start")
 
 	model, _ = model.Update(keyEnter)
-	assert.True(t, model.rows[0].selected, "Row should be selected after first toggle")
+	assert.True(t, model.sortedRows[0].selected, "Row should be selected after first toggle")
 
 	model, _ = model.Update(keyEnter)
-	assert.False(t, model.rows[0].selected, "Row should not be selected after second toggle")
+	assert.False(t, model.sortedRows[0].selected, "Row should not be selected after second toggle")
 
 	model, _ = model.Update(keyDown)
 	model, _ = model.Update(keyEnter)
-	assert.True(t, model.rows[1].selected, "Second row should be selected after moving and toggling")
+	assert.True(t, model.sortedRows[1].selected, "Second row should be selected after moving and toggling")
 }
