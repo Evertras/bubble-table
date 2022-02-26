@@ -49,7 +49,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	columnStrings := []string{}
 
-	baseStyle := row.Style.Copy()
+	baseStyle := m.baseStyle.Copy().Inherit(row.Style.Copy())
 
 	if m.focused && highlighted {
 		baseStyle = baseStyle.Inherit(m.highlightStyle)

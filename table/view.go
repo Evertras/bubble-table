@@ -32,7 +32,7 @@ func (m Model) View() string {
 			borderStyle = headerStyles.right.Copy()
 		}
 
-		borderStyle = borderStyle.Inherit(column.style)
+		borderStyle = m.baseStyle.Copy().Inherit(borderStyle.Inherit(column.style))
 
 		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
 	}

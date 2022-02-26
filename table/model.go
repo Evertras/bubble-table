@@ -27,6 +27,7 @@ type Model struct {
 	rowCursorIndex int
 
 	// Styles
+	baseStyle      lipgloss.Style
 	highlightStyle lipgloss.Style
 	headerStyle    lipgloss.Style
 	border         Border

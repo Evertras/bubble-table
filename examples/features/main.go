@@ -38,8 +38,6 @@ var (
 		InnerJunction:  "╫",
 
 		InnerDivider: "║",
-
-		StyleBase: lipgloss.NewStyle().BorderForeground(lipgloss.Color("#a38")),
 	}
 )
 
@@ -110,6 +108,7 @@ func NewModel() Model {
 			WithStaticFooter("Footer!").
 			WithPageSize(3).
 			WithSelectedText(" ", "✓").
+			WithBaseStyle(lipgloss.NewStyle().BorderForeground(lipgloss.Color("#a38"))).
 			SortByAsc(columnKeyID),
 	}
 

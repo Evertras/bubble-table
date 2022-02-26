@@ -21,5 +21,7 @@ func (m Model) renderFooter() string {
 		footerText = fmt.Sprintf("%d/%d", m.CurrentPage(), m.MaxPages())
 	}
 
-	return m.border.styleFooter.Width(m.totalWidth).Render(footerText)
+	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(m.totalWidth)
+
+	return styleFooter.Render(footerText)
 }
