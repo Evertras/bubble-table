@@ -118,3 +118,11 @@ func (m Model) WithSelectedText(unselected, selected string) Model {
 
 	return m
 }
+
+// WithBaseStyle applies a base style as the default for everything in the table.
+// This is useful for border colors, default alignment, default color, etc.
+func (m Model) WithBaseStyle(style lipgloss.Style) Model {
+	m.baseStyle = style
+
+	return m
+}

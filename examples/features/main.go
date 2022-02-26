@@ -38,8 +38,6 @@ var (
 		InnerJunction:  "╫",
 
 		InnerDivider: "║",
-
-		StyleBase: lipgloss.NewStyle().BorderForeground(lipgloss.Color("#a38")),
 	}
 )
 
@@ -53,7 +51,7 @@ func NewModel() Model {
 			lipgloss.NewStyle().
 				Faint(true).
 				Foreground(lipgloss.Color("#88f")).
-				Align(lipgloss.Left)),
+				Align(lipgloss.Center)),
 		table.NewColumn(columnKeyName, "Name", 10),
 		table.NewColumn(columnKeyDescription, "Description", 30),
 		table.NewColumn(columnKeyCount, "#", 5),
@@ -110,6 +108,12 @@ func NewModel() Model {
 			WithStaticFooter("Footer!").
 			WithPageSize(3).
 			WithSelectedText(" ", "✓").
+			WithBaseStyle(
+				lipgloss.NewStyle().
+					BorderForeground(lipgloss.Color("#a38")).
+					Foreground(lipgloss.Color("#a7a")).
+					Align(lipgloss.Left),
+			).
 			SortByAsc(columnKeyID),
 	}
 

@@ -49,16 +49,16 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	columnStrings := []string{}
 
-	baseStyle := row.Style.Copy()
+	rowStyle := row.Style.Copy()
 
 	if m.focused && highlighted {
-		baseStyle = baseStyle.Inherit(m.highlightStyle)
+		rowStyle = rowStyle.Inherit(m.highlightStyle)
 	}
 
 	stylesInner, stylesLast := m.styleRows()
 
 	for columnIndex, column := range m.columns {
-		cellStyle := baseStyle.Copy().Inherit(column.style)
+		cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
 		var str string
 

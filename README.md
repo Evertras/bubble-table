@@ -19,11 +19,14 @@ If you want to get started with a simple default table, [check the simplest exam
 
 Displays a table with a header, rows, footer, and borders.
 
-Border shape is customizable with a basic thick square default, and style can
-be applied for color.
+Border shape is customizable with a basic thick square default.  The color can
+be modified by applying a base style with `lipgloss.NewStyle().BorderForeground(...)`.
 
-Styles can be applied to columns, rows, and individual cells.  Column style is
-applied first, then row, then cell when determining overrides.
+Styles can be applied globally and to columns, rows, and individual cells.
+The base style is applied first, then column, then row, then cell when
+determining overrides.  The default base style is a basic right-alignment.
+[See the main feature example](./examples/features/main.go) to see styles and
+how they override each other.
 
 Can be focused to highlight a row and navigate with up/down (and j/k).  These
 keys can be customized with a KeyMap.
