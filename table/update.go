@@ -30,16 +30,16 @@ func (m *Model) toggleSelect() {
 		return
 	}
 
-	rows := make([]Row, len(m.rows))
-	copy(rows, m.rows)
+	rows := make([]Row, len(m.sortedRows))
+	copy(rows, m.sortedRows)
 
 	rows[m.rowCursorIndex].selected = !rows[m.rowCursorIndex].selected
 
-	m.rows = rows
+	m.sortedRows = rows
 
 	m.selectedRows = []Row{}
 
-	for _, row := range m.rows {
+	for _, row := range m.sortedRows {
 		if row.selected {
 			m.selectedRows = append(m.selectedRows, row)
 		}
