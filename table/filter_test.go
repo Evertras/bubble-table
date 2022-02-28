@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/textinput"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,4 +47,50 @@ func TestIsRowMatched(t *testing.T) {
 			"title":       "AAA",
 			"description": "BBB",
 		}), "BBB"))
+}
+
+func TestGetFilteredRows(t *testing.T) {
+	input := textinput.Model{}
+	input.SetValue("AAA")
+	columns := []Column{NewColumn("title", "title", 10)}
+	m := Model{filtered: true, filterTextInput: input, columns: columns}
+	rows := []Row{
+		NewRow(map[string]interface{}{
+			"title":       "AAA",
+			"description": "",
+		}),
+		NewRow(map[string]interface{}{
+			"title":       "BBB",
+			"description": "",
+		}),
+		NewRow(map[string]interface{}{
+			"title":       "CCC",
+			"description": "",
+		}),
+	}
+	filteredRows := m.getFilteredRows(rows)
+	assert.Equal(t, 0, len(filteredRows))
+}
+
+func TestGetFilteredRowsFiltered(t *testing.T) {
+	input := textinput.Model{}
+	input.SetValue("AAA")
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	m := Model{filtered: true, filterTextInput: input, columns: columns}
+	rows := []Row{
+		NewRow(map[string]interface{}{
+			"title":       "AAA",
+			"description": "",
+		}),
+		NewRow(map[string]interface{}{
+			"title":       "BBB",
+			"description": "",
+		}),
+		NewRow(map[string]interface{}{
+			"title":       "CCC",
+			"description": "",
+		}),
+	}
+	filteredRows := m.getFilteredRows(rows)
+	assert.Equal(t, 1, len(filteredRows))
 }
