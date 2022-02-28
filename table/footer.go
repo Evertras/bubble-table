@@ -32,5 +32,7 @@ func (m Model) renderFooter() string {
 	}
 	footerText = fmt.Sprintf("%s %s", filter, pagination)
 
-	return m.border.styleFooter.Width(m.totalWidth).Render(footerText)
+	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(m.totalWidth)
+
+	return styleFooter.Render(footerText)
 }

@@ -28,6 +28,7 @@ type Model struct {
 	rowCursorIndex int
 
 	// Styles
+	baseStyle      lipgloss.Style
 	highlightStyle lipgloss.Style
 	headerStyle    lipgloss.Style
 	border         Border
@@ -66,6 +67,7 @@ func New(columns []Column) Model {
 		unselectedText: "[ ]",
 
 		filterTextInput: filterInput,
+		baseStyle: lipgloss.NewStyle().Align(lipgloss.Right),
 	}
 
 	// Do a full deep copy to avoid unexpected edits
