@@ -1,9 +1,9 @@
 package table
 
 import (
-	"github.com/charmbracelet/bubbles/textinput"
 	"testing"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/stretchr/testify/assert"
 )
 
