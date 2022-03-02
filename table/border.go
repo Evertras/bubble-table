@@ -322,7 +322,7 @@ func (b *borderStyleRow) inherit(s lipgloss.Style) {
 // harder to follow.  So just be careful with comments and make sure it's tested!
 // nolint:nestif
 func (m Model) styleHeaders() borderStyleRow {
-	hasRows := len(m.rows) > 0
+	hasRows := len(m.GetVisibleRows()) > 0
 	singleColumn := len(m.columns) == 1
 	styles := borderStyleRow{}
 

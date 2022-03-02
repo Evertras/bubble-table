@@ -44,7 +44,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 // nolint: cyclop
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
-	row := m.sortedRows[rowIndex]
+	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
 
 	columnStrings := []string{}

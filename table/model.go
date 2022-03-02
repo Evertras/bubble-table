@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -41,9 +42,12 @@ type Model struct {
 	pageSize    int
 	currentPage int
 
-	// Sorting
-	sortOrder  []sortColumn
-	sortedRows []Row
+	// Sorting, first sortColum will be last sorted
+	sortOrder []sortColumn
+
+	// Filter
+	filtered        bool
+	filterTextInput textinput.Model
 
 	// Internal cached calculations for reference
 	totalWidth int
@@ -51,6 +55,8 @@ type Model struct {
 
 // New creates a new table ready for further modifications.
 func New(columns []Column) Model {
+	filterInput := textinput.New()
+	filterInput.Prompt = ""
 	model := Model{
 		columns:        make([]Column, len(columns)),
 		highlightStyle: defaultHighlightStyle.Copy(),
@@ -60,7 +66,8 @@ func New(columns []Column) Model {
 		selectedText:   "[x]",
 		unselectedText: "[ ]",
 
-		baseStyle: lipgloss.NewStyle().Align(lipgloss.Right),
+		filterTextInput: filterInput,
+		baseStyle:       lipgloss.NewStyle().Align(lipgloss.Right),
 	}
 
 	// Do a full deep copy to avoid unexpected edits
@@ -74,4 +81,16 @@ func New(columns []Column) Model {
 // Init initializes the table per the Bubble Tea architecture.
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+// GetVisibleRows return sorted and filtered rows.
+func (m Model) GetVisibleRows() []Row {
+	rows := make([]Row, len(m.rows))
+	copy(rows, m.rows)
+	if m.filtered {
+		rows = m.getFilteredRows(rows)
+	}
+	rows = getSortedRows(m.sortOrder, rows)
+
+	return rows
 }

@@ -14,7 +14,6 @@ func (m Model) HeaderStyle(style lipgloss.Style) Model {
 // WithRows sets the rows to show as data in the table.
 func (m Model) WithRows(rows []Row) Model {
 	m.rows = rows
-	m.updateSortedRows()
 
 	return m
 }
@@ -55,8 +54,8 @@ func (m Model) SelectableRows(selectable bool) Model {
 
 // HighlightedRow returns the full Row that's currently highlighted by the user.
 func (m Model) HighlightedRow() Row {
-	if len(m.rows) > 0 {
-		return m.rows[m.rowCursorIndex]
+	if len(m.GetVisibleRows()) > 0 {
+		return m.GetVisibleRows()[m.rowCursorIndex]
 	}
 
 	// TODO: Better way to do this without pointers/nil?  Or should it be nil?
@@ -80,6 +79,19 @@ func (m Model) HighlightStyle(style lipgloss.Style) Model {
 // up/down/space/etc to let the user navigate the table and interact with it.
 func (m Model) Focused(focused bool) Model {
 	m.focused = focused
+
+	return m
+}
+
+// Filtered allows the table to show rows that match the filter.
+func (m Model) Filtered(filtered bool) Model {
+	m.filtered = filtered
+
+	return m
+}
+
+func (m Model) FilterMode() Model {
+	m.filterTextInput.Focus()
 
 	return m
 }

@@ -24,7 +24,7 @@ func TestSortSingleColumnAscAndDesc(t *testing.T) {
 
 	assertOrder := func(expectedList []string) {
 		for index, expected := range expectedList {
-			idVal, ok := model.sortedRows[index].Data[idColKey]
+			idVal, ok := model.GetVisibleRows()[index].Data[idColKey]
 
 			if expected != "" {
 				assert.True(t, ok)
@@ -47,7 +47,7 @@ func TestSortSingleColumnAscAndDesc(t *testing.T) {
 		}
 	}
 
-	assert.Len(t, model.sortedRows, len(rows))
+	assert.Len(t, model.GetVisibleRows(), len(rows))
 	assertOrder([]string{"", "a", "b", "c"})
 
 	model = model.SortByDesc(idColKey)
@@ -70,7 +70,7 @@ func TestSortSingleColumnIntsAsc(t *testing.T) {
 
 	assertOrder := func(expectedList []int) {
 		for index, expected := range expectedList {
-			idVal, ok := model.sortedRows[index].Data[idColKey]
+			idVal, ok := model.GetVisibleRows()[index].Data[idColKey]
 
 			assert.True(t, ok)
 
@@ -87,7 +87,7 @@ func TestSortSingleColumnIntsAsc(t *testing.T) {
 		}
 	}
 
-	assert.Len(t, model.sortedRows, len(rows))
+	assert.Len(t, model.GetVisibleRows(), len(rows))
 	assertOrder([]int{1, 2, 13})
 }
 
@@ -115,17 +115,17 @@ func TestSortTwoColumnsAscDescMix(t *testing.T) {
 	}).SortByAsc(nameKey).ThenSortByDesc(scoreKey)
 
 	assertVals := func(index int, name string, score int) {
-		actualName, ok := model.sortedRows[index].Data[nameKey].(string)
+		actualName, ok := model.GetVisibleRows()[index].Data[nameKey].(string)
 		assert.True(t, ok)
 
-		actualScore, ok := model.sortedRows[index].Data[scoreKey].(int)
+		actualScore, ok := model.GetVisibleRows()[index].Data[scoreKey].(int)
 		assert.True(t, ok)
 
 		assert.Equal(t, name, actualName)
 		assert.Equal(t, score, actualScore)
 	}
 
-	assert.Len(t, model.sortedRows, 4)
+	assert.Len(t, model.GetVisibleRows(), 4)
 
 	assertVals(0, "a", 100)
 	assertVals(1, "a", 75)
@@ -138,4 +138,45 @@ func TestSortTwoColumnsAscDescMix(t *testing.T) {
 	assertVals(1, "b", 101)
 	assertVals(2, "a", 75)
 	assertVals(3, "a", 100)
+}
+
+func TestGetSortedRows(t *testing.T) {
+	sortColumns := []sortColumn{
+		{
+			columnKey: "cb",
+			direction: 1,
+		},
+		{
+			columnKey: "ca",
+			direction: 0,
+		},
+	}
+	rows := getSortedRows(sortColumns, []Row{
+		NewRow(map[string]interface{}{
+			"ca": "2",
+			"cb": "t-1",
+		}),
+		NewRow(map[string]interface{}{
+			"ca": "1",
+			"cb": "t-2",
+		}),
+		NewRow(map[string]interface{}{
+			"ca": "3",
+			"cb": "t-3",
+		}),
+		NewRow(map[string]interface{}{
+			"ca": "3",
+			"cb": "t-2",
+		}),
+	})
+	assert.Len(t, rows, 4)
+	assert.Equal(t, "1", rows[0].Data["ca"])
+	assert.Equal(t, "2", rows[1].Data["ca"])
+	assert.Equal(t, "3", rows[2].Data["ca"])
+	assert.Equal(t, "3", rows[3].Data["ca"])
+
+	assert.Equal(t, "t-2", rows[0].Data["cb"])
+	assert.Equal(t, "t-1", rows[1].Data["cb"])
+	assert.Equal(t, "t-3", rows[2].Data["cb"])
+	assert.Equal(t, "t-2", rows[3].Data["cb"])
 }

@@ -10,7 +10,8 @@ type Column struct {
 	Key   string
 	Width int
 
-	style lipgloss.Style
+	filterable bool
+	style      lipgloss.Style
 }
 
 // NewColumn creates a new column with the given information.
@@ -26,6 +27,12 @@ func NewColumn(key, title string, width int) Column {
 // WithStyle applies a style to the column as a whole.
 func (c Column) WithStyle(style lipgloss.Style) Column {
 	c.style = style.Copy().Width(c.Width)
+
+	return c
+}
+
+func (c Column) WithFiltered(filterable bool) Column {
+	c.filterable = filterable
 
 	return c
 }
