@@ -33,12 +33,56 @@ func TestUnfocusedDoesntMove(t *testing.T) {
 	assert.True(t, ok, "Failed to convert to string")
 
 	assert.Equal(t, "first", id, "Should still be on first row")
+
+	model, _ = model.Update(tea.KeyMsg{
+		Type: tea.KeyHome,
+	})
+}
+
+func TestPageKeysDoNothingWhenNoPages(t *testing.T) {
+	cols := []Column{
+		NewColumn("id", "ID", 3),
+	}
+
+	model := New(cols).WithRows([]Row{
+		NewRow(RowData{
+			"id": "first",
+		}),
+		NewRow(RowData{
+			"id": "second",
+		}),
+		NewRow(RowData{
+			"id": "third",
+		}),
+	}).Focused(true)
+
+	pageMoveKeys := []tea.Msg{
+		tea.KeyMsg{Type: tea.KeyLeft},
+		tea.KeyMsg{Type: tea.KeyRight},
+		tea.KeyMsg{Type: tea.KeyHome},
+		tea.KeyMsg{Type: tea.KeyEnd},
+	}
+
+	checkNoMove := func() string {
+		str, ok := model.HighlightedRow().Data["id"].(string)
+
+		assert.True(t, ok, "Failed to convert to string")
+
+		assert.Equal(t, "first", str, "Shouldn't move")
+
+		return str
+	}
+
+	for _, msg := range pageMoveKeys {
+		model, _ = model.Update(msg)
+		checkNoMove()
+	}
 }
 
 // This is a long test with a lot of movement keys pressed, that's okay because
 // it's simply repetitive and tracking the same kind of state change many times
 // nolint: funlen
-func TestFocusedMovesWhenMoveKeysPressed(t *testing.T) {
+func TestFocusedMovesWhenMoveKeysPressedPaged(t *testing.T) {
 	cols := []Column{
 		NewColumn("id", "ID", 3),
 	}
