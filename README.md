@@ -8,9 +8,9 @@
 
 A table component for the [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
 
-![Table with all features](https://user-images.githubusercontent.com/5923958/154851497-78a28031-db82-4a95-a4c7-dae5b0d6cf00.png)
+![Styled table](https://user-images.githubusercontent.com/5923958/156777260-56262f95-b136-43f3-a6bf-a2e416ece74f.png)
 
-[View above sample source code](./examples/features/main.go)
+[View above sample source code](./examples/pokemon/main.go)
 
 ## Features
 
