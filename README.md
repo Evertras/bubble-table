@@ -36,6 +36,9 @@ Can make rows selectable, and fetch the current selections.
 Pagination can be set with a given page size, which automatically generates a
 simple footer to show the current page and total pages.
 
+Built-in filtering can be enabled by setting any columns as filterable, using
+a text box in the footer and `/` (customizable by keybind) to start filtering.
+
 Columns can be sorted in either ascending or descending order.  Multiple columns
 can be specified in a row.  If multiple columns are specified, first the table
 is sorted by the first specified column, then each group within that column is
