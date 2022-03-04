@@ -59,6 +59,34 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	return m, cmd
 }
 
+func (m *Model) handleKeypress(msg tea.KeyMsg) {
+	switch {
+	case key.Matches(msg, m.keyMap.RowDown):
+		m.moveHighlightDown()
+
+	case key.Matches(msg, m.keyMap.RowUp):
+		m.moveHighlightUp()
+
+	case key.Matches(msg, m.keyMap.RowSelectToggle):
+		m.toggleSelect()
+
+	case key.Matches(msg, m.keyMap.PageDown):
+		m.pageDown()
+
+	case key.Matches(msg, m.keyMap.PageUp):
+		m.pageUp()
+
+	case key.Matches(msg, m.keyMap.PageFirst):
+		m.pageFirst()
+
+	case key.Matches(msg, m.keyMap.PageLast):
+		m.pageLast()
+
+	case key.Matches(msg, m.keyMap.Filter):
+		m.filterTextInput.Focus()
+	}
+}
+
 // Update responds to input from the user or other messages from Bubble Tea.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focused {
@@ -71,25 +99,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.keyMap.RowDown):
-			m.moveHighlightDown()
-
-		case key.Matches(msg, m.keyMap.RowUp):
-			m.moveHighlightUp()
-
-		case key.Matches(msg, m.keyMap.RowSelectToggle):
-			m.toggleSelect()
-
-		case key.Matches(msg, m.keyMap.PageDown):
-			m.pageDown()
-
-		case key.Matches(msg, m.keyMap.PageUp):
-			m.pageUp()
-
-		case key.Matches(msg, m.keyMap.Filter):
-			m.filterTextInput.Focus()
-		}
+		m.handleKeypress(msg)
 	}
 
 	return m, nil

@@ -33,9 +33,56 @@ func TestUnfocusedDoesntMove(t *testing.T) {
 	assert.True(t, ok, "Failed to convert to string")
 
 	assert.Equal(t, "first", id, "Should still be on first row")
+
+	model, _ = model.Update(tea.KeyMsg{
+		Type: tea.KeyHome,
+	})
 }
 
-func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
+func TestPageKeysDoNothingWhenNoPages(t *testing.T) {
+	cols := []Column{
+		NewColumn("id", "ID", 3),
+	}
+
+	model := New(cols).WithRows([]Row{
+		NewRow(RowData{
+			"id": "first",
+		}),
+		NewRow(RowData{
+			"id": "second",
+		}),
+		NewRow(RowData{
+			"id": "third",
+		}),
+	}).Focused(true)
+
+	pageMoveKeys := []tea.Msg{
+		tea.KeyMsg{Type: tea.KeyLeft},
+		tea.KeyMsg{Type: tea.KeyRight},
+		tea.KeyMsg{Type: tea.KeyHome},
+		tea.KeyMsg{Type: tea.KeyEnd},
+	}
+
+	checkNoMove := func() string {
+		str, ok := model.HighlightedRow().Data["id"].(string)
+
+		assert.True(t, ok, "Failed to convert to string")
+
+		assert.Equal(t, "first", str, "Shouldn't move")
+
+		return str
+	}
+
+	for _, msg := range pageMoveKeys {
+		model, _ = model.Update(msg)
+		checkNoMove()
+	}
+}
+
+// This is a long test with a lot of movement keys pressed, that's okay because
+// it's simply repetitive and tracking the same kind of state change many times
+// nolint: funlen
+func TestFocusedMovesWhenMoveKeysPressedPaged(t *testing.T) {
 	cols := []Column{
 		NewColumn("id", "ID", 3),
 	}
@@ -57,6 +104,8 @@ func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
 	keyLeft := tea.KeyMsg{Type: tea.KeyLeft}
 	keyRight := tea.KeyMsg{Type: tea.KeyRight}
+	keyHome := tea.KeyMsg{Type: tea.KeyHome}
+	keyEnd := tea.KeyMsg{Type: tea.KeyEnd}
 
 	curID := func() string {
 		str, ok := model.HighlightedRow().Data["id"].(string)
@@ -91,6 +140,21 @@ func TestFocusedMovesWhenArrowsPressed(t *testing.T) {
 
 	model, _ = model.Update(keyLeft)
 	assert.Equal(t, "first", curID(), "Moving left should move back to first page")
+
+	model, _ = model.Update(keyDown)
+	assert.Equal(t, "second", curID(), "Should be back down to second row")
+
+	model, _ = model.Update(keyHome)
+	assert.Equal(t, "first", curID(), "Hitting home should go to first page and select first row")
+
+	model, _ = model.Update(keyHome)
+	assert.Equal(t, "first", curID(), "Hitting home a second time should not move pages")
+
+	model, _ = model.Update(keyEnd)
+	assert.Equal(t, "third", curID(), "Hitting end should move to last page")
+
+	model, _ = model.Update(keyEnd)
+	assert.Equal(t, "third", curID(), "Hitting end a second time should not move pages")
 }
 
 func TestFocusedMovesWithCustomKeyMap(t *testing.T) {

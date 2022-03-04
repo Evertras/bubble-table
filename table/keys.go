@@ -9,8 +9,10 @@ type KeyMap struct {
 
 	RowSelectToggle key.Binding
 
-	PageDown key.Binding
-	PageUp   key.Binding
+	PageDown  key.Binding
+	PageUp    key.Binding
+	PageFirst key.Binding
+	PageLast  key.Binding
 
 	Filter key.Binding
 }
@@ -32,6 +34,12 @@ func DefaultKeyMap() KeyMap {
 		),
 		PageUp: key.NewBinding(
 			key.WithKeys("left", "h", "pgup"),
+		),
+		PageFirst: key.NewBinding(
+			key.WithKeys("home", "g"),
+		),
+		PageLast: key.NewBinding(
+			key.WithKeys("end", "G"),
 		),
 		Filter: key.NewBinding(
 			key.WithKeys("/"),
