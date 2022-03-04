@@ -26,30 +26,33 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 		return true
 	}
 
+	checkedAny := false
+
 	for _, column := range columns {
 		if !column.filterable {
 			continue
 		}
+
+		checkedAny = true
+
 		data, ok := row.Data[column.Key]
+
 		if !ok {
 			continue
 		}
+
 		switch dataV := data.(type) {
 		case string:
 			if strings.Contains(strings.ToLower(dataV), strings.ToLower(filter)) {
 				return true
 			}
+
 		case fmt.Stringer:
 			if strings.Contains(strings.ToLower(dataV.String()), strings.ToLower(filter)) {
 				return true
 			}
-
-			return false
-		default:
-
-			return false
 		}
 	}
 
-	return false
+	return !checkedAny
 }
