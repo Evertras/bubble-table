@@ -14,8 +14,10 @@ func (m Model) renderFooter() string {
 		return ""
 	}
 
+	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(m.totalWidth)
+
 	if m.staticFooter != "" {
-		return m.border.styleFooter.Width(m.totalWidth).Render(m.staticFooter)
+		return styleFooter.Render(m.staticFooter)
 	}
 
 	sections := []string{}
@@ -30,8 +32,6 @@ func (m Model) renderFooter() string {
 	}
 
 	footerText := strings.Join(sections, " ")
-
-	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(m.totalWidth)
 
 	return styleFooter.Render(footerText)
 }
