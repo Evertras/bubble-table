@@ -68,15 +68,15 @@ func TestIsRowMatched(t *testing.T) {
 func TestGetFilteredRowsNoColumnFiltered(t *testing.T) {
 	columns := []Column{NewColumn("title", "title", 10)}
 	rows := []Row{
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "BBB",
 			"description": "",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "CCC",
 			"description": "",
 		}),
@@ -111,15 +111,16 @@ func TestGetFilteredRowsUnfiltered(t *testing.T) {
 func TestGetFilteredRowsFiltered(t *testing.T) {
 	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
 	rows := []Row{
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "BBB",
 			"description": "",
 		}),
-		NewRow(map[string]interface{}{}),
+		// Empty
+		NewRow(RowData{}),
 	}
 	model := New(columns).WithRows(rows).Filtered(true)
 	model.filterTextInput.SetValue("AaA")

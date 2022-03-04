@@ -152,19 +152,19 @@ func TestGetSortedRows(t *testing.T) {
 		},
 	}
 	rows := getSortedRows(sortColumns, []Row{
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"ca": "2",
 			"cb": "t-1",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"ca": "1",
 			"cb": "t-2",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"ca": "3",
 			"cb": "t-3",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"ca": "3",
 			"cb": "t-2",
 		}),
