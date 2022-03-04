@@ -20,7 +20,9 @@ func NewColumn(key, title string, width int) Column {
 		Key:   key,
 		Title: title,
 		Width: width,
-		style: lipgloss.NewStyle().Width(width),
+
+		filterable: false,
+		style:      lipgloss.NewStyle().Width(width),
 	}
 }
 

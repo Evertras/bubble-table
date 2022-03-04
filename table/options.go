@@ -90,7 +90,8 @@ func (m Model) Filtered(filtered bool) Model {
 	return m
 }
 
-func (m Model) FilterMode() Model {
+// StartFilterTyping focuses the text input to allow user typing to filter.
+func (m Model) StartFilterTyping() Model {
 	m.filterTextInput.Focus()
 
 	return m

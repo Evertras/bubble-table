@@ -193,14 +193,58 @@ func TestSelectingRowToggles(t *testing.T) {
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
 
 	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected to start")
+	assert.Len(t, model.SelectedRows(), 0)
 
 	model, _ = model.Update(keyEnter)
 	assert.True(t, model.GetVisibleRows()[0].selected, "Row should be selected after first toggle")
+	assert.Len(t, model.SelectedRows(), 1)
 
 	model, _ = model.Update(keyEnter)
 	assert.False(t, model.GetVisibleRows()[0].selected, "Row should not be selected after second toggle")
+	assert.Len(t, model.SelectedRows(), 0)
 
 	model, _ = model.Update(keyDown)
 	model, _ = model.Update(keyEnter)
 	assert.True(t, model.GetVisibleRows()[1].selected, "Second row should be selected after moving and toggling")
+}
+
+func TestFilterWithKeypresses(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+	}
+
+	model := New(cols).WithRows([]Row{
+		NewRow(RowData{"name": "Pikachu"}),
+		NewRow(RowData{"name": "Charmander"}),
+	}).Focused(true).Filtered(true)
+
+	hitKey := func(key rune) {
+		model, _ = model.Update(tea.KeyMsg{
+			Type:  tea.KeyRunes,
+			Runes: []rune{key},
+		})
+	}
+
+	hitEnter := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	}
+
+	visible := model.GetVisibleRows()
+
+	assert.Len(t, visible, 2)
+	hitKey(rune(model.KeyMap().Filter.Keys()[0][0]))
+	assert.Len(t, visible, 2)
+	hitKey('p')
+	hitKey('i')
+	hitKey('k')
+
+	visible = model.GetVisibleRows()
+
+	assert.Len(t, visible, 1)
+
+	hitEnter()
+
+	hitKey('x')
+
+	assert.Len(t, visible, 1)
 }

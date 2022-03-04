@@ -20,15 +20,15 @@ func TestGetVisibleRows(t *testing.T) {
 	input.SetValue("AAA")
 	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
 	rows := []Row{
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "BBB",
 			"description": "",
 		}),
-		NewRow(map[string]interface{}{
+		NewRow(RowData{
 			"title":       "CCC",
 			"description": "",
 		}),

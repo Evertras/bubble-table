@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/stretchr/testify/assert"
 )
@@ -380,4 +381,76 @@ func TestSimple3x3StyleOverridesAsBaseColumnRowCell(t *testing.T) {
 	rendered := model.View()
 
 	assert.Equal(t, expectedTable, rendered)
+}
+
+// This is a long test due to typing and multiple big table strings, that's okay
+// nolint: funlen
+func Test3x3WithFilterFooter(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4).WithFiltered(true),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).Filtered(true).Focused(true)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃ 2,2┃ 3,2┃
+┃ 1,3┃ 2,3┃ 3,3┃
+┣━━━━┻━━━━┻━━━━┫
+┃              ┃
+┗━━━━━━━━━━━━━━┛`
+
+	assert.Equal(t, expectedTable, model.View())
+
+	hitKey := func(key rune) {
+		model, _ = model.Update(
+			tea.KeyMsg{
+				Type:  tea.KeyRunes,
+				Runes: []rune{key},
+			})
+	}
+
+	hitKey('/')
+	hitKey('3')
+
+	// The byte code near the bottom is a block cursor from the text box
+	const expectedFilteredTypingTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,3┃ 2,3┃ 3,3┃
+┣━━━━┻━━━━┻━━━━┫
+┃           /3` + "\x1b[7m \x1b[0m" + `┃
+┗━━━━━━━━━━━━━━┛`
+
+	assert.Equal(t, expectedFilteredTypingTable, model.View())
+
+	const expectedFilteredDoneTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,3┃ 2,3┃ 3,3┃
+┣━━━━┻━━━━┻━━━━┫
+┃            /3┃
+┗━━━━━━━━━━━━━━┛`
+
+	model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+
+	assert.Equal(t, expectedFilteredDoneTable, model.View())
 }

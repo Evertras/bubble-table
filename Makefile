@@ -10,6 +10,10 @@ example-dimensions:
 example-updates:
 	@go run ./examples/updates/*.go
 
+.PHONY: example-filter
+example-filter:
+	@go run ./examples/filter/*.go
+
 .PHONY: example-pagination
 example-pagination:
 	@go run ./examples/pagination/*.go
@@ -18,7 +22,7 @@ example-pagination:
 example-simplest:
 	@go run ./examples/simplest/*.go
 
-.PHONY: example-simplest
+.PHONY: example-sorting
 example-sorting:
 	@go run ./examples/sorting/*.go
 
