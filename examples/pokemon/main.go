@@ -41,11 +41,11 @@ var (
 		BottomRight: "╯",
 		BottomLeft:  "╰",
 
-		TopJunction:    "┳",
-		LeftJunction:   "┣",
-		RightJunction:  "┫",
-		BottomJunction: "┻",
-		InnerJunction:  "╋",
+		TopJunction:    "┬",
+		LeftJunction:   "├",
+		RightJunction:  "┤",
+		BottomJunction: "┴",
+		InnerJunction:  "┼",
 
 		InnerDivider: "│",
 	}
@@ -116,13 +116,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	selected := m.pokeTable.HighlightedRow().Data[columnKeyName].(string)
-	return lipgloss.JoinVertical(
+	view := lipgloss.JoinVertical(
 		lipgloss.Left,
 		styleSubtle.Render("Press q or ctrl+c to quit - Sorted by # Conversations"),
 		styleSubtle.Render("Highlighted: " + selected),
 		styleSubtle.Render("https://www.nintendolife.com/news/2021/11/these-are-the-most-loved-and-most-hated-pokemon-according-to-a-new-study"),
 		m.pokeTable.View(),
 	) + "\n"
+
+	return lipgloss.NewStyle().MarginLeft(1).Render(view)
 }
 
 func main() {

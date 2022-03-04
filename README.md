@@ -3,12 +3,13 @@
 <p>
   <a href="https://github.com/Evertras/bubble-table/releases"><img src="https://img.shields.io/github/release/Evertras/bubble-table.svg" alt="Latest Release"></a>
   <a href="https://pkg.go.dev/github.com/evertras/bubble-table/table?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="GoDoc"></a>
-  <a href='https://coveralls.io/github/Evertras/bubble-table?branch=main'><img src='https://coveralls.io/repos/github/Evertras/bubble-table/badge.svg?branch=main' alt='Coverage Status'/></a>
+  <a href='https://coveralls.io/github/Evertras/bubble-table?branch=main'><img src='https://coveralls.io/repos/github/Evertras/bubble-table/badge.svg?branch=main&hash=abc' alt='Coverage Status'/></a>
 </p>
 
-A table component for the [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
+A customizable, interactive table component for the
+[Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
 
-![Styled table](https://user-images.githubusercontent.com/5923958/156777260-56262f95-b136-43f3-a6bf-a2e416ece74f.png)
+![Styled table](https://user-images.githubusercontent.com/5923958/156778142-cc1a32e1-1b1e-4a65-b699-187f39f0f946.png)
 
 [View above sample source code](./examples/pokemon/main.go)
 
