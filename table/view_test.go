@@ -207,6 +207,24 @@ func TestSingleRowWithFooterView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestSingleRowWithFooterViewAndBaseStyle(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithStaticFooter("Footer").WithBaseStyle(lipgloss.NewStyle().Align(lipgloss.Left))
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃1   ┃2   ┃3   ┃
+┣━━━━┻━━━━┻━━━━┫
+┃Footer        ┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestSingleColumnWithFooterView(t *testing.T) {
 	model := New([]Column{
 		NewColumn("id", "ID", 4),
