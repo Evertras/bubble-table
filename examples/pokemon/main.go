@@ -119,7 +119,7 @@ func (m Model) View() string {
 	view := lipgloss.JoinVertical(
 		lipgloss.Left,
 		styleSubtle.Render("Press q or ctrl+c to quit - Sorted by # Conversations"),
-		styleSubtle.Render("Highlighted: " + selected),
+		styleSubtle.Render("Highlighted: "+selected),
 		styleSubtle.Render("https://www.nintendolife.com/news/2021/11/these-are-the-most-loved-and-most-hated-pokemon-according-to-a-new-study"),
 		m.pokeTable.View(),
 	) + "\n"
