@@ -33,6 +33,8 @@ func (c Column) WithStyle(style lipgloss.Style) Column {
 	return c
 }
 
+// WithFiltered sets whether the column should be considered for filtering (true)
+// or not (false).
 func (c Column) WithFiltered(filterable bool) Column {
 	c.filterable = filterable
 
