@@ -124,6 +124,18 @@ func TestColumnUpdateWidths(t *testing.T) {
 				3, 5, 6, 3,
 			},
 		},
+		{
+			name: "Width is too small",
+			columns: []Column{
+				NewColumn("abc", "a", 5),
+				NewFlexColumn("flex", "flex", 2),
+				NewFlexColumn("flex", "flex", 1),
+			},
+			totalWidth: 3,
+			expectedWidths: []int{
+				5, 1, 1,
+			},
+		},
 	}
 
 	for _, test := range tests {

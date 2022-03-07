@@ -52,6 +52,8 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 			leftoverWidth--
 		}
 
+		width = max(width, 1)
+
 		cols[index].width = width
 
 		// Take borders into account for the actual style

@@ -26,7 +26,7 @@ type Model struct {
 func NewModel() Model {
 	return Model{
 		flexTable: table.New([]table.Column{
-			table.NewFlexColumn(columnKeyName, "Name", 1),
+			table.NewColumn(columnKeyName, "Name", 10),
 			table.NewFlexColumn(columnKeyElement, "Element", 1),
 			table.NewFlexColumn(columnKeyDescription, "Description", 3),
 		}).WithRows([]table.Row{
@@ -38,6 +38,7 @@ func NewModel() Model {
 			table.NewRow(table.RowData{
 				columnKeyName:    "Charmander",
 				columnKeyElement: "Fire",
+				// TODO: Fix double width string length limiting!
 				//columnKeyDescription: "直立した恐竜のような身体と、尻尾の先端に常に燃えている炎が特徴。",
 				columnKeyDescription: "Lots of fire",
 			}),
@@ -92,13 +93,13 @@ func (m *Model) recalculateTable() {
 
 func (m Model) View() string {
 	strs := []string{
-		"A flexible table that fills available space",
+		"A flexible table that fills available space (Name is fixed-width)",
 		fmt.Sprintf("Total margin: %d (left/right to adjust)", m.totalMargin),
 		"Press q or ctrl+c to quit",
 		m.flexTable.View(),
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Left, strs...)
+	return lipgloss.JoinVertical(lipgloss.Left, strs...) + "\n"
 }
 
 func main() {
