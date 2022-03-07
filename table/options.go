@@ -35,7 +35,7 @@ func (m Model) KeyMap() KeyMap {
 func (m Model) SelectableRows(selectable bool) Model {
 	m.selectableRows = selectable
 
-	hasSelectColumn := m.columns[0].Key == columnKeySelect
+	hasSelectColumn := m.columns[0].key == columnKeySelect
 
 	if hasSelectColumn != selectable {
 		if selectable {
@@ -124,7 +124,7 @@ func (m Model) WithSelectedText(unselected, selected string) Model {
 	m.selectedText = selected
 	m.unselectedText = unselected
 
-	if len(m.columns) > 0 && m.columns[0].Key == columnKeySelect {
+	if len(m.columns) > 0 && m.columns[0].key == columnKeySelect {
 		m.columns[0] = NewColumn(columnKeySelect, m.selectedText, len([]rune(m.selectedText)))
 		m.recalculateWidth()
 	}
@@ -136,6 +136,17 @@ func (m Model) WithSelectedText(unselected, selected string) Model {
 // This is useful for border colors, default alignment, default color, etc.
 func (m Model) WithBaseStyle(style lipgloss.Style) Model {
 	m.baseStyle = style
+
+	return m
+}
+
+// WithTargetWidth sets the total target width of the table, including borders.
+// This only takes effect when using flex columns.  When using flex columns,
+// columns will stretch to fill out to the total width given here.
+func (m Model) WithTargetWidth(totalWidth int) Model {
+	m.targetTotalWidth = totalWidth
+
+	m.recalculateWidth()
 
 	return m
 }

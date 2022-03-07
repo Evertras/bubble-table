@@ -35,7 +35,7 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 
 		checkedAny = true
 
-		data, ok := row.Data[column.Key]
+		data, ok := row.Data[column.key]
 
 		if !ok {
 			continue

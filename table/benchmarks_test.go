@@ -21,7 +21,7 @@ func benchTable(numColumns, numDataRows int) Model {
 		rowData := RowData{}
 
 		for columnIndex, column := range columns {
-			rowData[column.Key] = fmt.Sprintf("%d", columnIndex)
+			rowData[column.key] = fmt.Sprintf("%d", columnIndex)
 		}
 
 		rows = append(rows, NewRow(rowData))

@@ -21,7 +21,7 @@ func (m Model) View() string {
 	headerStyles := m.styleHeaders()
 
 	for columnIndex, column := range m.columns {
-		headerSection := limitStr(column.Title, column.Width)
+		headerSection := limitStr(column.title, column.width)
 		var borderStyle lipgloss.Style
 
 		if columnIndex == 0 {

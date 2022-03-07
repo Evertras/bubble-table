@@ -49,6 +49,9 @@ type Model struct {
 	filtered        bool
 	filterTextInput textinput.Model
 
+	// For flex columns
+	targetTotalWidth int
+
 	// Internal cached calculations for reference
 	totalWidth int
 }

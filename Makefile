@@ -2,21 +2,21 @@
 example-pokemon:
 	@go run ./examples/pokemon/*.go
 
-.PHONY: example-features
-example-features:
-	@go run ./examples/features/main.go
-
 .PHONY: example-dimensions
 example-dimensions:
 	@go run ./examples/dimensions/main.go
 
-.PHONY: example-updates
-example-updates:
-	@go run ./examples/updates/*.go
+.PHONY: example-features
+example-features:
+	@go run ./examples/features/main.go
 
 .PHONY: example-filter
 example-filter:
 	@go run ./examples/filter/*.go
+
+.PHONY: example-flex
+example-flex:
+	@go run ./examples/flex/*.go
 
 .PHONY: example-pagination
 example-pagination:
@@ -29,6 +29,10 @@ example-simplest:
 .PHONY: example-sorting
 example-sorting:
 	@go run ./examples/sorting/*.go
+
+.PHONY: example-updates
+example-updates:
+	@go run ./examples/updates/*.go
 
 .PHONY: test
 test:
