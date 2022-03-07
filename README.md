@@ -20,6 +20,8 @@ If you want to get started with a simple default table, [check the simplest exam
 
 Displays a table with a header, rows, footer, and borders.
 
+Columns can be fixed-width [or flexible width](./examples/flex/main.go).
+
 Border shape is customizable with a basic thick square default.  The color can
 be modified by applying a base style with `lipgloss.NewStyle().BorderForeground(...)`.
 
