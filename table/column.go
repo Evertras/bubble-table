@@ -6,9 +6,9 @@ import (
 
 // Column is a column in the table.
 type Column struct {
-	Title string
-	Key   string
-	Width int
+	title string
+	key   string
+	width int
 
 	filterable bool
 	style      lipgloss.Style
@@ -17,9 +17,9 @@ type Column struct {
 // NewColumn creates a new column with the given information.
 func NewColumn(key, title string, width int) Column {
 	return Column{
-		Key:   key,
-		Title: title,
-		Width: width,
+		key:   key,
+		title: title,
+		width: width,
 
 		filterable: false,
 		style:      lipgloss.NewStyle().Width(width),
@@ -28,7 +28,7 @@ func NewColumn(key, title string, width int) Column {
 
 // WithStyle applies a style to the column as a whole.
 func (c Column) WithStyle(style lipgloss.Style) Column {
-	c.style = style.Copy().Width(c.Width)
+	c.style = style.Copy().Width(c.width)
 
 	return c
 }

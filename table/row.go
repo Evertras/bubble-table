@@ -62,13 +62,13 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 		var str string
 
-		if column.Key == columnKeySelect {
+		if column.key == columnKeySelect {
 			if row.selected {
 				str = m.selectedText
 			} else {
 				str = m.unselectedText
 			}
-		} else if entry, exists := row.Data[column.Key]; exists {
+		} else if entry, exists := row.Data[column.key]; exists {
 			switch entry := entry.(type) {
 			case StyledCell:
 				str = fmt.Sprintf("%v", entry.Data)
@@ -94,7 +94,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 			cellStyle = cellStyle.Inherit(rowStyles.right)
 		}
 
-		cellStr := cellStyle.Render(limitStr(str, column.Width))
+		cellStr := cellStyle.Render(limitStr(str, column.width))
 
 		columnStrings = append(columnStrings, cellStr)
 	}

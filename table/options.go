@@ -35,7 +35,7 @@ func (m Model) KeyMap() KeyMap {
 func (m Model) SelectableRows(selectable bool) Model {
 	m.selectableRows = selectable
 
-	hasSelectColumn := m.columns[0].Key == columnKeySelect
+	hasSelectColumn := m.columns[0].key == columnKeySelect
 
 	if hasSelectColumn != selectable {
 		if selectable {
@@ -124,7 +124,7 @@ func (m Model) WithSelectedText(unselected, selected string) Model {
 	m.selectedText = selected
 	m.unselectedText = unselected
 
-	if len(m.columns) > 0 && m.columns[0].Key == columnKeySelect {
+	if len(m.columns) > 0 && m.columns[0].key == columnKeySelect {
 		m.columns[0] = NewColumn(columnKeySelect, m.selectedText, len([]rune(m.selectedText)))
 		m.recalculateWidth()
 	}
