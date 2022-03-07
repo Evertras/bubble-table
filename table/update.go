@@ -5,6 +5,20 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+func (m *Model) SetHighlightRow(index int) {
+	m.rowCursorIndex = index
+
+	if m.rowCursorIndex < 0 {
+		m.rowCursorIndex = 0
+	}
+
+	if m.rowCursorIndex >= len(m.GetVisibleRows()) {
+		m.rowCursorIndex = len(m.GetVisibleRows()) - 1
+	}
+
+	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
+}
+
 func (m *Model) moveHighlightUp() {
 	m.rowCursorIndex--
 
