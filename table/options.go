@@ -139,3 +139,14 @@ func (m Model) WithBaseStyle(style lipgloss.Style) Model {
 
 	return m
 }
+
+// WithTargetWidth sets the total target width of the table, including borders.
+// This only takes effect when using flex columns.  When using flex columns,
+// columns will stretch to fill out to the total width given here.
+func (m Model) WithTargetWidth(totalWidth int) Model {
+	m.targetTotalWidth = totalWidth
+
+	m.recalculateWidth()
+
+	return m
+}

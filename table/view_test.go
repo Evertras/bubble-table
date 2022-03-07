@@ -472,3 +472,53 @@ func Test3x3WithFilterFooter(t *testing.T) {
 
 	assert.Equal(t, expectedFilteredDoneTable, model.View())
 }
+
+func TestSingleCellFlexView(t *testing.T) {
+	model := New([]Column{
+		NewFlexColumn("id", "ID", 1),
+	}).WithTargetWidth(6)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSimpleFlex3x3(t *testing.T) {
+	model := New([]Column{
+		NewFlexColumn("1", "1", 1),
+		NewFlexColumn("2", "2", 1),
+		NewFlexColumn("3", "3", 2),
+	}).WithTargetWidth(20)
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━━━━━┓
+┃   1┃   2┃       3┃
+┣━━━━╋━━━━╋━━━━━━━━┫
+┃ 1,1┃ 2,1┃     3,1┃
+┃ 1,2┃ 2,2┃     3,2┃
+┃ 1,3┃ 2,3┃     3,3┃
+┗━━━━┻━━━━┻━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}

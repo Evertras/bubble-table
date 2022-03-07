@@ -10,11 +10,13 @@ type Column struct {
 	key   string
 	width int
 
+	flexFactor int
+
 	filterable bool
 	style      lipgloss.Style
 }
 
-// NewColumn creates a new column with the given information.
+// NewColumn creates a new fixed-width column with the given information.
 func NewColumn(key, title string, width int) Column {
 	return Column{
 		key:   key,
@@ -22,7 +24,20 @@ func NewColumn(key, title string, width int) Column {
 		width: width,
 
 		filterable: false,
-		style:      lipgloss.NewStyle().Width(width),
+	}
+}
+
+// NewFlexColumn creates a new flexible width column that tries to fill in the
+// total table width.  If multiple flex columns exist, each will measure against
+// each other depending on their flexFactor.  For example, if both have a flexFactor
+// of 1, they will have equal width.  If one has a flexFactor of 1 and the other
+// has a flexFactor of 3, the second will be 3 times larger than the first.
+func NewFlexColumn(key, title string, flexFactor int) Column {
+	return Column{
+		key:   key,
+		title: title,
+
+		flexFactor: max(flexFactor, 1),
 	}
 }
 
@@ -39,4 +54,8 @@ func (c Column) WithFiltered(filterable bool) Column {
 	c.filterable = filterable
 
 	return c
+}
+
+func (c *Column) isFlex() bool {
+	return c.flexFactor != 0
 }
