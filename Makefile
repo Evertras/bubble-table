@@ -1,10 +1,10 @@
-.PHONY: example-features
-example-features:
-	@go run ./examples/features/main.go
-
 .PHONY: example-pokemon
 example-pokemon:
 	@go run ./examples/pokemon/*.go
+
+.PHONY: example-features
+example-features:
+	@go run ./examples/features/main.go
 
 .PHONY: example-dimensions
 example-dimensions:
