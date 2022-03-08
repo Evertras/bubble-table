@@ -4,6 +4,23 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// WithHighlightedRow sets the highlighted row to the given index.
+func (m Model) WithHighlightedRow(index int) Model {
+	m.rowCursorIndex = index
+
+	if m.rowCursorIndex < 0 {
+		m.rowCursorIndex = 0
+	}
+
+	if m.rowCursorIndex >= len(m.GetVisibleRows()) {
+		m.rowCursorIndex = len(m.GetVisibleRows()) - 1
+	}
+
+	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
+
+	return m
+}
+
 // HeaderStyle sets the style to apply to the header text, such as color or bold.
 func (m Model) HeaderStyle(style lipgloss.Style) Model {
 	m.headerStyle = style.Copy()
