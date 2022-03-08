@@ -18,7 +18,7 @@ func (m Model) WithHighlightedRow(index int) Model {
 
 	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
 
-  return m
+	return m
 }
 
 // HeaderStyle sets the style to apply to the header text, such as color or bold.
