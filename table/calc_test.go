@@ -93,6 +93,16 @@ func TestGCD(t *testing.T) {
 			expected: 2,
 		},
 		{
+			x:        0,
+			y:        6,
+			expected: 6,
+		},
+		{
+			x:        12,
+			y:        0,
+			expected: 12,
+		},
+		{
 			x:        1000,
 			y:        100000,
 			expected: 1000,
