@@ -36,11 +36,9 @@ func NewModel() Model {
 				columnKeyDescription: "Super zappy mouse, handle with care",
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName:    "Charmander",
-				columnKeyElement: "Fire",
-				// TODO: Fix double width string length limiting!
-				//columnKeyDescription: "直立した恐竜のような身体と、尻尾の先端に常に燃えている炎が特徴。",
-				columnKeyDescription: "Lots of fire",
+				columnKeyName:        "Charmander",
+				columnKeyElement:     "Fire",
+				columnKeyDescription: "直立した恐竜のような身体と、尻尾の先端に常に燃えている炎が特徴。",
 			}),
 		}),
 	}
