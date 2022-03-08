@@ -13,6 +13,11 @@ A customizable, interactive table component for the
 
 [View above sample source code](./examples/pokemon/main.go)
 
+## Contributing
+
+Contributions welcome, please [check the contributions doc](./CONTRIBUTING.md)
+for a few helpful tips!
+
 ## Features
 
 For a code reference of all available features, please see the [full feature example](./examples/features/main.go).
@@ -142,10 +147,4 @@ make example-dimensions
 # Or run any of them directly
 go run ./examples/pagination/main.go
 ```
-
-## Contributing
-
-Contributions welcome, but since this is being actively developed for use in
-[Khan](https://github.com/evertras/khan) please check first by opening an issue
-or commenting on an existing one!
 
