@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// This function is only long because of repetitive test definitions, this is fine
+// nolint: funlen
 func TestLimitStr(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -55,6 +57,18 @@ func TestLimitStr(t *testing.T) {
 			input:    "✓✓✓",
 			max:      2,
 			expected: "✓…",
+		},
+		{
+			name:     "Unicode japenese equal",
+			input:    "直立",
+			max:      5,
+			expected: "直立",
+		},
+		{
+			name:     "Unicode japenese truncated",
+			input:    "直立した恐",
+			max:      5,
+			expected: "直立…",
 		},
 	}
 
