@@ -7,6 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/mattn/go-runewidth"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -521,4 +522,43 @@ func TestSimpleFlex3x3(t *testing.T) {
 	rendered := model.View()
 
 	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSimpleFlex3x3AtAllTargetWidths(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewFlexColumn("2", "2", 1),
+		NewFlexColumn("3", "3", 2),
+	}).WithTargetWidth(20)
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows)
+
+	for targetWidth := 15; targetWidth < 100; targetWidth++ {
+		model = model.WithTargetWidth(targetWidth)
+
+		rendered := model.View()
+
+		firstLine := strings.Split(rendered, "\n")[0]
+
+		assert.Equal(t, targetWidth, model.totalWidth)
+		assert.Equal(t, targetWidth, runewidth.StringWidth(firstLine))
+
+		if t.Failed() {
+			return
+		}
+	}
 }

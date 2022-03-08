@@ -1,13 +1,17 @@
 package table
 
 func (m *Model) recalculateWidth() {
-	total := 0
+	if m.targetTotalWidth != 0 {
+		m.totalWidth = m.targetTotalWidth
+	} else {
+		total := 0
 
-	for _, column := range m.columns {
-		total += column.width
+		for _, column := range m.columns {
+			total += column.width
+		}
+
+		m.totalWidth = total + len(m.columns) + 1
 	}
-
-	m.totalWidth = total + len(m.columns) - 1
 
 	updateColumnWidths(m.columns, m.targetTotalWidth)
 }
@@ -50,6 +54,11 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 		if leftoverWidth > 0 {
 			width++
 			leftoverWidth--
+		}
+
+		if index == len(cols)-1 {
+			width += leftoverWidth
+			leftoverWidth = 0
 		}
 
 		width = max(width, 1)
