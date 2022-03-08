@@ -40,7 +40,7 @@ func NewModel() Model {
 				columnKeyElement:     "Fire",
 				columnKeyDescription: "直立した恐竜のような身体と、尻尾の先端に常に燃えている炎が特徴。",
 			}),
-		}),
+		}).WithStaticFooter("A footer!"),
 	}
 }
 
@@ -92,7 +92,7 @@ func (m *Model) recalculateTable() {
 func (m Model) View() string {
 	strs := []string{
 		"A flexible table that fills available space (Name is fixed-width)",
-		fmt.Sprintf("Total margin: %d (left/right to adjust)", m.totalMargin),
+		fmt.Sprintf("Target size: %d (left/right to adjust)", m.totalWidth-m.totalMargin),
 		"Press q or ctrl+c to quit",
 		m.flexTable.View(),
 	}
