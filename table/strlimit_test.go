@@ -71,10 +71,16 @@ func TestLimitStr(t *testing.T) {
 			expected: "直立…",
 		},
 		{
-			name:     "multiline truncated",
+			name:     "Multiline truncated",
 			input:    "hi\nall",
 			max:      5,
 			expected: "hi…",
+		},
+		{
+			name:     "Multiline with exact max width",
+			input:    "hello\nall",
+			max:      5,
+			expected: "hell…",
 		},
 	}
 
