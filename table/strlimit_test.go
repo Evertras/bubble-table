@@ -70,6 +70,12 @@ func TestLimitStr(t *testing.T) {
 			max:      5,
 			expected: "直立…",
 		},
+		{
+			name:     "multiline truncated",
+			input:    "hi\nall",
+			max:      5,
+			expected: "hi…",
+		},
 	}
 
 	for _, test := range tests {
