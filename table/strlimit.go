@@ -13,15 +13,11 @@ func limitStr(str string, maxLen int) string {
 
 	newLineIndex := strings.Index(str, "\n")
 	if newLineIndex > -1 {
-		str = str[:newLineIndex]
+		str = str[:newLineIndex] + "…"
 	}
 
 	if runewidth.StringWidth(str) > maxLen {
 		return runewidth.Truncate(str, maxLen-1, "") + "…"
-	}
-
-	if newLineIndex > -1 {
-		return str + "…"
 	}
 
 	return str
