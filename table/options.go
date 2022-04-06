@@ -176,3 +176,57 @@ func (m Model) WithTargetWidth(totalWidth int) Model {
 
 	return m
 }
+
+// PageDown goes to the next page of a paginated table, wrapping to the first
+// page if the table is already on the last page.
+func (m Model) PageDown() Model {
+	m.pageDown()
+
+	return m
+}
+
+// PageUp goes to the previous page of a paginated table, wrapping to the
+// last page if the table is already on the first page.
+func (m Model) PageUp() Model {
+	m.pageUp()
+
+	return m
+}
+
+// PageLast goes to the last page of a paginated table.
+func (m Model) PageLast() Model {
+	m.pageLast()
+
+	return m
+}
+
+// PageFirst goes to the first page of a paginated table.
+func (m Model) PageFirst() Model {
+	m.pageFirst()
+
+	return m
+}
+
+// WithCurrentPage sets the current page (1 as the first page) of a paginated
+// table, bounded to the total number of pages.  The current selected row will
+// be set to the top row of the page if the page changed.
+func (m Model) WithCurrentPage(currentPage int) Model {
+	if m.pageSize == 0 || currentPage == m.CurrentPage() {
+		return m
+	}
+
+	if currentPage < 1 {
+		currentPage = 1
+	} else {
+		maxPages := m.MaxPages()
+
+		if currentPage > maxPages {
+			currentPage = maxPages
+		}
+	}
+
+	m.currentPage = currentPage - 1
+	m.rowCursorIndex = m.currentPage * m.pageSize
+
+	return m
+}
