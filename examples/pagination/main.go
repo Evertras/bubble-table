@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -90,6 +91,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.tableDefault = m.tableDefault.Focused(false)
 			m.tableWithRowIndices = m.tableWithRowIndices.Focused(true)
 
+		case "r":
+			m.tableDefault = m.tableDefault.WithCurrentPage(rand.Intn(m.tableDefault.MaxPages()) + 1)
+			m.tableWithRowIndices = m.tableWithRowIndices.WithCurrentPage(rand.Intn(m.tableWithRowIndices.MaxPages()) + 1)
+
 		case "z":
 			if m.rowCount < 10 {
 				break
@@ -122,7 +127,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("Table demo with pagination! Press left/right to move pages, or use page up/down\nPress 'a' for left table, 'b' for right table\nPress 'z' to reduce rows by 10, 'y' to increase rows by 10\nPress q or ctrl+c to quit\n\n")
+	body.WriteString("Table demo with pagination! Press left/right to move pages, or use page up/down, or 'r' to jump to a random page\nPress 'a' for left table, 'b' for right table\nPress 'z' to reduce rows by 10, 'y' to increase rows by 10\nPress q or ctrl+c to quit\n\n")
 
 	pad := lipgloss.NewStyle().Padding(1)
 
