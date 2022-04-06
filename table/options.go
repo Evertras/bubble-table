@@ -32,6 +32,15 @@ func (m Model) HeaderStyle(style lipgloss.Style) Model {
 func (m Model) WithRows(rows []Row) Model {
 	m.rows = rows
 
+	if m.pageSize != 0 {
+		maxPage := m.MaxPages()
+
+		// MaxPages is 1-index, currentPage is 0 index
+		if maxPage <= m.currentPage {
+			m.pageLast()
+		}
+	}
+
 	return m
 }
 

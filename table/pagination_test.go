@@ -363,3 +363,28 @@ func TestClearPagination(t *testing.T) {
 
 	assert.Equal(t, 0, model.expectedPageForRowIndex(11))
 }
+
+func TestPaginationSetsLastPageWithFewerRows(t *testing.T) {
+	const (
+		pageSize        = 10
+		numRowsOriginal = 30
+		numRowsAfter    = 18
+	)
+
+	model := genPaginationTable(numRowsOriginal, pageSize)
+	model.pageUp()
+
+	assert.Equal(t, 3, model.CurrentPage())
+
+	rows := []Row{}
+
+	for i := 1; i <= numRowsAfter; i++ {
+		rows = append(rows, NewRow(RowData{
+			"id": i,
+		}))
+	}
+
+	model = model.WithRows(rows)
+
+	assert.Equal(t, 2, model.CurrentPage())
+}
