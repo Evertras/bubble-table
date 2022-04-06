@@ -82,19 +82,11 @@ func (m *Model) pageUp() {
 }
 
 func (m *Model) pageFirst() {
-	if m.pageSize == 0 || len(m.GetVisibleRows()) <= m.pageSize {
-		return
-	}
-
 	m.currentPage = 0
 	m.rowCursorIndex = 0
 }
 
 func (m *Model) pageLast() {
-	if m.pageSize == 0 || len(m.GetVisibleRows()) <= m.pageSize {
-		return
-	}
-
 	m.currentPage = m.MaxPages() - 1
 	m.rowCursorIndex = m.currentPage * m.pageSize
 }

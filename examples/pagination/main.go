@@ -13,16 +13,11 @@ import (
 type Model struct {
 	tableDefault        table.Model
 	tableWithRowIndices table.Model
+
+	rowCount int
 }
 
-func genTable(columnCount int, rowCount int) table.Model {
-	columns := []table.Column{}
-
-	for column := 0; column < columnCount; column++ {
-		columnStr := fmt.Sprintf("%d", column+1)
-		columns = append(columns, table.NewColumn(columnStr, columnStr, 8))
-	}
-
+func genRows(columnCount int, rowCount int) []table.Row {
 	rows := []table.Row{}
 
 	for row := 1; row <= rowCount; row++ {
@@ -36,14 +31,39 @@ func genTable(columnCount int, rowCount int) table.Model {
 		rows = append(rows, table.NewRow(rowData))
 	}
 
+	return rows
+}
+
+func genTable(columnCount int, rowCount int) table.Model {
+	columns := []table.Column{}
+
+	for column := 0; column < columnCount; column++ {
+		columnStr := fmt.Sprintf("%d", column+1)
+		columns = append(columns, table.NewColumn(columnStr, columnStr, 8))
+	}
+
+	rows := genRows(columnCount, rowCount)
+
 	return table.New(columns).WithRows(rows).HeaderStyle(lipgloss.NewStyle().Bold(true))
 }
 
 func NewModel() Model {
-	return Model{
-		tableDefault:        genTable(3, 105).WithPageSize(10).Focused(true),
-		tableWithRowIndices: genTable(3, 105).WithPageSize(10).Focused(false),
+	const startingRowCount = 105
+
+	m := Model{
+		rowCount:            startingRowCount,
+		tableDefault:        genTable(3, startingRowCount).WithPageSize(10).Focused(true),
+		tableWithRowIndices: genTable(3, startingRowCount).WithPageSize(10).Focused(false),
 	}
+
+	m.regenTableRows()
+
+	return m
+}
+
+func (m *Model) regenTableRows() {
+	m.tableDefault = m.tableDefault.WithRows(genRows(3, m.rowCount))
+	m.tableWithRowIndices = m.tableWithRowIndices.WithRows(genRows(3, m.rowCount))
 }
 
 func (m Model) Init() tea.Cmd {
@@ -54,18 +74,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
-	)
-
-	m.tableDefault, cmd = m.tableDefault.Update(msg)
-	cmds = append(cmds, cmd)
-
-	m.tableWithRowIndices, cmd = m.tableWithRowIndices.Update(msg)
-	cmds = append(cmds, cmd)
-
-	// Write a custom footer
-	start, end := m.tableWithRowIndices.VisibleIndices()
-	m.tableWithRowIndices = m.tableWithRowIndices.WithStaticFooter(
-		fmt.Sprintf("%d-%d of %d", start+1, end+1, m.tableWithRowIndices.TotalRows()),
 	)
 
 	switch msg := msg.(type) {
@@ -81,8 +89,32 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "b":
 			m.tableDefault = m.tableDefault.Focused(false)
 			m.tableWithRowIndices = m.tableWithRowIndices.Focused(true)
+
+		case "z":
+			if m.rowCount < 10 {
+				break
+			}
+
+			m.rowCount -= 10
+			m.regenTableRows()
+
+		case "x":
+			m.rowCount += 10
+			m.regenTableRows()
 		}
 	}
+
+	m.tableDefault, cmd = m.tableDefault.Update(msg)
+	cmds = append(cmds, cmd)
+
+	m.tableWithRowIndices, cmd = m.tableWithRowIndices.Update(msg)
+	cmds = append(cmds, cmd)
+
+	// Write a custom footer
+	start, end := m.tableWithRowIndices.VisibleIndices()
+	m.tableWithRowIndices = m.tableWithRowIndices.WithStaticFooter(
+		fmt.Sprintf("%d-%d of %d", start+1, end+1, m.tableWithRowIndices.TotalRows()),
+	)
 
 	return m, tea.Batch(cmds...)
 }
@@ -90,7 +122,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("Table demo with pagination! Press left/right to move pages, or use page up/down\nPress 'a' for left table, 'b' for right table\nPress q or ctrl+c to quit\n\n")
+	body.WriteString("Table demo with pagination! Press left/right to move pages, or use page up/down\nPress 'a' for left table, 'b' for right table\nPress 'z' to reduce rows by 10, 'y' to increase rows by 10\nPress q or ctrl+c to quit\n\n")
 
 	pad := lipgloss.NewStyle().Padding(1)
 
