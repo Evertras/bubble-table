@@ -27,6 +27,11 @@ func NewModel() Model {
 	return Model{
 		flexTable: table.New([]table.Column{
 			table.NewColumn(columnKeyName, "Name", 10),
+			// This table uses flex columns, but it will still need a target
+			// width in order to know what width it should fill.  In this example
+			// the target width is set below in `recalculateTable`, which sets
+			// the table to the width of the screen to demonstrate resizing
+			// with flex columns.
 			table.NewFlexColumn(columnKeyElement, "Element", 1),
 			table.NewFlexColumn(columnKeyDescription, "Description", 3),
 		}).WithRows([]table.Row{
