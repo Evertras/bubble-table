@@ -31,7 +31,9 @@ func NewColumn(key, title string, width int) Column {
 // total table width.  If multiple flex columns exist, each will measure against
 // each other depending on their flexFactor.  For example, if both have a flexFactor
 // of 1, they will have equal width.  If one has a flexFactor of 1 and the other
-// has a flexFactor of 3, the second will be 3 times larger than the first.
+// has a flexFactor of 3, the second will be 3 times larger than the first.  You
+// must use WithTargetWidth if you have any flex columns, so that the table knows
+// how much width it should fill.
 func NewFlexColumn(key, title string, flexFactor int) Column {
 	return Column{
 		key:   key,
