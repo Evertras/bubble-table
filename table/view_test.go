@@ -562,3 +562,40 @@ func TestSimpleFlex3x3AtAllTargetWidths(t *testing.T) {
 		}
 	}
 }
+
+func TestViewResizesWhenColumnsChange(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": "1", "score": 3}),
+		NewRow(RowData{"id": "2", "score": 4}),
+	})
+
+	const expectedTableOriginal = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃   1┃
+┃   2┃
+┗━━━━┛`
+
+	// Lowercased, resized, and new column added
+	const expectedTableUpdated = `┏━━━━━┳━━━━━━┓
+┃   id┃ Score┃
+┣━━━━━╋━━━━━━┫
+┃    1┃     3┃
+┃    2┃     4┃
+┗━━━━━┻━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTableOriginal, rendered)
+
+	model = model.WithColumns([]Column{
+		NewColumn("id", "id", 5),
+		NewColumn("score", "Score", 6),
+	})
+
+	rendered = model.View()
+
+	assert.Equal(t, expectedTableUpdated, rendered)
+}

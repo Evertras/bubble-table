@@ -230,3 +230,15 @@ func (m Model) WithCurrentPage(currentPage int) Model {
 
 	return m
 }
+
+// WithColumns sets the visible columns for the table, so that columns can be
+// added/removed/resized or headers rewritten.
+func (m Model) WithColumns(columns []Column) Model {
+	// Deep copy to avoid edits
+	m.columns = make([]Column, len(columns))
+	copy(m.columns, columns)
+
+	m.recalculateWidth()
+
+	return m
+}
