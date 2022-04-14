@@ -32,14 +32,8 @@ type Model struct {
 }
 
 func NewModel() Model {
-	columns := []table.Column{
-		table.NewColumn(columnKeyID, "ID", 10),
-		table.NewColumn(columnKeyScore, "Score", 8),
-		table.NewColumn(columnKeyStatus, "Status", 10),
-	}
-
 	return Model{
-		table:       table.New(columns),
+		table:       table.New(generateColumns(0)),
 		updateDelay: time.Second,
 	}
 }
@@ -55,6 +49,25 @@ func refreshDataCmd() tea.Msg {
 		NewSomeData("another"),
 		NewSomeData("yay"),
 		NewSomeData("more"),
+	}
+}
+
+// Generate columns based on how many are critical to show some summary
+func generateColumns(numCritical int) []table.Column {
+	// Show how many critical there are
+	statusStr := fmt.Sprintf("Score (%d)", numCritical)
+	statusCol := table.NewColumn(columnKeyStatus, statusStr, 10)
+
+	if numCritical > 3 {
+		// This normally applies the critical style to everything in the column,
+		// but in this case we apply a row style which overrides it anyway.
+		statusCol = statusCol.WithStyle(styleCritical)
+	}
+
+	return []table.Column{
+		table.NewColumn(columnKeyID, "ID", 10),
+		table.NewColumn(columnKeyScore, "Score", 8),
+		statusCol,
 	}
 }
 
@@ -91,8 +104,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case []*SomeData:
 		m.data = msg
 
-		// Reapply the new data
-		m.table = m.table.WithRows(generateRowsFromData(m.data))
+		numCritical := 0
+
+		for _, d := range msg {
+			if d.Status == "Critical" {
+				numCritical++
+			}
+		}
+
+		// Reapply the new data and the new columns based on critical count
+		m.table = m.table.WithRows(generateRowsFromData(m.data)).WithColumns(generateColumns(numCritical))
 
 		// This can be from any source, but for demo purposes let's party!
 		delay := m.updateDelay
