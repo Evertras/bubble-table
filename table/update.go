@@ -50,7 +50,7 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if msg.Type == tea.KeyEnter || msg.Type == tea.KeyEscape {
+		if key.Matches(msg, m.keyMap.FilterBlur) {
 			m.filterTextInput.Blur()
 		}
 	}
