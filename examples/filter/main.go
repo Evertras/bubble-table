@@ -71,7 +71,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "esc", "q":
+		case "ctrl+c", "q":
 			cmds = append(cmds, tea.Quit)
 		}
 
@@ -84,7 +84,7 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	body.WriteString("A filtered simple default table\n" +
-		"Currently filter by Title and Author, press / to filter.\nPress q or ctrl+c to quit\n\n")
+		"Currently filter by Title and Author, press / + letters to start filtering, and escape to clear filter.\nPress q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.table.View())
 

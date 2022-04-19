@@ -14,7 +14,14 @@ type KeyMap struct {
 	PageFirst key.Binding
 	PageLast  key.Binding
 
+	// Filter allows the user to start typing and filter the rows.
 	Filter key.Binding
+
+	// FilterBlur is the key that stops the user's input from typing into the filter.
+	FilterBlur key.Binding
+
+	// FilterClear will clear the filter while it's blurred.
+	FilterClear key.Binding
 }
 
 // DefaultKeyMap returns a set of sensible defaults for controlling a focused table.
@@ -43,6 +50,12 @@ func DefaultKeyMap() KeyMap {
 		),
 		Filter: key.NewBinding(
 			key.WithKeys("/"),
+		),
+		FilterBlur: key.NewBinding(
+			key.WithKeys("enter", "esc"),
+		),
+		FilterClear: key.NewBinding(
+			key.WithKeys("esc"),
 		),
 	}
 }
