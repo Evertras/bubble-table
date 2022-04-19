@@ -14,7 +14,8 @@ type KeyMap struct {
 	PageFirst key.Binding
 	PageLast  key.Binding
 
-	Filter key.Binding
+	Filter      key.Binding
+	FilterClear key.Binding
 }
 
 // DefaultKeyMap returns a set of sensible defaults for controlling a focused table.
@@ -43,6 +44,9 @@ func DefaultKeyMap() KeyMap {
 		),
 		Filter: key.NewBinding(
 			key.WithKeys("/"),
+		),
+		FilterClear: key.NewBinding(
+			key.WithKeys("esc"),
 		),
 	}
 }

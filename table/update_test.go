@@ -293,6 +293,10 @@ func TestFilterWithKeypresses(t *testing.T) {
 		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	}
 
+	hitEscape := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEscape})
+	}
+
 	visible := model.GetVisibleRows()
 
 	assert.Len(t, visible, 2)
@@ -310,5 +314,13 @@ func TestFilterWithKeypresses(t *testing.T) {
 
 	hitKey('x')
 
+	visible = model.GetVisibleRows()
+
 	assert.Len(t, visible, 1)
+
+	hitEscape()
+
+	visible = model.GetVisibleRows()
+
+	assert.Len(t, visible, 2)
 }
