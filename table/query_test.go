@@ -23,7 +23,12 @@ func TestQuerySortColumns(t *testing.T) {
 
 	sorted[0].Direction = SortDirectionDesc
 
-	assert.NotEqual(t, model.sortOrder[0].Direction, sorted[0].Direction, "Should not have been able to modify actual values")
+	assert.NotEqual(
+		t,
+		model.sortOrder[0].Direction,
+		sorted[0].Direction,
+		"Should not have been able to modify actual values",
+	)
 }
 
 func TestGetFilterData(t *testing.T) {

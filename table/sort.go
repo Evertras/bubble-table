@@ -5,13 +5,18 @@ import (
 	"sort"
 )
 
+// SortDirection indicates whether a column should sort by ascending or descending.
 type SortDirection int
 
 const (
+	// SortDirectionAsc indicates the column should be in ascending order.
 	SortDirectionAsc SortDirection = iota
+
+	// SortDirectionDesc indicates the column should be in descending order.
 	SortDirectionDesc
 )
 
+// SortColumn describes which column should be sorted and how.
 type SortColumn struct {
 	ColumnKey string
 	Direction SortDirection
