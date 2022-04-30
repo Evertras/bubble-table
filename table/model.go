@@ -42,8 +42,9 @@ type Model struct {
 	pageSize    int
 	currentPage int
 
-	// Sorting, first sortColum will be last sorted
-	sortOrder []sortColumn
+	// Sorting, where a stable sort is applied from first element to last so
+	// that elements are grouped by the later elements.
+	sortOrder []SortColumn
 
 	// Filter
 	filtered        bool

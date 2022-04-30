@@ -5,16 +5,21 @@ import (
 	"sort"
 )
 
-type sortDirection int
+// SortDirection indicates whether a column should sort by ascending or descending.
+type SortDirection int
 
 const (
-	sortDirectionAsc sortDirection = iota
-	sortDirectionDesc
+	// SortDirectionAsc indicates the column should be in ascending order.
+	SortDirectionAsc SortDirection = iota
+
+	// SortDirectionDesc indicates the column should be in descending order.
+	SortDirectionDesc
 )
 
-type sortColumn struct {
-	columnKey string
-	direction sortDirection
+// SortColumn describes which column should be sorted and how.
+type SortColumn struct {
+	ColumnKey string
+	Direction SortDirection
 }
 
 // SortByAsc sets the main sorting column to the given key, in ascending order.
@@ -22,10 +27,10 @@ type sortColumn struct {
 // this function is called.  Values are sorted as numbers if possible, or just
 // as simple string comparisons if not numbers.
 func (m Model) SortByAsc(columnKey string) Model {
-	m.sortOrder = []sortColumn{
+	m.sortOrder = []SortColumn{
 		{
-			columnKey: columnKey,
-			direction: sortDirectionAsc,
+			ColumnKey: columnKey,
+			Direction: SortDirectionAsc,
 		},
 	}
 
@@ -37,10 +42,10 @@ func (m Model) SortByAsc(columnKey string) Model {
 // this function is called.  Values are sorted as numbers if possible, or just
 // as simple string comparisons if not numbers.
 func (m Model) SortByDesc(columnKey string) Model {
-	m.sortOrder = []sortColumn{
+	m.sortOrder = []SortColumn{
 		{
-			columnKey: columnKey,
-			direction: sortDirectionDesc,
+			ColumnKey: columnKey,
+			Direction: SortDirectionDesc,
 		},
 	}
 
@@ -50,10 +55,10 @@ func (m Model) SortByDesc(columnKey string) Model {
 // ThenSortByAsc provides a secondary sort after the first, in ascending order.
 // Can be chained multiple times, applying to smaller subgroups each time.
 func (m Model) ThenSortByAsc(columnKey string) Model {
-	m.sortOrder = append([]sortColumn{
+	m.sortOrder = append([]SortColumn{
 		{
-			columnKey: columnKey,
-			direction: sortDirectionAsc,
+			ColumnKey: columnKey,
+			Direction: SortDirectionAsc,
 		},
 	}, m.sortOrder...)
 
@@ -63,10 +68,10 @@ func (m Model) ThenSortByAsc(columnKey string) Model {
 // ThenSortByDesc provides a secondary sort after the first, in descending order.
 // Can be chained multiple times, applying to smaller subgroups each time.
 func (m Model) ThenSortByDesc(columnKey string) Model {
-	m.sortOrder = append([]sortColumn{
+	m.sortOrder = append([]SortColumn{
 		{
-			columnKey: columnKey,
-			direction: sortDirectionDesc,
+			ColumnKey: columnKey,
+			Direction: SortDirectionDesc,
 		},
 	}, m.sortOrder...)
 
@@ -75,7 +80,7 @@ func (m Model) ThenSortByDesc(columnKey string) Model {
 
 type sortableTable struct {
 	rows     []Row
-	byColumn sortColumn
+	byColumn SortColumn
 }
 
 func (s *sortableTable) Len() int {
@@ -118,28 +123,28 @@ func (s *sortableTable) extractNumber(i int, column string) (float64, bool) {
 }
 
 func (s *sortableTable) Less(first, second int) bool {
-	firstNum, firstNumIsValid := s.extractNumber(first, s.byColumn.columnKey)
-	secondNum, secondNumIsValid := s.extractNumber(second, s.byColumn.columnKey)
+	firstNum, firstNumIsValid := s.extractNumber(first, s.byColumn.ColumnKey)
+	secondNum, secondNumIsValid := s.extractNumber(second, s.byColumn.ColumnKey)
 
 	if firstNumIsValid && secondNumIsValid {
-		if s.byColumn.direction == sortDirectionAsc {
+		if s.byColumn.Direction == SortDirectionAsc {
 			return firstNum < secondNum
 		}
 
 		return firstNum > secondNum
 	}
 
-	firstVal := s.extractString(first, s.byColumn.columnKey)
-	secondVal := s.extractString(second, s.byColumn.columnKey)
+	firstVal := s.extractString(first, s.byColumn.ColumnKey)
+	secondVal := s.extractString(second, s.byColumn.ColumnKey)
 
-	if s.byColumn.direction == sortDirectionAsc {
+	if s.byColumn.Direction == SortDirectionAsc {
 		return firstVal < secondVal
 	}
 
 	return firstVal > secondVal
 }
 
-func getSortedRows(sortOrder []sortColumn, rows []Row) []Row {
+func getSortedRows(sortOrder []SortColumn, rows []Row) []Row {
 	var sortedRows []Row
 	if len(sortOrder) == 0 {
 		sortedRows = rows
