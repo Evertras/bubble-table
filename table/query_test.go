@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestQuerySortColumns(t *testing.T) {
+func TestGetColumnSorting(t *testing.T) {
 	cols := []Column{
 		NewColumn("a", "a", 3),
 		NewColumn("b", "b", 3),
@@ -15,7 +15,7 @@ func TestQuerySortColumns(t *testing.T) {
 
 	model := New(cols).SortByAsc("b")
 
-	sorted := model.GetSortedColumns()
+	sorted := model.GetColumnSorting()
 
 	assert.Len(t, sorted, 1, "Should only have one column")
 	assert.Equal(t, sorted[0].ColumnKey, "b", "Should sort column b")

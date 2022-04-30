@@ -1,10 +1,10 @@
 package table
 
-// GetSortedColumns returns the current sorting rules for the table as a list of
+// GetColumnSorting returns the current sorting rules for the table as a list of
 // SortColumns, which are applied from first to last.  This means that data will
 // be grouped by the later elements in the list.  The returned list is a copy
 // and modifications will have no effect.
-func (m *Model) GetSortedColumns() []SortColumn {
+func (m *Model) GetColumnSorting() []SortColumn {
 	c := make([]SortColumn, len(m.sortOrder))
 
 	copy(c, m.sortOrder)
