@@ -141,14 +141,14 @@ func TestSortTwoColumnsAscDescMix(t *testing.T) {
 }
 
 func TestGetSortedRows(t *testing.T) {
-	sortColumns := []sortColumn{
+	sortColumns := []SortColumn{
 		{
-			columnKey: "cb",
-			direction: 1,
+			ColumnKey: "cb",
+			Direction: SortDirectionDesc,
 		},
 		{
-			columnKey: "ca",
-			direction: 0,
+			ColumnKey: "ca",
+			Direction: SortDirectionAsc,
 		},
 	}
 	rows := getSortedRows(sortColumns, []Row{
