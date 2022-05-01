@@ -3,7 +3,8 @@ package table
 import (
 	"strings"
 
-	"github.com/mattn/go-runewidth"
+	"github.com/muesli/reflow/ansi"
+	"github.com/muesli/reflow/truncate"
 )
 
 func limitStr(str string, maxLen int) string {
@@ -16,8 +17,8 @@ func limitStr(str string, maxLen int) string {
 		str = str[:newLineIndex] + "…"
 	}
 
-	if runewidth.StringWidth(str) > maxLen {
-		return runewidth.Truncate(str, maxLen-1, "") + "…"
+	if ansi.PrintableRuneWidth(str) > maxLen {
+		return truncate.StringWithTail(str, uint(maxLen), "…")
 	}
 
 	return str
