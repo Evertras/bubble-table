@@ -84,15 +84,15 @@ func TestLimitStr(t *testing.T) {
 		},
 		{
 			name:     "Embedded ANSI control sequences with exact max width",
-			input:    "\x1b[0m\x1b[0mtest",
+			input:    "\x1b[31;41mtest\x1b[0m",
 			max:      4,
-			expected: "\x1b[0m\x1b[0mtest",
+			expected: "\x1b[31;41mtest\x1b[0m",
 		},
 		{
 			name:     "Embedded ANSI control sequences with truncation",
-			input:    "\x1b[0m\x1b[0mt\x1b[0me\x1b[0ms\x1b[0mt",
+			input:    "\x1b[31;41mte\x1b[0m\x1b[0m\x1b[0mst",
 			max:      3,
-			expected: "\x1b[0m\x1b[0mt\x1b[0me\x1b[0m…",
+			expected: "\x1b[31;41mte\x1b[0m\x1b[0m\x1b[0m…",
 		},
 	}
 
