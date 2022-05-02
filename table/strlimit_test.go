@@ -2,8 +2,8 @@ package table
 
 import (
 	"testing"
-	"unicode/utf8"
 
+	"github.com/muesli/reflow/ansi"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -82,6 +82,18 @@ func TestLimitStr(t *testing.T) {
 			max:      5,
 			expected: "hell…",
 		},
+		{
+			name:     "Embedded ANSI control sequences with exact max width",
+			input:    "\x1b[31;41mtest\x1b[0m",
+			max:      4,
+			expected: "\x1b[31;41mtest\x1b[0m",
+		},
+		{
+			name:     "Embedded ANSI control sequences with truncation",
+			input:    "\x1b[31;41mte\x1b[0m\x1b[0m\x1b[0mst",
+			max:      3,
+			expected: "\x1b[31;41mte\x1b[0m\x1b[0m\x1b[0m…",
+		},
 	}
 
 	for _, test := range tests {
@@ -89,7 +101,7 @@ func TestLimitStr(t *testing.T) {
 			output := limitStr(test.input, test.max)
 
 			assert.Equal(t, test.expected, output)
-			assert.LessOrEqual(t, utf8.RuneCountInString(output), test.max)
+			assert.LessOrEqual(t, ansi.PrintableRuneWidth(output), test.max)
 		})
 	}
 }
