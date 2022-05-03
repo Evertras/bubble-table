@@ -24,7 +24,7 @@ func TestSortSingleColumnAscAndDesc(t *testing.T) {
 
 	assertOrder := func(expectedList []string) {
 		for index, expected := range expectedList {
-			idVal, ok := model.GetVisibleRows()[index].Data[idColKey]
+			idVal, ok := model.GetAvailableRows()[index].Data[idColKey]
 
 			if expected != "" {
 				assert.True(t, ok)
@@ -47,7 +47,7 @@ func TestSortSingleColumnAscAndDesc(t *testing.T) {
 		}
 	}
 
-	assert.Len(t, model.GetVisibleRows(), len(rows))
+	assert.Len(t, model.GetAvailableRows(), len(rows))
 	assertOrder([]string{"", "a", "b", "c"})
 
 	model = model.SortByDesc(idColKey)
@@ -70,7 +70,7 @@ func TestSortSingleColumnIntsAsc(t *testing.T) {
 
 	assertOrder := func(expectedList []int) {
 		for index, expected := range expectedList {
-			idVal, ok := model.GetVisibleRows()[index].Data[idColKey]
+			idVal, ok := model.GetAvailableRows()[index].Data[idColKey]
 
 			assert.True(t, ok)
 
@@ -87,7 +87,7 @@ func TestSortSingleColumnIntsAsc(t *testing.T) {
 		}
 	}
 
-	assert.Len(t, model.GetVisibleRows(), len(rows))
+	assert.Len(t, model.GetAvailableRows(), len(rows))
 	assertOrder([]int{1, 2, 13})
 }
 
@@ -115,17 +115,17 @@ func TestSortTwoColumnsAscDescMix(t *testing.T) {
 	}).SortByAsc(nameKey).ThenSortByDesc(scoreKey)
 
 	assertVals := func(index int, name string, score int) {
-		actualName, ok := model.GetVisibleRows()[index].Data[nameKey].(string)
+		actualName, ok := model.GetAvailableRows()[index].Data[nameKey].(string)
 		assert.True(t, ok)
 
-		actualScore, ok := model.GetVisibleRows()[index].Data[scoreKey].(int)
+		actualScore, ok := model.GetAvailableRows()[index].Data[scoreKey].(int)
 		assert.True(t, ok)
 
 		assert.Equal(t, name, actualName)
 		assert.Equal(t, score, actualScore)
 	}
 
-	assert.Len(t, model.GetVisibleRows(), 4)
+	assert.Len(t, model.GetAvailableRows(), 4)
 
 	assertVals(0, "a", 100)
 	assertVals(1, "a", 75)

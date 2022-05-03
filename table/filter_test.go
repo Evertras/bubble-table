@@ -157,7 +157,7 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 	}
 	model := New(columns).WithRows(rows).Filtered(true).WithPageSize(1)
 	model = model.PageDown()
-	assert.Len(t, model.GetVisibleRows(), 5)
+	assert.Len(t, model.GetAvailableRows(), 5)
 	assert.Equal(t, 1, model.PageSize())
 	assert.Equal(t, 2, model.CurrentPage())
 	assert.Equal(t, 5, model.MaxPages())
@@ -165,7 +165,7 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 
 	model.filterTextInput.SetValue("c")
 	model, _ = model.updateFilterTextInput(tea.KeyMsg{})
-	assert.Len(t, model.GetVisibleRows(), 1)
+	assert.Len(t, model.GetAvailableRows(), 1)
 	assert.Equal(t, 1, model.PageSize())
 	assert.Equal(t, 1, model.CurrentPage())
 	assert.Equal(t, 1, model.MaxPages())
@@ -173,7 +173,7 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 
 	model.filterTextInput.SetValue("not-exist")
 	model, _ = model.updateFilterTextInput(tea.KeyMsg{})
-	assert.Len(t, model.GetVisibleRows(), 0)
+	assert.Len(t, model.GetAvailableRows(), 0)
 	assert.Equal(t, 1, model.PageSize())
 	assert.Equal(t, 1, model.CurrentPage())
 	assert.Equal(t, 1, model.MaxPages())

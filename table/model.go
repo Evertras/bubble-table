@@ -87,8 +87,15 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-// GetVisibleRows return sorted and filtered rows.
+// GetVisibleRows is the legacy name of GetAvailableRows
+// you should use GetAvailableRows instead.
+// TODO: remove this in a future release.
 func (m Model) GetVisibleRows() []Row {
+	return m.GetAvailableRows()
+}
+
+// GetAvailableRows return sorted and filtered rows.
+func (m Model) GetAvailableRows() []Row {
 	rows := make([]Row, len(m.rows))
 	copy(rows, m.rows)
 	if m.filtered {

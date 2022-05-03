@@ -41,7 +41,7 @@ func (m Model) View() string {
 
 	rowStrs := []string{headerBlock}
 
-	startRowIndex, endRowIndex := m.VisibleIndices()
+	startRowIndex, endRowIndex := m.AvailableIndices()
 	for i := startRowIndex; i <= endRowIndex; i++ {
 		rowStrs = append(rowStrs, m.renderRow(i, i == endRowIndex))
 	}

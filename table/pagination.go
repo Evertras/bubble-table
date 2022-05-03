@@ -14,23 +14,30 @@ func (m *Model) CurrentPage() int {
 
 // MaxPages returns the maximum number of pages that are visible.
 func (m *Model) MaxPages() int {
-	if m.pageSize == 0 || len(m.GetVisibleRows()) == 0 {
+	if m.pageSize == 0 || len(m.GetAvailableRows()) == 0 {
 		return 1
 	}
 
-	return (len(m.GetVisibleRows())-1)/m.pageSize + 1
+	return (len(m.GetAvailableRows())-1)/m.pageSize + 1
 }
 
 // TotalRows returns the current total row count of the table.  If the table is
 // paginated, this is the total number of rows across all pages.
 func (m *Model) TotalRows() int {
-	return len(m.GetVisibleRows())
+	return len(m.GetAvailableRows())
 }
 
-// VisibleIndices returns the current visible rows by their 0 based index.
-// Useful for custom pagination footers.
+// VisibleIndices is the legacy name for AvailableIndices.
+// use AvailableIndices instead.
+// TODO: remove this in a future release.
 func (m *Model) VisibleIndices() (start, end int) {
-	totalRows := len(m.GetVisibleRows())
+	return m.AvailableIndices()
+}
+
+// AvailableIndices returns the current visible rows by their 0 based index.
+// Useful for custom pagination footers.
+func (m *Model) AvailableIndices() (start, end int) {
+	totalRows := len(m.GetAvailableRows())
 
 	if m.pageSize == 0 {
 		start = 0
@@ -50,7 +57,7 @@ func (m *Model) VisibleIndices() (start, end int) {
 }
 
 func (m *Model) pageDown() {
-	if m.pageSize == 0 || len(m.GetVisibleRows()) <= m.pageSize {
+	if m.pageSize == 0 || len(m.GetAvailableRows()) <= m.pageSize {
 		return
 	}
 
@@ -66,7 +73,7 @@ func (m *Model) pageDown() {
 }
 
 func (m *Model) pageUp() {
-	if m.pageSize == 0 || len(m.GetVisibleRows()) <= m.pageSize {
+	if m.pageSize == 0 || len(m.GetAvailableRows()) <= m.pageSize {
 		return
 	}
 

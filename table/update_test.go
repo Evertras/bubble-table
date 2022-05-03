@@ -229,11 +229,11 @@ func TestSelectingRowWhenTableUnselectableDoesNothing(t *testing.T) {
 		}),
 	}).Focused(true)
 
-	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected to start")
+	assert.False(t, model.GetAvailableRows()[0].selected, "Row shouldn't be selected to start")
 
 	model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
 
-	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected after key press")
+	assert.False(t, model.GetAvailableRows()[0].selected, "Row shouldn't be selected after key press")
 }
 
 func TestSelectingRowToggles(t *testing.T) {
@@ -256,20 +256,20 @@ func TestSelectingRowToggles(t *testing.T) {
 	keyEnter := tea.KeyMsg{Type: tea.KeyEnter}
 	keyDown := tea.KeyMsg{Type: tea.KeyDown}
 
-	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected to start")
+	assert.False(t, model.GetAvailableRows()[0].selected, "Row shouldn't be selected to start")
 	assert.Len(t, model.SelectedRows(), 0)
 
 	model, _ = model.Update(keyEnter)
-	assert.True(t, model.GetVisibleRows()[0].selected, "Row should be selected after first toggle")
+	assert.True(t, model.GetAvailableRows()[0].selected, "Row should be selected after first toggle")
 	assert.Len(t, model.SelectedRows(), 1)
 
 	model, _ = model.Update(keyEnter)
-	assert.False(t, model.GetVisibleRows()[0].selected, "Row should not be selected after second toggle")
+	assert.False(t, model.GetAvailableRows()[0].selected, "Row should not be selected after second toggle")
 	assert.Len(t, model.SelectedRows(), 0)
 
 	model, _ = model.Update(keyDown)
 	model, _ = model.Update(keyEnter)
-	assert.True(t, model.GetVisibleRows()[1].selected, "Second row should be selected after moving and toggling")
+	assert.True(t, model.GetAvailableRows()[1].selected, "Second row should be selected after moving and toggling")
 }
 
 func TestFilterWithKeypresses(t *testing.T) {
@@ -297,30 +297,30 @@ func TestFilterWithKeypresses(t *testing.T) {
 		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEscape})
 	}
 
-	visible := model.GetVisibleRows()
+	availableRows := model.GetAvailableRows()
 
-	assert.Len(t, visible, 2)
+	assert.Len(t, availableRows, 2)
 	hitKey(rune(model.KeyMap().Filter.Keys()[0][0]))
-	assert.Len(t, visible, 2)
+	assert.Len(t, availableRows, 2)
 	hitKey('p')
 	hitKey('i')
 	hitKey('k')
 
-	visible = model.GetVisibleRows()
+	availableRows = model.GetAvailableRows()
 
-	assert.Len(t, visible, 1)
+	assert.Len(t, availableRows, 1)
 
 	hitEnter()
 
 	hitKey('x')
 
-	visible = model.GetVisibleRows()
+	availableRows = model.GetAvailableRows()
 
-	assert.Len(t, visible, 1)
+	assert.Len(t, availableRows, 1)
 
 	hitEscape()
 
-	visible = model.GetVisibleRows()
+	availableRows = model.GetAvailableRows()
 
-	assert.Len(t, visible, 2)
+	assert.Len(t, availableRows, 2)
 }

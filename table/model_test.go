@@ -15,7 +15,7 @@ func TestModelInitReturnsNil(t *testing.T) {
 	assert.Nil(t, cmd)
 }
 
-func TestGetVisibleRows(t *testing.T) {
+func TestGetAvailableRows(t *testing.T) {
 	input := textinput.Model{}
 	input.SetValue("AAA")
 	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
@@ -34,6 +34,6 @@ func TestGetVisibleRows(t *testing.T) {
 		}),
 	}
 	m := Model{filtered: true, filterTextInput: input, columns: columns, rows: rows}
-	visibleRows := m.GetVisibleRows()
-	assert.Len(t, visibleRows, 1)
+	availableRows := m.GetAvailableRows()
+	assert.Len(t, availableRows, 1)
 }

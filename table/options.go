@@ -12,8 +12,8 @@ func (m Model) WithHighlightedRow(index int) Model {
 		m.rowCursorIndex = 0
 	}
 
-	if m.rowCursorIndex >= len(m.GetVisibleRows()) {
-		m.rowCursorIndex = len(m.GetVisibleRows()) - 1
+	if m.rowCursorIndex >= len(m.GetAvailableRows()) {
+		m.rowCursorIndex = len(m.GetAvailableRows()) - 1
 	}
 
 	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
@@ -80,8 +80,8 @@ func (m Model) SelectableRows(selectable bool) Model {
 
 // HighlightedRow returns the full Row that's currently highlighted by the user.
 func (m Model) HighlightedRow() Row {
-	if len(m.GetVisibleRows()) > 0 {
-		return m.GetVisibleRows()[m.rowCursorIndex]
+	if len(m.GetAvailableRows()) > 0 {
+		return m.GetAvailableRows()[m.rowCursorIndex]
 	}
 
 	// TODO: Better way to do this without pointers/nil?  Or should it be nil?
@@ -231,7 +231,7 @@ func (m Model) WithCurrentPage(currentPage int) Model {
 	return m
 }
 
-// WithColumns sets the visible columns for the table, so that columns can be
+// WithColumns sets the available columns for the table, so that columns can be
 // added/removed/resized or headers rewritten.
 func (m Model) WithColumns(columns []Column) Model {
 	// Deep copy to avoid edits
