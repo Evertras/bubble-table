@@ -130,7 +130,8 @@ func (m Model) WithStaticFooter(footer string) Model {
 	return m
 }
 
-// WithPageSize enables pagination using the given page size.
+// WithPageSize enables pagination using the given page size.  This can be called
+// again at any point to resize the height of the table.
 func (m Model) WithPageSize(pageSize int) Model {
 	m.pageSize = pageSize
 
