@@ -388,3 +388,23 @@ func TestPaginationSetsLastPageWithFewerRows(t *testing.T) {
 
 	assert.Equal(t, 2, model.CurrentPage())
 }
+
+func TestPaginationBoundsToMaxPageOnResize(t *testing.T) {
+	const (
+		pageSize = 5
+		numRows  = 20
+	)
+
+	model := genPaginationTable(numRows, pageSize)
+
+	assert.Equal(t, model.CurrentPage(), 1)
+
+	model.pageUp()
+
+	assert.Equal(t, model.CurrentPage(), 4)
+
+	model = model.WithPageSize(10)
+
+	assert.Equal(t, model.CurrentPage(), 2)
+	assert.Equal(t, model.MaxPages(), 2)
+}
