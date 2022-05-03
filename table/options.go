@@ -134,6 +134,12 @@ func (m Model) WithStaticFooter(footer string) Model {
 func (m Model) WithPageSize(pageSize int) Model {
 	m.pageSize = pageSize
 
+	maxPages := m.MaxPages()
+
+	if m.currentPage >= maxPages {
+		m.currentPage = maxPages-1
+	}
+
 	return m
 }
 
