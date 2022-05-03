@@ -92,12 +92,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.tableWithRowIndices = m.tableWithRowIndices.Focused(true)
 
 		case "u":
-			m.tableDefault = m.tableDefault.WithPageSize(m.tableDefault.PageSize()-1)
-			m.tableWithRowIndices = m.tableWithRowIndices.WithPageSize(m.tableWithRowIndices.PageSize()-1)
+			m.tableDefault = m.tableDefault.WithPageSize(m.tableDefault.PageSize() - 1)
+			m.tableWithRowIndices = m.tableWithRowIndices.WithPageSize(m.tableWithRowIndices.PageSize() - 1)
 
 		case "i":
-			m.tableDefault = m.tableDefault.WithPageSize(m.tableDefault.PageSize()+1)
-			m.tableWithRowIndices = m.tableWithRowIndices.WithPageSize(m.tableWithRowIndices.PageSize()+1)
+			m.tableDefault = m.tableDefault.WithPageSize(m.tableDefault.PageSize() + 1)
+			m.tableWithRowIndices = m.tableWithRowIndices.WithPageSize(m.tableWithRowIndices.PageSize() + 1)
 
 		case "r":
 			m.tableDefault = m.tableDefault.WithCurrentPage(rand.Intn(m.tableDefault.MaxPages()) + 1)

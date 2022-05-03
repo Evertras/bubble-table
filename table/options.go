@@ -137,7 +137,7 @@ func (m Model) WithPageSize(pageSize int) Model {
 	maxPages := m.MaxPages()
 
 	if m.currentPage >= maxPages {
-		m.currentPage = maxPages-1
+		m.currentPage = maxPages - 1
 	}
 
 	return m
