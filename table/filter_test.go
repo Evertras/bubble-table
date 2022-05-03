@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -128,4 +129,53 @@ func TestGetFilteredRowsFiltered(t *testing.T) {
 	filteredRows := model.getFilteredRows(rows)
 
 	assert.Len(t, filteredRows, 1)
+}
+
+func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := []Row{
+		NewRow(RowData{
+			"title":       "a",
+			"description": "",
+		}),
+		NewRow(RowData{
+			"title":       "b",
+			"description": "",
+		}),
+		NewRow(RowData{
+			"title":       "c",
+			"description": "",
+		}),
+		NewRow(RowData{
+			"title":       "d1",
+			"description": "",
+		}),
+		NewRow(RowData{
+			"title":       "d2",
+			"description": "",
+		}),
+	}
+	model := New(columns).WithRows(rows).Filtered(true).WithPageSize(1)
+	model = model.PageDown()
+	assert.Len(t, model.GetVisibleRows(), 5)
+	assert.Equal(t, 1, model.PageSize())
+	assert.Equal(t, 2, model.CurrentPage())
+	assert.Equal(t, 5, model.MaxPages())
+	assert.Equal(t, 5, model.TotalRows())
+
+	model.filterTextInput.SetValue("c")
+	model, _ = model.updateFilterTextInput(tea.KeyMsg{})
+	assert.Len(t, model.GetVisibleRows(), 1)
+	assert.Equal(t, 1, model.PageSize())
+	assert.Equal(t, 1, model.CurrentPage())
+	assert.Equal(t, 1, model.MaxPages())
+	assert.Equal(t, 1, model.TotalRows())
+
+	model.filterTextInput.SetValue("not-exist")
+	model, _ = model.updateFilterTextInput(tea.KeyMsg{})
+	assert.Len(t, model.GetVisibleRows(), 0)
+	assert.Equal(t, 1, model.PageSize())
+	assert.Equal(t, 1, model.CurrentPage())
+	assert.Equal(t, 1, model.MaxPages())
+	assert.Equal(t, 0, model.TotalRows())
 }
