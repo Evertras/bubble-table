@@ -55,6 +55,7 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 		}
 	}
 	m.filterTextInput, cmd = m.filterTextInput.Update(msg)
+	m.pageFirst()
 
 	return m, cmd
 }
