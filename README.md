@@ -20,7 +20,7 @@ for a few helpful tips!
 
 ## Features
 
-For a code reference of all available features, please see the [full feature example](./examples/features/main.go).
+For a code reference of most available features, please see the [full feature example](./examples/features/main.go).
 If you want to get started with a simple default table, [check the simplest example](./examples/simplest/main.go).
 
 Displays a table with a header, rows, footer, and borders.
