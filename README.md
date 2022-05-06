@@ -71,7 +71,8 @@ If it does not exist, nothing is rendered.
 
 Extra data in the `RowData` object is ignored.  This can be helpful to simply
 dump data into `RowData` and create columns that select what is interesting to
-view, or to generate different columns based on view options on the fly.
+view, or to generate different columns based on view options on the fly (see the
+[metadata example](./examples/metadata/main.go) for an example of using this).
 
 An example is given below.  For more detailed examples, see
 [the examples directory](./examples).

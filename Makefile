@@ -2,6 +2,10 @@
 example-pokemon:
 	@go run ./examples/pokemon/*.go
 
+.PHONY: example-metadata
+example-metadata:
+	@go run ./examples/metadata/*.go
+
 .PHONY: example-dimensions
 example-dimensions:
 	@go run ./examples/dimensions/main.go
