@@ -6,7 +6,7 @@ import (
 )
 
 func (m Model) hasFooter() bool {
-	return m.isRenderFooter && (m.staticFooter != "" || m.pageSize != 0 || m.filtered)
+	return m.footerVisible && (m.staticFooter != "" || m.pageSize != 0 || m.filtered)
 }
 
 func (m Model) renderFooter() string {

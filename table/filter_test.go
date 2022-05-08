@@ -181,7 +181,7 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 	assert.Equal(t, 0, model.TotalRows())
 }
 
-func TestFitlerWithOthersTextInput(t *testing.T) {
+func TestFilterWithExternalTextInput(t *testing.T) {
 	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
 	rows := []Row{
 		NewRow(RowData{

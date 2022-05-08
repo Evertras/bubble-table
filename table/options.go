@@ -258,16 +258,9 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 	return m
 }
 
-// WithNoFooter disables the footer.
-func (m Model) WithNoFooter() Model {
-	m.isRenderFooter = false
-
-	return m
-}
-
-// WithFooter enable the footer for the table.
-func (m Model) WithFooter() Model {
-	m.isRenderFooter = true
+// WithFooterVisibility set the visibility of footer.
+func (m Model) WithFooterVisibility(visibility bool) Model {
+	m.footerVisible = visibility
 
 	return m
 }

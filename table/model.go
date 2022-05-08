@@ -36,8 +36,8 @@ type Model struct {
 	unselectedText string
 
 	// Footers
-	isRenderFooter bool
-	staticFooter   string
+	footerVisible bool
+	staticFooter  string
 
 	// Pagination
 	pageSize    int
@@ -66,7 +66,7 @@ func New(columns []Column) Model {
 		columns:        make([]Column, len(columns)),
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
-		isRenderFooter: true,
+		footerVisible:  true,
 		keyMap:         DefaultKeyMap(),
 
 		selectedText:   "[x]",

@@ -130,10 +130,10 @@ func TestPageOptions(t *testing.T) {
 	assert.Equal(t, 6, model.CurrentPage())
 	assert.Equal(t, 26, model.rowCursorIndex)
 
-	model = model.WithNoFooter()
+	model = model.WithFooterVisibility(false)
 	assert.Equal(t, "", model.renderFooter())
 
-	model = model.WithFooter()
+	model = model.WithFooterVisibility(true)
 	assert.Greater(t, len(model.renderFooter()), 10)
 	assert.Contains(t, model.renderFooter(), "6/6")
 }
