@@ -251,7 +251,9 @@ func (m Model) WithColumns(columns []Column) Model {
 	return m
 }
 
-// WithFilterInput sets the filter input for the table.  This can be used as API of filter input.
+// WithFilterInput makes the table use the provided text input bubble for
+// filtering rather than using the built-in default.  This allows for external
+// text input controls to be used.
 func (m Model) WithFilterInput(input textinput.Model) Model {
 	m.filterTextInput = input
 
