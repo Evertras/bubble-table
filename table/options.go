@@ -260,7 +260,7 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 	return m
 }
 
-// WithFooterVisibility set the visibility of footer.
+// WithFooterVisibility sets the visibility of the footer.
 func (m Model) WithFooterVisibility(visibility bool) Model {
 	m.footerVisible = visibility
 
