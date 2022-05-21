@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/stretchr/testify/assert"
 )
@@ -178,4 +179,28 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 	assert.Equal(t, 1, model.CurrentPage())
 	assert.Equal(t, 1, model.MaxPages())
 	assert.Equal(t, 0, model.TotalRows())
+}
+
+func TestFilterWithExternalTextInput(t *testing.T) {
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := []Row{
+		NewRow(RowData{
+			"title":       "AAA",
+			"description": "",
+		}),
+		NewRow(RowData{
+			"title":       "BBB",
+			"description": "",
+		}),
+		// Empty
+		NewRow(RowData{}),
+	}
+	model := New(columns).WithRows(rows).Filtered(true)
+	input := textinput.New()
+	input.SetValue("AaA")
+	model = model.WithFilterInput(input)
+
+	filteredRows := model.getFilteredRows(rows)
+
+	assert.Len(t, filteredRows, 1)
 }

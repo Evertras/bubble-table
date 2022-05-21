@@ -6,7 +6,7 @@ import (
 )
 
 func (m Model) hasFooter() bool {
-	return m.staticFooter != "" || m.pageSize != 0 || m.filtered
+	return m.footerVisible && (m.staticFooter != "" || m.pageSize != 0 || m.filtered)
 }
 
 func (m Model) renderFooter() string {
@@ -25,7 +25,7 @@ func (m Model) renderFooter() string {
 	sections := []string{}
 
 	if m.filtered && (m.filterTextInput.Focused() || m.filterTextInput.Value() != "") {
-		sections = append(sections, fmt.Sprintf("/%s", m.filterTextInput.View()))
+		sections = append(sections, m.filterTextInput.View())
 	}
 
 	// paged feature enabled

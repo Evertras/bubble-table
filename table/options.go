@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -246,6 +247,22 @@ func (m Model) WithColumns(columns []Column) Model {
 	copy(m.columns, columns)
 
 	m.recalculateWidth()
+
+	return m
+}
+
+// WithFilterInput makes the table use the provided text input bubble for
+// filtering rather than using the built-in default.  This allows for external
+// text input controls to be used.
+func (m Model) WithFilterInput(input textinput.Model) Model {
+	m.filterTextInput = input
+
+	return m
+}
+
+// WithFooterVisibility sets the visibility of the footer.
+func (m Model) WithFooterVisibility(visibility bool) Model {
+	m.footerVisible = visibility
 
 	return m
 }

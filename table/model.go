@@ -36,7 +36,8 @@ type Model struct {
 	unselectedText string
 
 	// Footers
-	staticFooter string
+	footerVisible bool
+	staticFooter  string
 
 	// Pagination
 	pageSize    int
@@ -60,11 +61,12 @@ type Model struct {
 // New creates a new table ready for further modifications.
 func New(columns []Column) Model {
 	filterInput := textinput.New()
-	filterInput.Prompt = ""
+	filterInput.Prompt = "/"
 	model := Model{
 		columns:        make([]Column, len(columns)),
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
+		footerVisible:  true,
 		keyMap:         DefaultKeyMap(),
 
 		selectedText:   "[x]",
