@@ -130,6 +130,48 @@ rows := []table.Row{
 }
 ```
 
+### A note on 'metadata'
+
+There may be cases where you wish to reference some kind of data object in the
+table.  For example, a table of users may display a user name, ID, etc., and you
+may wish to retrieve data about the user when the row is selected.  This can be
+accomplished by attaching hidden 'metadata' to the row in the same way as any
+other data.
+
+```golang
+const (
+  columnKeyID = "id"
+  columnKeyName = "名前"
+  columnKeyUserData = "userstuff"
+)
+
+// Notice there is no "userstuff" column, so it won't be displayed
+columns := []table.Column{
+  table.NewColumn(columnKeyID, "ID", 5),
+  table.NewColumn(columnKeyName, "Name", 10),
+}
+
+// Just one user for this quick snippet, check the example for more
+user := &SomeUser{
+  ID:   3,
+  Name: "Evertras",
+}
+
+rows := []table.Row{
+  // This row contains both an ID and a name
+  table.NewRow(table.RowData{
+    columnKeyID:       user.ID,
+    columnKeyName:     user.Name,
+
+    // This isn't displayed, but it remains attached to the row
+    columnKeyUserData: user,
+  }),
+}
+```
+
+For a more detailed demonstration of this idea in action, please see the
+[metadata example](./examples/metadata/main.go).
+
 ## Demos
 
 Code examples are located in [the examples directory](./examples).  Run commands

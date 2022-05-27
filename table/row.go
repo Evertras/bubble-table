@@ -6,7 +6,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// RowData is a map of string column keys to interface{} data.
+// RowData is a map of string column keys to interface{} data.  Data with a key
+// that matches a column key will be displayed.  Data with a key that does not
+// match a column key will not be displayed, but will remain attached to the Row.
+// This can be useful for attaching hidden metadata for future reference when
+// retrieving rows.
 type RowData map[string]interface{}
 
 // Row represents a row in the table with some data keyed to the table columns>
