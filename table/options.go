@@ -32,6 +32,7 @@ func (m Model) HeaderStyle(style lipgloss.Style) Model {
 // WithRows sets the rows to show as data in the table.
 func (m Model) WithRows(rows []Row) Model {
 	m.rows = rows
+	m.selectedRows = nil
 
 	if m.pageSize != 0 {
 		maxPage := m.MaxPages()
