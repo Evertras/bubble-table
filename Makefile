@@ -18,6 +18,10 @@ example-features:
 example-filter:
 	@go run ./examples/filter/*.go
 
+.PHONY: example-filterapi
+example-filterapi:
+	@go run ./examples/filterapi/*.go
+
 .PHONY: example-flex
 example-flex:
 	@go run ./examples/flex/*.go

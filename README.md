@@ -11,7 +11,7 @@ A customizable, interactive table component for the
 
 ![Styled table](https://user-images.githubusercontent.com/5923958/156778142-cc1a32e1-1b1e-4a65-b699-187f39f0f946.png)
 
-[View above sample source code](./examples/pokemon/main.go)
+[View above sample source code](./examples/pokemon)
 
 ## Contributing
 
@@ -20,12 +20,12 @@ for a few helpful tips!
 
 ## Features
 
-For a code reference of most available features, please see the [full feature example](./examples/features/main.go).
-If you want to get started with a simple default table, [check the simplest example](./examples/simplest/main.go).
+For a code reference of most available features, please see the [full feature example](./examples/features).
+If you want to get started with a simple default table, [check the simplest example](./examples/simplest).
 
 Displays a table with a header, rows, footer, and borders.
 
-Columns can be fixed-width [or flexible width](./examples/flex/main.go).
+Columns can be fixed-width [or flexible width](./examples/flex).
 
 Border shape is customizable with a basic thick square default.  The color can
 be modified by applying a base style with `lipgloss.NewStyle().BorderForeground(...)`.
@@ -33,7 +33,7 @@ be modified by applying a base style with `lipgloss.NewStyle().BorderForeground(
 Styles can be applied globally and to columns, rows, and individual cells.
 The base style is applied first, then column, then row, then cell when
 determining overrides.  The default base style is a basic right-alignment.
-[See the main feature example](./examples/features/main.go) to see styles and
+[See the main feature example](./examples/features) to see styles and
 how they override each other.
 
 Can be focused to highlight a row and navigate with up/down (and j/k).  These
@@ -50,7 +50,7 @@ a text box in the footer and `/` (customizable by keybind) to start filtering.
 Columns can be sorted in either ascending or descending order.  Multiple columns
 can be specified in a row.  If multiple columns are specified, first the table
 is sorted by the first specified column, then each group within that column is
-sorted in smaller and smaller groups.  [See the sorting example](examples/sorting/main.go)
+sorted in smaller and smaller groups.  [See the sorting example](examples/sorting)
 for more information.  If a column contains numbers (either ints or floats),
 the numbers will be sorted by numeric value.  Otherwise rendered string values
 will be compared.
@@ -72,7 +72,7 @@ If it does not exist, nothing is rendered.
 Extra data in the `RowData` object is ignored.  This can be helpful to simply
 dump data into `RowData` and create columns that select what is interesting to
 view, or to generate different columns based on view options on the fly (see the
-[metadata example](./examples/metadata/main.go) for an example of using this).
+[metadata example](./examples/metadata) for an example of using this).
 
 An example is given below.  For more detailed examples, see
 [the examples directory](./examples).
@@ -170,13 +170,15 @@ rows := []table.Row{
 ```
 
 For a more detailed demonstration of this idea in action, please see the
-[metadata example](./examples/metadata/main.go).
+[metadata example](./examples/metadata).
 
 ## Demos
 
 Code examples are located in [the examples directory](./examples).  Run commands
 are added to the [Makefile](Makefile) for convenience but they should be as
-simple as `go run ./examples/features/main.go`, etc.
+simple as `go run ./examples/features/main.go`, etc.  You can also view what
+they look like by checking the example's directory in each README here on
+Github.
 
 To run the examples, clone this repo and run:
 
