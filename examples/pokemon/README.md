@@ -3,4 +3,4 @@
 This example is a general use of the table using various features to nicely
 display a table of Pokemon and some interesting statistics about them.
 
-<img width="1165" alt="image" src="https://user-images.githubusercontent.com/5923958/170802114-c9cdd209-ea72-4eff-878c-6c582aa82994.png">
+![Styled table](https://user-images.githubusercontent.com/5923958/156778142-cc1a32e1-1b1e-4a65-b699-187f39f0f946.png)
