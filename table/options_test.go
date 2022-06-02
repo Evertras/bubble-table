@@ -180,3 +180,30 @@ func TestSelectRowsProgramatically(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkSelectedRows(b *testing.B) {
+	const N = 1000
+
+	b.ReportAllocs()
+
+	rows := make([]Row, 0, N)
+	for i := 0; i < N; i++ {
+		rows = append(rows, NewRow(RowData{"row": i}).Selected(i%2 == 0))
+	}
+
+	model := New([]Column{
+		NewColumn("row", "Row", 4),
+	}).WithRows(rows)
+
+	var sel []Row
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		sel = model.SelectedRows()
+	}
+
+	Rows = sel
+}
+
+var Rows []Row
