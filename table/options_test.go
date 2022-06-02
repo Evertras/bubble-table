@@ -140,31 +140,45 @@ func TestPageOptions(t *testing.T) {
 
 func TestSelectRowsProgramatically(t *testing.T) {
 	const col = "id"
-	newRow := func(id int, selected bool) Row {
-		return NewRow(RowData{col: id}).Selected(selected)
-	}
 
 	tests := map[string]struct {
-		rows, selected []Row
+		rows        []Row
+		selectedIds []int
 	}{
 		"no rows selected": {
-			[]Row{newRow(1, false), newRow(2, false), newRow(2, false)},
-			[]Row{},
+			[]Row{
+				NewRow(RowData{col: 1}),
+				NewRow(RowData{col: 2}),
+				NewRow(RowData{col: 3}),
+			},
+			[]int{},
 		},
 
 		"all rows selected": {
-			[]Row{newRow(1, true), newRow(2, true), newRow(3, true)},
-			[]Row{newRow(1, true), newRow(2, true), newRow(3, true)},
+			[]Row{
+				NewRow(RowData{col: 1}).Selected(true),
+				NewRow(RowData{col: 2}).Selected(true),
+				NewRow(RowData{col: 3}).Selected(true),
+			},
+			[]int{1, 2, 3},
 		},
 
 		"first row selected": {
-			[]Row{newRow(1, true), newRow(2, false), newRow(3, false)},
-			[]Row{newRow(1, true)},
+			[]Row{
+				NewRow(RowData{col: 1}).Selected(true),
+				NewRow(RowData{col: 2}),
+				NewRow(RowData{col: 3}),
+			},
+			[]int{1},
 		},
 
 		"last row selected": {
-			[]Row{newRow(1, false), newRow(2, false), newRow(3, true)},
-			[]Row{newRow(3, true)},
+			[]Row{
+				NewRow(RowData{col: 1}),
+				NewRow(RowData{col: 2}),
+				NewRow(RowData{col: 3}).Selected(true),
+			},
+			[]int{3},
 		},
 	}
 
@@ -176,7 +190,10 @@ func TestSelectRowsProgramatically(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			sel := model.WithRows(tt.rows).SelectedRows()
 
-			assert.Equal(t, tt.selected, sel)
+			assert.Equal(t, len(tt.selectedIds), len(sel))
+			for i, id := range tt.selectedIds {
+				assert.Equal(t, id, sel[i].Data[col], "expecting row %d to have same %s column value", i)
+			}
 		})
 	}
 }
