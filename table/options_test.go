@@ -137,3 +137,46 @@ func TestPageOptions(t *testing.T) {
 	assert.Greater(t, len(model.renderFooter()), 10)
 	assert.Contains(t, model.renderFooter(), "6/6")
 }
+
+func TestSelectRowsProgramatically(t *testing.T) {
+	const col = "id"
+	newRow := func(id int, selected bool) Row {
+		return NewRow(RowData{col: id}).Selected(selected)
+	}
+
+	tests := map[string]struct {
+		rows, selected []Row
+	}{
+		"no rows selected": {
+			[]Row{newRow(1, false), newRow(2, false), newRow(2, false)},
+			[]Row{},
+		},
+
+		"all rows selected": {
+			[]Row{newRow(1, true), newRow(2, true), newRow(3, true)},
+			[]Row{newRow(1, true), newRow(2, true), newRow(3, true)},
+		},
+
+		"first row selected": {
+			[]Row{newRow(1, true), newRow(2, false), newRow(3, false)},
+			[]Row{newRow(1, true)},
+		},
+
+		"last row selected": {
+			[]Row{newRow(1, false), newRow(2, false), newRow(3, true)},
+			[]Row{newRow(3, true)},
+		},
+	}
+
+	model := New([]Column{
+		NewColumn(col, col, 1),
+	})
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			sel := model.WithRows(tt.rows).SelectedRows()
+
+			assert.Equal(t, tt.selected, sel)
+		})
+	}
+}
