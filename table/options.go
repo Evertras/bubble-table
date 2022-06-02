@@ -92,6 +92,14 @@ func (m Model) HighlightedRow() Row {
 
 // SelectedRows returns all rows that have been set as selected by the user.
 func (m Model) SelectedRows() []Row {
+	m.selectedRows = []Row{}
+
+	for _, row := range m.GetVisibleRows() {
+		if row.selected {
+			m.selectedRows = append(m.selectedRows, row)
+		}
+	}
+
 	return m.selectedRows
 }
 

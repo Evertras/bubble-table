@@ -36,14 +36,6 @@ func (m *Model) toggleSelect() {
 	rows[m.rowCursorIndex].selected = !rows[m.rowCursorIndex].selected
 
 	m.rows = rows
-
-	m.selectedRows = []Row{}
-
-	for _, row := range m.GetVisibleRows() {
-		if row.selected {
-			m.selectedRows = append(m.selectedRows, row)
-		}
-	}
 }
 
 func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
