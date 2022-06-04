@@ -286,3 +286,17 @@ func (m Model) WithHorizontalFreezeColumnCount(columnsToFreeze int) Model {
 
 	return m
 }
+
+// ScrollRight moves one column to the right.  Use with WithMaxTotalWidth.
+func (m Model) ScrollRight() Model {
+	m.scrollRight()
+
+	return m
+}
+
+// ScrollLeft moves one column to the left.  Use with WithMaxTotalWidth.
+func (m Model) ScrollLeft() Model {
+	m.scrollLeft()
+
+	return m
+}
