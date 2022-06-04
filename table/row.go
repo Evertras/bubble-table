@@ -6,6 +6,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const columnKeyOverflow = "___overflow___"
+
 // RowData is a map of string column keys to interface{} data.  Data with a key
 // that matches a column key will be displayed.  Data with a key that does not
 // match a column key will not be displayed, but will remain attached to the Row.
@@ -43,13 +45,40 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-// This is somewhat complicated but at the moment splitting this out feels like
-// it would just make things harder to read.  May revisit later.
-// nolint: cyclop
+func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
+	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
+
+	var str string
+
+	if column.key == columnKeySelect {
+		if row.selected {
+			str = m.selectedText
+		} else {
+			str = m.unselectedText
+		}
+	} else if column.key == columnKeyOverflow {
+		str = ">"
+	} else if entry, exists := row.Data[column.key]; exists {
+		switch entry := entry.(type) {
+		case StyledCell:
+			str = fmt.Sprintf("%v", entry.Data)
+			cellStyle = entry.Style.Copy().Inherit(cellStyle)
+		default:
+			str = fmt.Sprintf("%v", entry)
+		}
+	}
+
+	cellStyle = cellStyle.Inherit(borderStyle)
+	cellStr := cellStyle.Render(limitStr(str, column.width))
+
+	return cellStr
+}
+
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
+	totalRenderedWidth := 0
 
 	columnStrings := []string{}
 
@@ -62,25 +91,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 	stylesInner, stylesLast := m.styleRows()
 
 	for columnIndex, column := range m.columns {
-		cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
-
-		var str string
-
-		if column.key == columnKeySelect {
-			if row.selected {
-				str = m.selectedText
-			} else {
-				str = m.unselectedText
-			}
-		} else if entry, exists := row.Data[column.key]; exists {
-			switch entry := entry.(type) {
-			case StyledCell:
-				str = fmt.Sprintf("%v", entry.Data)
-				cellStyle = entry.Style.Copy().Inherit(cellStyle)
-			default:
-				str = fmt.Sprintf("%v", entry)
-			}
-		}
+		var borderStyle lipgloss.Style
 
 		var rowStyles borderStyleRow
 
@@ -91,14 +102,33 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 		}
 
 		if columnIndex == 0 {
-			cellStyle = cellStyle.Inherit(rowStyles.left)
+			borderStyle = rowStyles.left
 		} else if columnIndex < numColumns-1 {
-			cellStyle = cellStyle.Inherit(rowStyles.inner)
+			borderStyle = rowStyles.inner
 		} else {
-			cellStyle = cellStyle.Inherit(rowStyles.right)
+			borderStyle = rowStyles.right
 		}
 
-		cellStr := cellStyle.Render(limitStr(str, column.width))
+		cellStr := m.renderRowColumnData(row, column, rowStyle, borderStyle)
+
+		if m.maxTotalWidth != 0 {
+			renderedWidth := lipgloss.Width(cellStr)
+
+			if totalRenderedWidth+renderedWidth > m.maxTotalWidth {
+				const borderAdjustment = 1
+
+				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
+				overflowStyle := genOverflowStyle(rowStyles.right, overflowWidth)
+				overflowColumn := genOverflowColumn(overflowWidth)
+				overflowStr := m.renderRowColumnData(row, overflowColumn, rowStyle, overflowStyle)
+
+				columnStrings = append(columnStrings, overflowStr)
+
+				break
+			}
+
+			totalRenderedWidth += renderedWidth
+		}
 
 		columnStrings = append(columnStrings, cellStr)
 	}
