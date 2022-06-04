@@ -63,6 +63,9 @@ type Model struct {
 
 	// How far to scroll to the right, in columns
 	horizontalScrollOffsetCol int
+
+	// How many columns to freeze when scrolling horizontally
+	horizontalScrollFreezeColumnsCount int
 }
 
 // New creates a new table ready for further modifications.

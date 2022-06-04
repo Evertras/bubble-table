@@ -51,8 +51,14 @@ func NewModel() Model {
 		cols = append(cols, table.NewColumn(colKey(i), colKey(i+1), 5))
 	}
 
+	t := table.New(cols).
+		WithRows(rows).
+		WithMaxTotalWidth(30).
+		WithHorizontalFreezeColumnCount(1).
+		Focused(true)
+
 	return Model{
-		scrollableTable: table.New(cols).WithRows(rows).WithMaxTotalWidth(30).Focused(true),
+		scrollableTable: t,
 	}
 }
 

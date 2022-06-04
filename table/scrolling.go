@@ -1,7 +1,8 @@
 package table
 
 func (m *Model) scrollRight() {
-	if m.horizontalScrollOffsetCol < len(m.columns)-1 {
+	maxCol := len(m.columns) - 1 - m.horizontalScrollFreezeColumnsCount
+	if m.horizontalScrollOffsetCol < maxCol {
 		m.horizontalScrollOffsetCol++
 	}
 }
