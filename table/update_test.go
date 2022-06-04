@@ -413,11 +413,12 @@ func TestScrollRightWithFooter(t *testing.T) {
 ┗━━━━━━━━━━━━━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+		// Try the programmatic API
+		model = model.ScrollRight()
 	}
 
 	hitScrollLeft := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftLeft})
+		model = model.ScrollLeft()
 	}
 
 	assert.Equal(t, expectedTableOriginal, model.View())
