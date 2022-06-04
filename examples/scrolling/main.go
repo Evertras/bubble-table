@@ -30,7 +30,7 @@ func genRow(id int) table.Row {
 	}
 
 	for i := 0; i < numCols; i++ {
-		data[colKey(i)] = i+1
+		data[colKey(i)] = i + 1
 	}
 
 	return table.NewRow(data)

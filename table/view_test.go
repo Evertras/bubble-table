@@ -646,10 +646,15 @@ func TestMaxWidthHasNoEffectForExactFit(t *testing.T) {
 				"3": "x3",
 				"4": "x4",
 			}),
-		}).
-		WithStaticFooter("Footer")
+		})
 
 	const expectedTable = `┏━━━━┳━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃   4┃
+┣━━━━╋━━━━╋━━━━╋━━━━┫
+┃  x1┃  x2┃  x3┃  x4┃
+┗━━━━┻━━━━┻━━━━┻━━━━┛`
+
+	const expectedTableFooter = `┏━━━━┳━━━━┳━━━━┳━━━━┓
 ┃   1┃   2┃   3┃   4┃
 ┣━━━━╋━━━━╋━━━━╋━━━━┫
 ┃  x1┃  x2┃  x3┃  x4┃
@@ -658,10 +663,12 @@ func TestMaxWidthHasNoEffectForExactFit(t *testing.T) {
 ┗━━━━━━━━━━━━━━━━━━━┛`
 
 	model = model.WithMaxTotalWidth(lipgloss.Width(expectedTable))
-
 	rendered := model.View()
-
 	assert.Equal(t, expectedTable, rendered)
+
+	model = model.WithStaticFooter("Footer")
+	rendered = model.View()
+	assert.Equal(t, expectedTableFooter, rendered)
 }
 
 func TestMaxWidthHidesOverflowWithSingleCharExtra(t *testing.T) {
@@ -711,11 +718,16 @@ func TestMaxWidthHidesOverflowWithTwoCharExtra(t *testing.T) {
 				"4": "x4",
 			}),
 		}).
-		WithStaticFooter("Footer").
 		// Just enough to squeeze in a '>' column
 		WithMaxTotalWidth(18)
 
 	const expectedTable = `┏━━━━┳━━━━┳━━━━┳━┓
+┃   1┃   2┃   3┃>┃
+┣━━━━╋━━━━╋━━━━╋━┫
+┃  x1┃  x2┃  x3┃>┃
+┗━━━━┻━━━━┻━━━━┻━┛`
+
+	const expectedTableFooter = `┏━━━━┳━━━━┳━━━━┳━┓
 ┃   1┃   2┃   3┃>┃
 ┣━━━━╋━━━━╋━━━━╋━┫
 ┃  x1┃  x2┃  x3┃>┃
@@ -724,6 +736,9 @@ func TestMaxWidthHidesOverflowWithTwoCharExtra(t *testing.T) {
 ┗━━━━━━━━━━━━━━━━┛`
 
 	rendered := model.View()
-
 	assert.Equal(t, expectedTable, rendered)
+
+	model = model.WithStaticFooter("Footer")
+	rendered = model.View()
+	assert.Equal(t, expectedTableFooter, rendered)
 }
