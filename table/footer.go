@@ -18,7 +18,7 @@ func (m Model) renderFooter() string {
 
 	width := m.totalWidth
 
-	if m.maxTotalWidth != 0 {
+	if m.maxTotalWidth != 0 && width > m.maxTotalWidth {
 		width = m.maxTotalWidth
 	}
 
