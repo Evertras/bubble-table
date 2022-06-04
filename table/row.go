@@ -77,7 +77,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 
 // This is long and could use some refactoring in the future, but not quite sure
 // how to pick it apart yet.
-// nolint: funlen, cyclop
+// nolint: funlen, cyclop, gocognit
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]
@@ -94,35 +94,35 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	stylesInner, stylesLast := m.styleRows()
 
-	if m.horizontalScrollOffsetCol > 0 {
-		var borderStyle lipgloss.Style
-
-		if !last {
-			borderStyle = stylesInner.left.Copy()
-		} else {
-			borderStyle = stylesLast.left.Copy()
-		}
-
-		rendered := m.renderRowColumnData(row, genOverflowColumnLeft(1), rowStyle, borderStyle)
-
-		totalRenderedWidth += lipgloss.Width(rendered)
-
-		columnStrings = append(columnStrings, rendered)
-	}
-
 	for columnIndex, column := range m.columns {
-		if columnIndex < m.horizontalScrollOffsetCol {
-			continue
-		}
-
 		var borderStyle lipgloss.Style
-
 		var rowStyles borderStyleRow
 
 		if !last {
 			rowStyles = stylesInner
 		} else {
 			rowStyles = stylesLast
+		}
+
+		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
+			var borderStyle lipgloss.Style
+
+			if columnIndex == 0 {
+				borderStyle = rowStyles.left.Copy()
+			} else {
+				borderStyle = rowStyles.inner.Copy()
+			}
+
+			rendered := m.renderRowColumnData(row, genOverflowColumnLeft(1), rowStyle, borderStyle)
+
+			totalRenderedWidth += lipgloss.Width(rendered)
+
+			columnStrings = append(columnStrings, rendered)
+		}
+
+		if columnIndex >= m.horizontalScrollFreezeColumnsCount &&
+			columnIndex < m.horizontalScrollOffsetCol+m.horizontalScrollFreezeColumnsCount {
+			continue
 		}
 
 		if len(columnStrings) == 0 {

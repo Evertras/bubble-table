@@ -277,3 +277,12 @@ func (m Model) WithMaxTotalWidth(maxTotalWidth int) Model {
 
 	return m
 }
+
+// WithHorizontalFreezeColumnCount freezes the given number of columns to the
+// left side.  This is useful for things like ID or Name columns that should
+// always be visible even when scrolling.
+func (m Model) WithHorizontalFreezeColumnCount(columnsToFreeze int) Model {
+	m.horizontalScrollFreezeColumnsCount = columnsToFreeze
+
+	return m
+}

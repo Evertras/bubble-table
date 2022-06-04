@@ -4,7 +4,7 @@ import "github.com/charmbracelet/lipgloss"
 
 // This is long and could use some refactoring in the future, but unsure of how
 // to pick it apart right now.
-// nolint: funlen
+// nolint: funlen, cyclop
 func (m Model) renderHeaders() string {
 	headerStrings := []string{}
 
@@ -20,22 +20,27 @@ func (m Model) renderHeaders() string {
 		return borderStyle.Render(headerSection)
 	}
 
-	if m.horizontalScrollOffsetCol > 0 {
-		borderStyle := headerStyles.left.Copy()
-
-		rendered := renderHeader(genOverflowColumnLeft(1), borderStyle)
-
-		totalRenderedWidth += lipgloss.Width(rendered)
-
-		headerStrings = append(headerStrings, rendered)
-	}
-
 	for columnIndex, column := range m.columns {
-		if columnIndex < m.horizontalScrollOffsetCol {
-			continue
+		var borderStyle lipgloss.Style
+
+		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
+			if columnIndex == 0 {
+				borderStyle = headerStyles.left.Copy()
+			} else {
+				borderStyle = headerStyles.inner.Copy()
+			}
+
+			rendered := renderHeader(genOverflowColumnLeft(1), borderStyle)
+
+			totalRenderedWidth += lipgloss.Width(rendered)
+
+			headerStrings = append(headerStrings, rendered)
 		}
 
-		var borderStyle lipgloss.Style
+		if columnIndex >= m.horizontalScrollFreezeColumnsCount &&
+			columnIndex < m.horizontalScrollOffsetCol+m.horizontalScrollFreezeColumnsCount {
+			continue
+		}
 
 		if len(headerStrings) == 0 {
 			borderStyle = headerStyles.left.Copy()
