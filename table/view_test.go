@@ -671,6 +671,45 @@ func TestMaxWidthHasNoEffectForExactFit(t *testing.T) {
 	assert.Equal(t, expectedTableFooter, rendered)
 }
 
+func TestMaxWidthHasNoEffectForSmaller(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		})
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃   4┃
+┣━━━━╋━━━━╋━━━━╋━━━━┫
+┃  x1┃  x2┃  x3┃  x4┃
+┗━━━━┻━━━━┻━━━━┻━━━━┛`
+
+	const expectedTableFooter = `┏━━━━┳━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃   4┃
+┣━━━━╋━━━━╋━━━━╋━━━━┫
+┃  x1┃  x2┃  x3┃  x4┃
+┣━━━━┻━━━━┻━━━━┻━━━━┫
+┃             Footer┃
+┗━━━━━━━━━━━━━━━━━━━┛`
+
+	model = model.WithMaxTotalWidth(lipgloss.Width(expectedTable) + 5)
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+
+	model = model.WithStaticFooter("Footer")
+	rendered = model.View()
+	assert.Equal(t, expectedTableFooter, rendered)
+}
+
 func TestMaxWidthHidesOverflowWithSingleCharExtra(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),
@@ -741,4 +780,35 @@ func TestMaxWidthHidesOverflowWithTwoCharExtra(t *testing.T) {
 	model = model.WithStaticFooter("Footer")
 	rendered = model.View()
 	assert.Equal(t, expectedTableFooter, rendered)
+}
+
+func TestScrolledTableSizesFooterCorrectly(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		}).
+		WithMaxTotalWidth(19).
+		WithStaticFooter("Footer").
+		ScrollRight()
+
+	const expectedTable = `┏━┳━━━━┳━━━━┳━━━━┓
+┃<┃   2┃   3┃   4┃
+┣━╋━━━━╋━━━━╋━━━━┫
+┃<┃  x2┃  x3┃  x4┃
+┣━┻━━━━┻━━━━┻━━━━┫
+┃          Footer┃
+┗━━━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
 }

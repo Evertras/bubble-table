@@ -9,18 +9,12 @@ func (m Model) hasFooter() bool {
 	return m.footerVisible && (m.staticFooter != "" || m.pageSize != 0 || m.filtered)
 }
 
-func (m Model) renderFooter() string {
+func (m Model) renderFooter(width int) string {
 	if !m.hasFooter() {
 		return ""
 	}
 
 	const borderAdjustment = 2
-
-	width := m.totalWidth
-
-	if m.maxTotalWidth != 0 {
-		width = m.maxTotalWidth
-	}
 
 	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(width - borderAdjustment)
 
