@@ -30,7 +30,7 @@ func genRow(id int) table.Row {
 	}
 
 	for i := 0; i < numCols; i++ {
-		data[colKey(i)] = i
+		data[colKey(i)] = i+1
 	}
 
 	return table.NewRow(data)
@@ -48,7 +48,7 @@ func NewModel() Model {
 	}
 
 	for i := 0; i < numCols; i++ {
-		cols = append(cols, table.NewColumn(colKey(i), colKey(i), 5))
+		cols = append(cols, table.NewColumn(colKey(i), colKey(i+1), 5))
 	}
 
 	return Model{
@@ -83,7 +83,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("A scrollable table\nPress q or ctrl+c to quit\n\n")
+	body.WriteString("A scrollable table\nPress shift+left or shift+right to scroll\nPress q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.scrollableTable.View())
 
