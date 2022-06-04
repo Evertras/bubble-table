@@ -77,7 +77,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 
 // This is long and could use some refactoring in the future, but not quite sure
 // how to pick it apart yet.
-// nolint: funlen, cyclop
+// nolint: funlen, cyclop, gocognit
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]
