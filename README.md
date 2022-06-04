@@ -25,7 +25,9 @@ If you want to get started with a simple default table, [check the simplest exam
 
 Displays a table with a header, rows, footer, and borders.
 
-Columns can be fixed-width [or flexible width](./examples/flex).
+Columns can be fixed-width [or flexible width](./examples/flex).  A maximum
+width can be specified which enables [horizontal scrolling](./examples/scrolling),
+and left-most columns can be frozen for easier reference.
 
 Border shape is customizable with a basic thick square default.  The color can
 be modified by applying a base style with `lipgloss.NewStyle().BorderForeground(...)`.
