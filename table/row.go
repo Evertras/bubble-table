@@ -136,7 +136,15 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 			const borderAdjustment = 1
 
-			if totalRenderedWidth+renderedWidth > m.maxTotalWidth-borderAdjustment*2 {
+			targetWidth := m.maxTotalWidth - borderAdjustment*2
+
+			if columnIndex == len(m.columns)-1 {
+				// If this is the last header, we don't need to account for the
+				// overflow arrow column
+				targetWidth = m.maxTotalWidth
+			}
+
+			if totalRenderedWidth+renderedWidth > targetWidth {
 				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
 				overflowStyle := genOverflowStyle(rowStyles.right, overflowWidth)
 				overflowColumn := genOverflowColumnRight(overflowWidth)
