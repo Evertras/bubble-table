@@ -60,6 +60,12 @@ type Model struct {
 	// Internal cached calculations for reference, may be higher than
 	// maxTotalWidth.  If this is the case, we need to adjust the view
 	totalWidth int
+
+	// How far to scroll to the right, in columns
+	horizontalScrollOffsetCol int
+
+	// How many columns on the left side to freeze when scrolling horizontally
+	horizontalScrollFrozenColCount int
 }
 
 // New creates a new table ready for further modifications.

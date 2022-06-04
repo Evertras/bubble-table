@@ -6,8 +6,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-const columnKeyOverflow = "___overflow___"
-
 // RowData is a map of string column keys to interface{} data.  Data with a key
 // that matches a column key will be displayed.  Data with a key that does not
 // match a column key will not be displayed, but will remain attached to the Row.
@@ -56,8 +54,10 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		} else {
 			str = m.unselectedText
 		}
-	} else if column.key == columnKeyOverflow {
+	} else if column.key == columnKeyOverflowRight {
 		str = ">"
+	} else if column.key == columnKeyOverflowLeft {
+		str = "<"
 	} else if entry, exists := row.Data[column.key]; exists {
 		switch entry := entry.(type) {
 		case StyledCell:
@@ -90,7 +90,27 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	stylesInner, stylesLast := m.styleRows()
 
+	if m.horizontalScrollOffsetCol > 0 {
+		var borderStyle lipgloss.Style
+
+		if !last {
+			borderStyle = stylesInner.left.Copy()
+		} else {
+			borderStyle = stylesLast.left.Copy()
+		}
+
+		rendered := m.renderRowColumnData(row, genOverflowColumnLeft(1), rowStyle, borderStyle)
+
+		totalRenderedWidth += lipgloss.Width(rendered)
+
+		columnStrings = append(columnStrings, rendered)
+	}
+
 	for columnIndex, column := range m.columns {
+		if columnIndex < m.horizontalScrollOffsetCol {
+			continue
+		}
+
 		var borderStyle lipgloss.Style
 
 		var rowStyles borderStyleRow
@@ -101,7 +121,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 			rowStyles = stylesLast
 		}
 
-		if columnIndex == 0 {
+		if len(columnStrings) == 0 {
 			borderStyle = rowStyles.left
 		} else if columnIndex < numColumns-1 {
 			borderStyle = rowStyles.inner
@@ -119,7 +139,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 			if totalRenderedWidth+renderedWidth > m.maxTotalWidth-borderAdjustment*2 {
 				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
 				overflowStyle := genOverflowStyle(rowStyles.right, overflowWidth)
-				overflowColumn := genOverflowColumn(overflowWidth)
+				overflowColumn := genOverflowColumnRight(overflowWidth)
 				overflowStr := m.renderRowColumnData(row, overflowColumn, rowStyle, overflowStyle)
 
 				columnStrings = append(columnStrings, overflowStr)

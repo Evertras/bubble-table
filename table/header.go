@@ -10,23 +10,37 @@ func (m Model) renderHeaders() string {
 	headerStyles := m.styleHeaders()
 
 	renderHeader := func(column Column, borderStyle lipgloss.Style) string {
+		borderStyle = borderStyle.Inherit(column.style).Inherit(m.baseStyle)
+
 		headerSection := limitStr(column.title, column.width)
 
 		return borderStyle.Render(headerSection)
 	}
 
+	if m.horizontalScrollOffsetCol > 0 {
+		borderStyle := headerStyles.left.Copy()
+
+		rendered := renderHeader(genOverflowColumnLeft(1), borderStyle)
+
+		totalRenderedWidth += lipgloss.Width(rendered)
+
+		headerStrings = append(headerStrings, rendered)
+	}
+
 	for columnIndex, column := range m.columns {
+		if columnIndex < m.horizontalScrollOffsetCol {
+			continue
+		}
+
 		var borderStyle lipgloss.Style
 
-		if columnIndex == 0 {
+		if len(headerStrings) == 0 {
 			borderStyle = headerStyles.left.Copy()
 		} else if columnIndex < len(m.columns)-1 {
 			borderStyle = headerStyles.inner.Copy()
 		} else {
 			borderStyle = headerStyles.right.Copy()
 		}
-
-		borderStyle = borderStyle.Inherit(column.style).Inherit(m.baseStyle)
 
 		rendered := renderHeader(column, borderStyle)
 
@@ -38,7 +52,7 @@ func (m Model) renderHeaders() string {
 			if totalRenderedWidth+renderedWidth > m.maxTotalWidth-borderAdjustment*2 {
 				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
 				overflowStyle := genOverflowStyle(headerStyles.right, overflowWidth)
-				overflowColumn := genOverflowColumn(overflowWidth)
+				overflowColumn := genOverflowColumnRight(overflowWidth)
 
 				overflowStr := renderHeader(overflowColumn, overflowStyle)
 

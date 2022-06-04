@@ -88,6 +88,12 @@ func (m *Model) handleKeypress(msg tea.KeyMsg) {
 
 	case key.Matches(msg, m.keyMap.FilterClear):
 		m.filterTextInput.Reset()
+
+	case key.Matches(msg, m.keyMap.ScrollRight):
+		m.scrollRight()
+
+	case key.Matches(msg, m.keyMap.ScrollLeft):
+		m.scrollLeft()
 	}
 }
 
