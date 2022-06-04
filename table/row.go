@@ -43,6 +43,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
+// nolint: nestif // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
@@ -74,6 +75,9 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	return cellStr
 }
 
+// This is long and could use some refactoring in the future, but not quite sure
+// how to pick it apart yet.
+// nolint: funlen, cyclop
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]
@@ -134,9 +138,12 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 		if m.maxTotalWidth != 0 {
 			renderedWidth := lipgloss.Width(cellStr)
 
-			const borderAdjustment = 1
+			const (
+				borderAdjustment = 1
+				overflowColWidth = 2
+			)
 
-			targetWidth := m.maxTotalWidth - borderAdjustment*2
+			targetWidth := m.maxTotalWidth - overflowColWidth
 
 			if columnIndex == len(m.columns)-1 {
 				// If this is the last header, we don't need to account for the

@@ -2,6 +2,9 @@ package table
 
 import "github.com/charmbracelet/lipgloss"
 
+// This is long and could use some refactoring in the future, but unsure of how
+// to pick it apart right now.
+// nolint: funlen
 func (m Model) renderHeaders() string {
 	headerStrings := []string{}
 
@@ -47,9 +50,12 @@ func (m Model) renderHeaders() string {
 		if m.maxTotalWidth != 0 {
 			renderedWidth := lipgloss.Width(rendered)
 
-			const borderAdjustment = 1
+			const (
+				borderAdjustment = 1
+				overflowColWidth = 2
+			)
 
-			targetWidth := m.maxTotalWidth - borderAdjustment*2
+			targetWidth := m.maxTotalWidth - overflowColWidth
 
 			if columnIndex == len(m.columns)-1 {
 				// If this is the last header, we don't need to account for the
