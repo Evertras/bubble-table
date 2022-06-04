@@ -16,30 +16,7 @@ func (m Model) View() string {
 
 	body := strings.Builder{}
 
-	headerStrings := []string{}
-
-	headerStyles := m.styleHeaders()
-
-	for columnIndex, column := range m.columns {
-		headerSection := limitStr(column.title, column.width)
-		var borderStyle lipgloss.Style
-
-		if columnIndex == 0 {
-			borderStyle = headerStyles.left.Copy()
-		} else if columnIndex < len(m.columns)-1 {
-			borderStyle = headerStyles.inner.Copy()
-		} else {
-			borderStyle = headerStyles.right.Copy()
-		}
-
-		borderStyle = borderStyle.Inherit(column.style).Inherit(m.baseStyle)
-
-		headerStrings = append(headerStrings, borderStyle.Render(headerSection))
-	}
-
-	headerBlock := lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...)
-
-	rowStrs := []string{headerBlock}
+	rowStrs := []string{m.renderHeaders()}
 
 	startRowIndex, endRowIndex := m.VisibleIndices()
 	for i := startRowIndex; i <= endRowIndex; i++ {

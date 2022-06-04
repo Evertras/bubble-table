@@ -599,3 +599,146 @@ func TestViewResizesWhenColumnsChange(t *testing.T) {
 
 	assert.Equal(t, expectedTableUpdated, rendered)
 }
+
+func TestMaxWidthHidesOverflow(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		}).
+		WithStaticFooter("Footer").
+		// This includes borders, so should cut off early
+		WithMaxTotalWidth(19)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┳━━┓
+┃   1┃   2┃   3┃ >┃
+┣━━━━╋━━━━╋━━━━╋━━┫
+┃  x1┃  x2┃  x3┃ >┃
+┣━━━━┻━━━━┻━━━━┻━━┫
+┃           Footer┃
+┗━━━━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMaxWidthHasNoEffectForExactFit(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		})
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃   4┃
+┣━━━━╋━━━━╋━━━━╋━━━━┫
+┃  x1┃  x2┃  x3┃  x4┃
+┗━━━━┻━━━━┻━━━━┻━━━━┛`
+
+	const expectedTableFooter = `┏━━━━┳━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃   4┃
+┣━━━━╋━━━━╋━━━━╋━━━━┫
+┃  x1┃  x2┃  x3┃  x4┃
+┣━━━━┻━━━━┻━━━━┻━━━━┫
+┃             Footer┃
+┗━━━━━━━━━━━━━━━━━━━┛`
+
+	model = model.WithMaxTotalWidth(lipgloss.Width(expectedTable))
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+
+	model = model.WithStaticFooter("Footer")
+	rendered = model.View()
+	assert.Equal(t, expectedTableFooter, rendered)
+}
+
+func TestMaxWidthHidesOverflowWithSingleCharExtra(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		}).
+		WithStaticFooter("Footer").
+		// Juuuust barely overflowing...
+		WithMaxTotalWidth(17)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━━┓
+┃   1┃   2┃    >┃
+┣━━━━╋━━━━╋━━━━━┫
+┃  x1┃  x2┃    >┃
+┣━━━━┻━━━━┻━━━━━┫
+┃         Footer┃
+┗━━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMaxWidthHidesOverflowWithTwoCharExtra(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		}).
+		// Just enough to squeeze in a '>' column
+		WithMaxTotalWidth(18)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┳━┓
+┃   1┃   2┃   3┃>┃
+┣━━━━╋━━━━╋━━━━╋━┫
+┃  x1┃  x2┃  x3┃>┃
+┗━━━━┻━━━━┻━━━━┻━┛`
+
+	const expectedTableFooter = `┏━━━━┳━━━━┳━━━━┳━┓
+┃   1┃   2┃   3┃>┃
+┣━━━━╋━━━━╋━━━━╋━┫
+┃  x1┃  x2┃  x3┃>┃
+┣━━━━┻━━━━┻━━━━┻━┫
+┃          Footer┃
+┗━━━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+
+	model = model.WithStaticFooter("Footer")
+	rendered = model.View()
+	assert.Equal(t, expectedTableFooter, rendered)
+}

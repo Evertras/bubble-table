@@ -54,8 +54,15 @@ type Model struct {
 	// For flex columns
 	targetTotalWidth int
 
-	// Internal cached calculations for reference
+	// The maximum total width for overflow/scrolling
+	maxTotalWidth int
+
+	// Internal cached calculations for reference, may be higher than
+	// maxTotalWidth.  If this is the case, we need to adjust the view
 	totalWidth int
+
+	// How far to scroll to the right, in columns
+	horizontalScrollOffsetCol int
 }
 
 // New creates a new table ready for further modifications.

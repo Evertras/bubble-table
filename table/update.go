@@ -60,6 +60,7 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	return m, cmd
 }
 
+// nolint: cyclop // This is just a series of Matches tests
 func (m *Model) handleKeypress(msg tea.KeyMsg) {
 	switch {
 	case key.Matches(msg, m.keyMap.RowDown):
@@ -88,6 +89,12 @@ func (m *Model) handleKeypress(msg tea.KeyMsg) {
 
 	case key.Matches(msg, m.keyMap.FilterClear):
 		m.filterTextInput.Reset()
+
+	case key.Matches(msg, m.keyMap.ScrollRight):
+		m.scrollRight()
+
+	case key.Matches(msg, m.keyMap.ScrollLeft):
+		m.scrollLeft()
 	}
 }
 

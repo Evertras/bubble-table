@@ -16,7 +16,13 @@ func (m Model) renderFooter() string {
 
 	const borderAdjustment = 2
 
-	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(m.totalWidth - borderAdjustment)
+	width := m.totalWidth
+
+	if m.maxTotalWidth != 0 {
+		width = m.maxTotalWidth
+	}
+
+	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(width - borderAdjustment)
 
 	if m.staticFooter != "" {
 		return styleFooter.Render(m.staticFooter)

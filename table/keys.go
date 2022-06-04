@@ -22,6 +22,12 @@ type KeyMap struct {
 
 	// FilterClear will clear the filter while it's blurred.
 	FilterClear key.Binding
+
+	// ScrollRight will move one column to the right when overflow occurs.
+	ScrollRight key.Binding
+
+	// ScrollLeft will move one column to the left when overflow occurs.
+	ScrollLeft key.Binding
 }
 
 // DefaultKeyMap returns a set of sensible defaults for controlling a focused table.
@@ -56,6 +62,12 @@ func DefaultKeyMap() KeyMap {
 		),
 		FilterClear: key.NewBinding(
 			key.WithKeys("esc"),
+		),
+		ScrollRight: key.NewBinding(
+			key.WithKeys("shift+right"),
+		),
+		ScrollLeft: key.NewBinding(
+			key.WithKeys("shift+left"),
 		),
 	}
 }

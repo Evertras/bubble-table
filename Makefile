@@ -34,6 +34,10 @@ example-pagination:
 example-simplest:
 	@go run ./examples/simplest/*.go
 
+.PHONY: example-scrolling
+example-scrolling:
+	@go run ./examples/scrolling/*.go
+
 .PHONY: example-sorting
 example-sorting:
 	@go run ./examples/sorting/*.go

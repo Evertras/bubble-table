@@ -43,13 +43,46 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-// This is somewhat complicated but at the moment splitting this out feels like
-// it would just make things harder to read.  May revisit later.
-// nolint: cyclop
+// nolint: nestif // This has many ifs, but they're short
+func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
+	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
+
+	var str string
+
+	if column.key == columnKeySelect {
+		if row.selected {
+			str = m.selectedText
+		} else {
+			str = m.unselectedText
+		}
+	} else if column.key == columnKeyOverflowRight {
+		str = ">"
+	} else if column.key == columnKeyOverflowLeft {
+		str = "<"
+	} else if entry, exists := row.Data[column.key]; exists {
+		switch entry := entry.(type) {
+		case StyledCell:
+			str = fmt.Sprintf("%v", entry.Data)
+			cellStyle = entry.Style.Copy().Inherit(cellStyle)
+		default:
+			str = fmt.Sprintf("%v", entry)
+		}
+	}
+
+	cellStyle = cellStyle.Inherit(borderStyle)
+	cellStr := cellStyle.Render(limitStr(str, column.width))
+
+	return cellStr
+}
+
+// This is long and could use some refactoring in the future, but not quite sure
+// how to pick it apart yet.
+// nolint: funlen, cyclop
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
+	totalRenderedWidth := 0
 
 	columnStrings := []string{}
 
@@ -61,26 +94,28 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	stylesInner, stylesLast := m.styleRows()
 
-	for columnIndex, column := range m.columns {
-		cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
+	if m.horizontalScrollOffsetCol > 0 {
+		var borderStyle lipgloss.Style
 
-		var str string
-
-		if column.key == columnKeySelect {
-			if row.selected {
-				str = m.selectedText
-			} else {
-				str = m.unselectedText
-			}
-		} else if entry, exists := row.Data[column.key]; exists {
-			switch entry := entry.(type) {
-			case StyledCell:
-				str = fmt.Sprintf("%v", entry.Data)
-				cellStyle = entry.Style.Copy().Inherit(cellStyle)
-			default:
-				str = fmt.Sprintf("%v", entry)
-			}
+		if !last {
+			borderStyle = stylesInner.left.Copy()
+		} else {
+			borderStyle = stylesLast.left.Copy()
 		}
+
+		rendered := m.renderRowColumnData(row, genOverflowColumnLeft(1), rowStyle, borderStyle)
+
+		totalRenderedWidth += lipgloss.Width(rendered)
+
+		columnStrings = append(columnStrings, rendered)
+	}
+
+	for columnIndex, column := range m.columns {
+		if columnIndex < m.horizontalScrollOffsetCol {
+			continue
+		}
+
+		var borderStyle lipgloss.Style
 
 		var rowStyles borderStyleRow
 
@@ -90,15 +125,45 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 			rowStyles = stylesLast
 		}
 
-		if columnIndex == 0 {
-			cellStyle = cellStyle.Inherit(rowStyles.left)
+		if len(columnStrings) == 0 {
+			borderStyle = rowStyles.left
 		} else if columnIndex < numColumns-1 {
-			cellStyle = cellStyle.Inherit(rowStyles.inner)
+			borderStyle = rowStyles.inner
 		} else {
-			cellStyle = cellStyle.Inherit(rowStyles.right)
+			borderStyle = rowStyles.right
 		}
 
-		cellStr := cellStyle.Render(limitStr(str, column.width))
+		cellStr := m.renderRowColumnData(row, column, rowStyle, borderStyle)
+
+		if m.maxTotalWidth != 0 {
+			renderedWidth := lipgloss.Width(cellStr)
+
+			const (
+				borderAdjustment = 1
+				overflowColWidth = 2
+			)
+
+			targetWidth := m.maxTotalWidth - overflowColWidth
+
+			if columnIndex == len(m.columns)-1 {
+				// If this is the last header, we don't need to account for the
+				// overflow arrow column
+				targetWidth = m.maxTotalWidth
+			}
+
+			if totalRenderedWidth+renderedWidth > targetWidth {
+				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
+				overflowStyle := genOverflowStyle(rowStyles.right, overflowWidth)
+				overflowColumn := genOverflowColumnRight(overflowWidth)
+				overflowStr := m.renderRowColumnData(row, overflowColumn, rowStyle, overflowStyle)
+
+				columnStrings = append(columnStrings, overflowStr)
+
+				break
+			}
+
+			totalRenderedWidth += renderedWidth
+		}
 
 		columnStrings = append(columnStrings, cellStr)
 	}
