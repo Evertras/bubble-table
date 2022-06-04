@@ -33,9 +33,9 @@ func (m Model) renderHeaders() string {
 		if m.maxTotalWidth != 0 {
 			renderedWidth := lipgloss.Width(rendered)
 
-			if totalRenderedWidth+renderedWidth > m.maxTotalWidth {
-				const borderAdjustment = 1
+			const borderAdjustment = 1
 
+			if totalRenderedWidth+renderedWidth > m.maxTotalWidth-borderAdjustment*2 {
 				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
 				overflowStyle := genOverflowStyle(headerStyles.right, overflowWidth)
 				overflowColumn := genOverflowColumn(overflowWidth)

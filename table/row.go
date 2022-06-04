@@ -114,9 +114,9 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 		if m.maxTotalWidth != 0 {
 			renderedWidth := lipgloss.Width(cellStr)
 
-			if totalRenderedWidth+renderedWidth > m.maxTotalWidth {
-				const borderAdjustment = 1
+			const borderAdjustment = 1
 
+			if totalRenderedWidth+renderedWidth > m.maxTotalWidth-borderAdjustment*2 {
 				overflowWidth := m.maxTotalWidth - totalRenderedWidth - borderAdjustment
 				overflowStyle := genOverflowStyle(rowStyles.right, overflowWidth)
 				overflowColumn := genOverflowColumn(overflowWidth)

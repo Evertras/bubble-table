@@ -631,3 +631,35 @@ func TestMaxWidthHidesOverflow(t *testing.T) {
 
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestMaxWidthHidesOverflowWithSingleCharExtra(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		}).
+		WithStaticFooter("Footer").
+		// Juuuust barely overflowing...
+		WithMaxTotalWidth(17)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━━┓
+┃   1┃   2┃    >┃
+┣━━━━╋━━━━╋━━━━━┫
+┃  x1┃  x2┃    >┃
+┣━━━━┻━━━━┻━━━━━┫
+┃         Footer┃
+┗━━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
