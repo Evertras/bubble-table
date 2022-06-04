@@ -23,7 +23,7 @@ func (m Model) View() string {
 		rowStrs = append(rowStrs, m.renderRow(i, i == endRowIndex))
 	}
 
-	footer := m.renderFooter()
+	footer := m.renderFooter(lipgloss.Width(rowStrs[0]))
 
 	if footer != "" {
 		rowStrs = append(rowStrs, footer)

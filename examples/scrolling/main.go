@@ -55,6 +55,7 @@ func NewModel() Model {
 		WithRows(rows).
 		WithMaxTotalWidth(30).
 		WithHorizontalFreezeColumnCount(1).
+		WithStaticFooter("A footer").
 		Focused(true)
 
 	return Model{
