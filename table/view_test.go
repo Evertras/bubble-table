@@ -812,3 +812,36 @@ func TestScrolledTableSizesFooterCorrectly(t *testing.T) {
 	rendered := model.View()
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestHorizontalScrollCaretIsRightAligned(t *testing.T) {
+	leftAlign := lipgloss.NewStyle().Align(lipgloss.Left)
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}).WithStyle(leftAlign),
+		}).
+		HeaderStyle(leftAlign).
+		WithStaticFooter("Footer").
+		WithMaxTotalWidth(17)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━━┓
+┃1   ┃2   ┃    >┃
+┣━━━━╋━━━━╋━━━━━┫
+┃x1  ┃x2  ┃    >┃
+┣━━━━┻━━━━┻━━━━━┫
+┃         Footer┃
+┗━━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
