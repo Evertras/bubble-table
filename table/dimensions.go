@@ -14,6 +14,8 @@ func (m *Model) recalculateWidth() {
 	}
 
 	updateColumnWidths(m.columns, m.targetTotalWidth)
+
+	m.recalculateLastHorizontalColumn()
 }
 
 // Updates column width in-place.  This could be optimized but should be called

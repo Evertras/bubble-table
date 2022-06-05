@@ -66,6 +66,9 @@ type Model struct {
 
 	// How many columns to freeze when scrolling horizontally
 	horizontalScrollFreezeColumnsCount int
+
+	// Calculated maximum column we can scroll to before the last is displayed
+	maxHorizontalColumnIndex int
 }
 
 // New creates a new table ready for further modifications.
