@@ -56,6 +56,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 			str = m.unselectedText
 		}
 	} else if column.key == columnKeyOverflowRight {
+		cellStyle = cellStyle.Align(lipgloss.Right)
 		str = ">"
 	} else if column.key == columnKeyOverflowLeft {
 		str = "<"
