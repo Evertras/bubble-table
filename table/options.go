@@ -275,6 +275,8 @@ func (m Model) WithFooterVisibility(visibility bool) Model {
 func (m Model) WithMaxTotalWidth(maxTotalWidth int) Model {
 	m.maxTotalWidth = maxTotalWidth
 
+	m.recalculateWidth()
+
 	return m
 }
 
@@ -283,6 +285,8 @@ func (m Model) WithMaxTotalWidth(maxTotalWidth int) Model {
 // always be visible even when scrolling.
 func (m Model) WithHorizontalFreezeColumnCount(columnsToFreeze int) Model {
 	m.horizontalScrollFreezeColumnsCount = columnsToFreeze
+
+	m.recalculateWidth()
 
 	return m
 }
