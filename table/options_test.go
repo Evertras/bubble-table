@@ -137,3 +137,90 @@ func TestPageOptions(t *testing.T) {
 	assert.Greater(t, len(model.renderFooter(10)), 10)
 	assert.Contains(t, model.renderFooter(10), "6/6")
 }
+
+func TestSelectRowsProgramatically(t *testing.T) {
+	const col = "id"
+
+	tests := map[string]struct {
+		rows        []Row
+		selectedIds []int
+	}{
+		"no rows selected": {
+			[]Row{
+				NewRow(RowData{col: 1}),
+				NewRow(RowData{col: 2}),
+				NewRow(RowData{col: 3}),
+			},
+			[]int{},
+		},
+
+		"all rows selected": {
+			[]Row{
+				NewRow(RowData{col: 1}).Selected(true),
+				NewRow(RowData{col: 2}).Selected(true),
+				NewRow(RowData{col: 3}).Selected(true),
+			},
+			[]int{1, 2, 3},
+		},
+
+		"first row selected": {
+			[]Row{
+				NewRow(RowData{col: 1}).Selected(true),
+				NewRow(RowData{col: 2}),
+				NewRow(RowData{col: 3}),
+			},
+			[]int{1},
+		},
+
+		"last row selected": {
+			[]Row{
+				NewRow(RowData{col: 1}),
+				NewRow(RowData{col: 2}),
+				NewRow(RowData{col: 3}).Selected(true),
+			},
+			[]int{3},
+		},
+	}
+
+	model := New([]Column{
+		NewColumn(col, col, 1),
+	})
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			sel := model.WithRows(tt.rows).SelectedRows()
+
+			assert.Equal(t, len(tt.selectedIds), len(sel))
+			for i, id := range tt.selectedIds {
+				assert.Equal(t, id, sel[i].Data[col], "expecting row %d to have same %s column value", i)
+			}
+		})
+	}
+}
+
+func BenchmarkSelectedRows(b *testing.B) {
+	const N = 1000
+
+	b.ReportAllocs()
+
+	rows := make([]Row, 0, N)
+	for i := 0; i < N; i++ {
+		rows = append(rows, NewRow(RowData{"row": i}).Selected(i%2 == 0))
+	}
+
+	model := New([]Column{
+		NewColumn("row", "Row", 4),
+	}).WithRows(rows)
+
+	var sel []Row
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		sel = model.SelectedRows()
+	}
+
+	Rows = sel
+}
+
+var Rows []Row

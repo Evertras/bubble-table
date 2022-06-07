@@ -24,7 +24,6 @@ type Model struct {
 	focused        bool
 	keyMap         KeyMap
 	selectableRows bool
-	selectedRows   []Row
 	rowCursorIndex int
 
 	// Styles

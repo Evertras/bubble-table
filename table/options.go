@@ -32,7 +32,6 @@ func (m Model) HeaderStyle(style lipgloss.Style) Model {
 // WithRows sets the rows to show as data in the table.
 func (m Model) WithRows(rows []Row) Model {
 	m.rows = rows
-	m.selectedRows = nil
 
 	if m.pageSize != 0 {
 		maxPage := m.MaxPages()
@@ -92,7 +91,15 @@ func (m Model) HighlightedRow() Row {
 
 // SelectedRows returns all rows that have been set as selected by the user.
 func (m Model) SelectedRows() []Row {
-	return m.selectedRows
+	selectedRows := []Row{}
+
+	for _, row := range m.GetVisibleRows() {
+		if row.selected {
+			selectedRows = append(selectedRows, row)
+		}
+	}
+
+	return selectedRows
 }
 
 // HighlightStyle sets a custom style to use when the row is being highlighted

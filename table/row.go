@@ -171,3 +171,10 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	return lipgloss.JoinHorizontal(lipgloss.Bottom, columnStrings...)
 }
+
+// Selected sets whether the row is selected or not.
+func (r Row) Selected(selected bool) Row {
+	r.selected = selected
+
+	return r
+}
