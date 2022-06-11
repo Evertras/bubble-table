@@ -72,10 +72,31 @@ var (
 
 		InnerDivider: "┃",
 	}
+
+	borderRounded = Border{
+		Top:    "─",
+		Left:   "│",
+		Right:  "│",
+		Bottom: "─",
+
+		TopRight:    "╮",
+		TopLeft:     "╭",
+		BottomRight: "╯",
+		BottomLeft:  "╰",
+
+		TopJunction:    "┬",
+		LeftJunction:   "├",
+		RightJunction:  "┤",
+		BottomJunction: "┴",
+		InnerJunction:  "┼",
+
+		InnerDivider: "│",
+	}
 )
 
 func init() {
 	borderDefault.generateStyles()
+	borderRounded.generateStyles()
 }
 
 func (b *Border) generateStyles() {
@@ -293,6 +314,13 @@ func (b *Border) generateSingleCellStyle() {
 func (m Model) BorderDefault() Model {
 	// Already generated styles
 	m.border = borderDefault
+
+	return m
+}
+
+func (m Model) BorderRounded() Model {
+	// Already generated styles
+	m.border = borderRounded
 
 	return m
 }
