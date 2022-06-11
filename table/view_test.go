@@ -454,6 +454,13 @@ func TestSimple3x3WithMissingIndicator(t *testing.T) {
 
 			id := fmt.Sprintf("%d", columnIndex)
 
+			if rowIndex == 2 && columnIndex == 3 {
+				// Empty string to ensure that zero value data is not 'missing'
+				rowData[id] = ""
+
+				continue
+			}
+
 			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
 		}
 
@@ -466,7 +473,7 @@ func TestSimple3x3WithMissingIndicator(t *testing.T) {
 ┃   1┃   2┃   3┃
 ┣━━━━╋━━━━╋━━━━┫
 ┃ 1,1┃ 2,1┃ 3,1┃
-┃ 1,2┃  XX┃ 3,2┃
+┃ 1,2┃  XX┃    ┃
 ┃ 1,3┃ 2,3┃ 3,3┃
 ┣━━━━┻━━━━┻━━━━┫
 ┃        Footer┃
