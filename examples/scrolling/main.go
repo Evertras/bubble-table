@@ -14,6 +14,10 @@ const (
 
 	numCols = 100
 	numRows = 10
+	idWidth = 5
+
+	colWidth = 3
+	maxWidth = 30
 )
 
 type Model struct {
@@ -30,7 +34,7 @@ func genRow(id int) table.Row {
 	}
 
 	for i := 0; i < numCols; i++ {
-		data[colKey(i)] = i + 1
+		data[colKey(i)] = colWidth
 	}
 
 	return table.NewRow(data)
@@ -44,16 +48,16 @@ func NewModel() Model {
 	}
 
 	cols := []table.Column{
-		table.NewColumn(columnKeyID, "ID", 5),
+		table.NewColumn(columnKeyID, "ID", idWidth),
 	}
 
 	for i := 0; i < numCols; i++ {
-		cols = append(cols, table.NewColumn(colKey(i), colKey(i+1), 5))
+		cols = append(cols, table.NewColumn(colKey(i), colKey(i+1), colWidth))
 	}
 
 	t := table.New(cols).
 		WithRows(rows).
-		WithMaxTotalWidth(30).
+		WithMaxTotalWidth(maxWidth).
 		WithHorizontalFreezeColumnCount(1).
 		WithStaticFooter("A footer").
 		Focused(true)
