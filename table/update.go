@@ -54,38 +54,47 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 
 // nolint: cyclop // This is just a series of Matches tests
 func (m *Model) handleKeypress(msg tea.KeyMsg) {
-	switch {
-	case key.Matches(msg, m.keyMap.RowDown):
+	if key.Matches(msg, m.keyMap.RowDown) {
 		m.moveHighlightDown()
+	}
 
-	case key.Matches(msg, m.keyMap.RowUp):
+	if key.Matches(msg, m.keyMap.RowUp) {
 		m.moveHighlightUp()
+	}
 
-	case key.Matches(msg, m.keyMap.RowSelectToggle):
+	if key.Matches(msg, m.keyMap.RowSelectToggle) {
 		m.toggleSelect()
+	}
 
-	case key.Matches(msg, m.keyMap.PageDown):
+	if key.Matches(msg, m.keyMap.PageDown) {
 		m.pageDown()
+	}
 
-	case key.Matches(msg, m.keyMap.PageUp):
+	if key.Matches(msg, m.keyMap.PageUp) {
 		m.pageUp()
+	}
 
-	case key.Matches(msg, m.keyMap.PageFirst):
+	if key.Matches(msg, m.keyMap.PageFirst) {
 		m.pageFirst()
+	}
 
-	case key.Matches(msg, m.keyMap.PageLast):
+	if key.Matches(msg, m.keyMap.PageLast) {
 		m.pageLast()
+	}
 
-	case key.Matches(msg, m.keyMap.Filter):
+	if key.Matches(msg, m.keyMap.Filter) {
 		m.filterTextInput.Focus()
+	}
 
-	case key.Matches(msg, m.keyMap.FilterClear):
+	if key.Matches(msg, m.keyMap.FilterClear) {
 		m.filterTextInput.Reset()
+	}
 
-	case key.Matches(msg, m.keyMap.ScrollRight):
+	if key.Matches(msg, m.keyMap.ScrollRight) {
 		m.scrollRight()
+	}
 
-	case key.Matches(msg, m.keyMap.ScrollLeft):
+	if key.Matches(msg, m.keyMap.ScrollLeft) {
 		m.scrollLeft()
 	}
 }
