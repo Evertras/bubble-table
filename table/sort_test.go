@@ -10,8 +10,11 @@ import (
 func TestSortSingleColumnAscAndDesc(t *testing.T) {
 	const idColKey = "id"
 
+	// Check mixing types
+	type someType string
+
 	rows := []Row{
-		NewRow(RowData{idColKey: "b"}),
+		NewRow(RowData{idColKey: someType("b")}),
 		NewRow(RowData{idColKey: NewStyledCell("c", lipgloss.NewStyle().Bold(true))}),
 		NewRow(RowData{idColKey: "a"}),
 		// Missing data
@@ -37,6 +40,9 @@ func TestSortSingleColumnAscAndDesc(t *testing.T) {
 			switch idVal := idVal.(type) {
 			case string:
 				assert.Equal(t, expected, idVal)
+
+			case someType:
+				assert.Equal(t, expected, string(idVal))
 
 			case StyledCell:
 				assert.Equal(t, expected, idVal.Data)
