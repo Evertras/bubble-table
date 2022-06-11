@@ -60,8 +60,18 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		str = ">"
 	} else if column.key == columnKeyOverflowLeft {
 		str = "<"
-	} else if entry, exists := row.Data[column.key]; exists {
-		switch entry := entry.(type) {
+	} else {
+		var data interface{}
+
+		if entry, exists := row.Data[column.key]; exists {
+			data = entry
+		} else if m.missingDataIndicator != nil {
+			data = m.missingDataIndicator
+		} else {
+			data = ""
+		}
+
+		switch entry := data.(type) {
 		case StyledCell:
 			str = fmt.Sprintf("%v", entry.Data)
 			cellStyle = entry.Style.Copy().Inherit(cellStyle)
