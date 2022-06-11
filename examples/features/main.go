@@ -59,8 +59,8 @@ func NewModel() Model {
 
 	rows := []table.Row{
 		table.NewRow(table.RowData{
-			columnKeyID:          "abc",
-			columnKeyName:        "Hello",
+			columnKeyID: "abc",
+			// Missing name
 			columnKeyDescription: "The first table entry, ever",
 			columnKeyCount:       4,
 		}),
@@ -114,7 +114,11 @@ func NewModel() Model {
 					Foreground(lipgloss.Color("#a7a")).
 					Align(lipgloss.Left),
 			).
-			SortByAsc(columnKeyID),
+			SortByAsc(columnKeyID).
+			WithMissingDataIndicatorStyled(table.StyledCell{
+				Style: lipgloss.NewStyle().Foreground(lipgloss.Color("#faa")),
+				Data:  "<ない>",
+			}),
 	}
 
 	model.updateFooter()

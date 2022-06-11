@@ -391,6 +391,145 @@ func TestSimple3x3WithFooterView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestSimple3x3WithMissingData(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			// Take out the center
+			if rowIndex == 2 && columnIndex == 2 {
+				continue
+			}
+
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).WithStaticFooter("Footer")
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃    ┃ 3,2┃
+┃ 1,3┃ 2,3┃ 3,3┃
+┣━━━━┻━━━━┻━━━━┫
+┃        Footer┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSimple3x3WithMissingIndicator(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithMissingDataIndicator("XX")
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			// Take out the center
+			if rowIndex == 2 && columnIndex == 2 {
+				continue
+			}
+
+			columnKey := fmt.Sprintf("%d", columnIndex)
+
+			if rowIndex == 2 && columnIndex == 3 {
+				// Empty string to ensure that zero value data is not 'missing'
+				rowData[columnKey] = ""
+
+				continue
+			}
+
+			rowData[columnKey] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).WithStaticFooter("Footer")
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃  XX┃    ┃
+┃ 1,3┃ 2,3┃ 3,3┃
+┣━━━━┻━━━━┻━━━━┫
+┃        Footer┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSimple3x3WithMissingIndicatorStyled(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithMissingDataIndicatorStyled(StyledCell{
+		Style: lipgloss.NewStyle().Align(lipgloss.Left),
+		Data:  "XX",
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			// Take out the center
+			if rowIndex == 2 && columnIndex == 2 {
+				continue
+			}
+
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).WithStaticFooter("Footer")
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃XX  ┃ 3,2┃
+┃ 1,3┃ 2,3┃ 3,3┃
+┣━━━━┻━━━━┻━━━━┫
+┃        Footer┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestPaged3x3WithNoSpecifiedFooter(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),

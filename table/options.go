@@ -318,3 +318,23 @@ func (m Model) ScrollLeft() Model {
 
 	return m
 }
+
+// WithMissingDataIndicator sets an indicator to use when data for a column is
+// not found in a given row.  Note that this is for completely missing data,
+// an empty string or other zero value that is explicitly set is not considered
+// to be missing.
+func (m Model) WithMissingDataIndicator(str string) Model {
+	m.missingDataIndicator = str
+
+	return m
+}
+
+// WithMissingDataIndicatorStyled sets a styled indicator to use when data for
+// a column is not found in a given row.  Note that this is for completely
+// missing data, an empty string or other zero value that is explicitly set is
+// not considered to be missing.
+func (m Model) WithMissingDataIndicatorStyled(styled StyledCell) Model {
+	m.missingDataIndicator = styled
+
+	return m
+}

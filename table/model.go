@@ -20,6 +20,9 @@ type Model struct {
 	columns []Column
 	rows    []Row
 
+	// Shown when data is missing from a row
+	missingDataIndicator interface{}
+
 	// Interaction
 	focused        bool
 	keyMap         KeyMap
