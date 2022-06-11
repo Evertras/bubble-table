@@ -307,6 +307,18 @@ func TestHorizontalScrollingStopEdgeCases(t *testing.T) {
 			maxWidth:     20,
 			expectedCols: []int{7, 8},
 		},
+		{
+			numCols:   6,
+			nameWidth: 5,
+			colWidth:  3,
+			maxWidth:  30,
+		},
+		{
+			numCols:   50,
+			nameWidth: 20,
+			colWidth:  6,
+			maxWidth:  31,
+		},
 	}
 
 	for i, test := range tests {

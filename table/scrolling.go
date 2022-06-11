@@ -47,10 +47,4 @@ func (m *Model) recalculateLastHorizontalColumn() {
 			m.maxHorizontalColumnIndex = i - m.horizontalScrollFreezeColumnsCount
 		}
 	}
-
-	if m.maxHorizontalColumnIndex <= m.horizontalScrollFreezeColumnsCount {
-		m.maxHorizontalColumnIndex = 0
-
-		return
-	}
 }
