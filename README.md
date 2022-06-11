@@ -23,7 +23,9 @@ for a few helpful tips!
 For a code reference of most available features, please see the [full feature example](./examples/features).
 If you want to get started with a simple default table, [check the simplest example](./examples/simplest).
 
-Displays a table with a header, rows, footer, and borders.
+Displays a table with a header, rows, footer, and borders.  The header can be
+hidden, and the footer can be set to automatically show page information, use
+custom text, or be hidden by default.
 
 Columns can be fixed-width [or flexible width](./examples/flex).  A maximum
 width can be specified which enables [horizontal scrolling](./examples/scrolling),
