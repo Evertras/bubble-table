@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/stretchr/testify/assert"
 )
@@ -351,4 +352,62 @@ func TestHorizontalScrollingStopEdgeCases(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestHorizontalScrollingWithCustomKeybind(t *testing.T) {
+	keymap := DefaultKeyMap()
+
+	keymap.ScrollRight = key.NewBinding(key.WithKeys("x"))
+	keymap.ScrollLeft = key.NewBinding(key.WithKeys("y"))
+
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+		NewColumn("4", "4", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{
+				"1": "x1",
+				"2": "x2",
+				"3": "x3",
+				"4": "x4",
+			}),
+		}).
+		WithKeyMap(keymap).
+		WithMaxTotalWidth(18).
+		Focused(true)
+
+	const expectedTableOriginal = `┏━━━━┳━━━━┳━━━━┳━┓
+┃   1┃   2┃   3┃>┃
+┣━━━━╋━━━━╋━━━━╋━┫
+┃  x1┃  x2┃  x3┃>┃
+┗━━━━┻━━━━┻━━━━┻━┛`
+
+	const expectedTableAfter = `┏━┳━━━━┳━━━━┳━━━━┓
+┃<┃   2┃   3┃   4┃
+┣━╋━━━━╋━━━━╋━━━━┫
+┃<┃  x2┃  x3┃  x4┃
+┗━┻━━━━┻━━━━┻━━━━┛`
+
+	hitScrollRight := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'x'}})
+	}
+
+	hitScrollLeft := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'y'}})
+	}
+
+	assert.Equal(t, expectedTableOriginal, model.View())
+
+	hitScrollRight()
+
+	assert.Equal(t, expectedTableAfter, model.View())
+
+	hitScrollLeft()
+	assert.Equal(t, expectedTableOriginal, model.View())
+
+	// Try it again, should do nothing
+	hitScrollLeft()
+	assert.Equal(t, expectedTableOriginal, model.View())
 }
