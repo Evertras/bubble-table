@@ -452,16 +452,16 @@ func TestSimple3x3WithMissingIndicator(t *testing.T) {
 				continue
 			}
 
-			id := fmt.Sprintf("%d", columnIndex)
+			columnKey := fmt.Sprintf("%d", columnIndex)
 
 			if rowIndex == 2 && columnIndex == 3 {
 				// Empty string to ensure that zero value data is not 'missing'
-				rowData[id] = ""
+				rowData[columnKey] = ""
 
 				continue
 			}
 
-			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+			rowData[columnKey] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
 		}
 
 		rows = append(rows, NewRow(rowData))
