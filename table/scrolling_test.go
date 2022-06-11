@@ -308,16 +308,16 @@ func TestHorizontalScrollingStopEdgeCases(t *testing.T) {
 			expectedCols: []int{7, 8},
 		},
 		{
-			numCols:      6,
-			nameWidth:    5,
-			colWidth:     3,
-			maxWidth:     30,
+			numCols:   6,
+			nameWidth: 5,
+			colWidth:  3,
+			maxWidth:  30,
 		},
 		{
-			numCols:      50,
-			nameWidth:    20,
-			colWidth:     6,
-			maxWidth:     31,
+			numCols:   50,
+			nameWidth: 20,
+			colWidth:  6,
+			maxWidth:  31,
 		},
 	}
 
