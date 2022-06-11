@@ -100,15 +100,3 @@ func New(columns []Column) Model {
 func (m Model) Init() tea.Cmd {
 	return nil
 }
-
-// GetVisibleRows return sorted and filtered rows.
-func (m Model) GetVisibleRows() []Row {
-	rows := make([]Row, len(m.rows))
-	copy(rows, m.rows)
-	if m.filtered {
-		rows = m.getFilteredRows(rows)
-	}
-	rows = getSortedRows(m.sortOrder, rows)
-
-	return rows
-}
