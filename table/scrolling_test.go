@@ -357,8 +357,10 @@ func TestHorizontalScrollingStopEdgeCases(t *testing.T) {
 func TestHorizontalScrollingWithCustomKeybind(t *testing.T) {
 	keymap := DefaultKeyMap()
 
-	keymap.ScrollRight = key.NewBinding(key.WithKeys("x"))
-	keymap.ScrollLeft = key.NewBinding(key.WithKeys("y"))
+	// These intentionally overlap with the keybinds for paging, to ensure
+	// that conflicts can live together
+	keymap.ScrollRight = key.NewBinding(key.WithKeys("right"))
+	keymap.ScrollLeft = key.NewBinding(key.WithKeys("left"))
 
 	model := New([]Column{
 		NewColumn("1", "1", 4),
@@ -391,11 +393,11 @@ func TestHorizontalScrollingWithCustomKeybind(t *testing.T) {
 ┗━┻━━━━┻━━━━┻━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'x'}})
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyRight})
 	}
 
 	hitScrollLeft := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'y'}})
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyLeft})
 	}
 
 	assert.Equal(t, expectedTableOriginal, model.View())
