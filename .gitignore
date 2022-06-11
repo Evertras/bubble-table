@@ -13,9 +13,6 @@
 *.out
 *.coverage
 
-# Fuzzing data
-testdata
-
 # Go vendor folder
 vendor/
 
