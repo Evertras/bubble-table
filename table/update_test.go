@@ -33,10 +33,6 @@ func TestUnfocusedDoesntMove(t *testing.T) {
 	assert.True(t, ok, "Failed to convert to string")
 
 	assert.Equal(t, "first", id, "Should still be on first row")
-
-	model, _ = model.Update(tea.KeyMsg{
-		Type: tea.KeyHome,
-	})
 }
 
 func TestPageKeysDoNothingWhenNoPages(t *testing.T) {
