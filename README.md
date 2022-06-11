@@ -51,6 +51,8 @@ simple footer to show the current page and total pages.
 Built-in filtering can be enabled by setting any columns as filterable, using
 a text box in the footer and `/` (customizable by keybind) to start filtering.
 
+A missing indicator can be supplied to show missing data in rows.
+
 Columns can be sorted in either ascending or descending order.  Multiple columns
 can be specified in a row.  If multiple columns are specified, first the table
 is sorted by the first specified column, then each group within that column is
@@ -114,7 +116,9 @@ rows := []table.Row{
 
   table.NewRow(table.RowData{
     columnKeyID:          "def",
-    // This row is missing the Name column, so it will simply be blank
+    // This row is missing the Name column, so it will use the supplied missing
+    // indicator if supplied when creating the table using the following option:
+    // .WithMissingDataIndicator("<ない>") (or .WithMissingDataIndicatorStyled!)
   }),
 
   // We can also apply styling to the row or to individual cells
@@ -123,7 +127,7 @@ rows := []table.Row{
   table.NewRow(table.RowData{
     columnKeyID:          "bold",
     columnKeyName:        "Bolded",
-  }).WithStyle(lipgloss.NewStyle().Bold(true),
+  }).WithStyle(lipgloss.NewStyle().Bold(true).  ,
 
   // This row also has individual styling to make it bold
   table.NewRow(table.RowData{
