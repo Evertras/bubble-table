@@ -85,4 +85,10 @@ func TestUserEventHighlightedIndexChanged(t *testing.T) {
 	events = model.GetLastUpdateUserEvents()
 	assert.Len(t, events, 1, "Missing event to scroll up with wrap")
 	checkEvent(events, 0, 3)
+
+	// Now check to make sure it doesn't trigger when row index doesn't change
+	model = model.WithRows([]Row{NewRow(empty)})
+	hitDown()
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 0, "There's no row to change to for single row table, event shouldn't exist")
 }
