@@ -318,6 +318,7 @@ func (m Model) BorderDefault() Model {
 	return m
 }
 
+// BorderRounded uses a thin, rounded border.
 func (m Model) BorderRounded() Model {
 	// Already generated styles
 	m.border = borderRounded
