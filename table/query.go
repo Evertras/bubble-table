@@ -60,3 +60,9 @@ func (m *Model) GetFocused() bool {
 func (m *Model) GetHorizontalScrollColumnOffset() int {
 	return m.horizontalScrollOffsetCol
 }
+
+// GetHeaderVisibility returns true if the header has been set to visible (default)
+// or false if the header has been set to hidden.
+func (m *Model) GetHeaderVisibility() bool {
+	return m.headerVisible
+}

@@ -105,8 +105,13 @@ func (b *Border) generateStyles() {
 	b.generateSingleRowStyles()
 	b.generateSingleCellStyle()
 
-	// For now a footer is just the same as a single column's last row
-	b.styleFooter = b.styleSingleColumnBottom.Copy().Align(lipgloss.Right)
+	// The footer is a single cell with the top taken off... usually.  We can
+	// re-enable the top if needed this way for certain format configurations.
+	b.styleFooter = b.styleSingleCell.Copy().
+		Align(lipgloss.Right).
+		BorderBottom(true).
+		BorderRight(true).
+		BorderLeft(true)
 }
 
 func (b *Border) styleLeftWithFooter(original lipgloss.Style) lipgloss.Style {

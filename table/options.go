@@ -275,6 +275,13 @@ func (m Model) WithFooterVisibility(visibility bool) Model {
 	return m
 }
 
+// WithHeaderVisibility sets the visibility of the header.
+func (m Model) WithHeaderVisibility(visibility bool) Model {
+	m.headerVisible = visibility
+
+	return m
+}
+
 // WithMaxTotalWidth sets the maximum total width that the table should render.
 // If this width is exceeded by either the target width or by the total width
 // of all the columns (including borders!), anything extra will be treated as
