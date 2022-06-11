@@ -185,7 +185,7 @@ Github.
 To run the examples, clone this repo and run:
 
 ```bash
-# Run the full feature demo
+# Run the pokemon demo for a general feel of common useful features
 make
 
 # Run dimensions example to see multiple sizes of simple tables in action

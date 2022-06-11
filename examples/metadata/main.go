@@ -45,26 +45,6 @@ var (
 		elementWater:    "#44f",
 		elementPlant:    "#8b8",
 	}
-
-	customBorder = table.Border{
-		Top:    "─",
-		Left:   "│",
-		Right:  "│",
-		Bottom: "─",
-
-		TopRight:    "╮",
-		TopLeft:     "╭",
-		BottomRight: "╯",
-		BottomLeft:  "╰",
-
-		TopJunction:    "┬",
-		LeftJunction:   "├",
-		RightJunction:  "┤",
-		BottomJunction: "┴",
-		InnerJunction:  "┼",
-
-		InnerDivider: "│",
-	}
 )
 
 type Pokemon struct {
@@ -133,7 +113,7 @@ func NewModel() Model {
 			table.NewColumn(columnKeyPositiveSentiment, ":D %", 5).WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#8c8"))),
 			table.NewColumn(columnKeyNegativeSentiment, ":( %", 5).WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#c88"))),
 		}).WithRows(rows).
-			Border(customBorder).
+			BorderRounded().
 			WithBaseStyle(styleBase).
 			WithPageSize(6).
 			SortByDesc(columnKeyConversations).

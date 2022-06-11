@@ -29,26 +29,6 @@ var (
 			Foreground(lipgloss.Color("#a7a")).
 			BorderForeground(lipgloss.Color("#a38")).
 			Align(lipgloss.Right)
-
-	customBorder = table.Border{
-		Top:    "─",
-		Left:   "│",
-		Right:  "│",
-		Bottom: "─",
-
-		TopRight:    "╮",
-		TopLeft:     "╭",
-		BottomRight: "╯",
-		BottomLeft:  "╰",
-
-		TopJunction:    "┬",
-		LeftJunction:   "├",
-		RightJunction:  "┤",
-		BottomJunction: "┴",
-		InnerJunction:  "┼",
-
-		InnerDivider: "│",
-	}
 )
 
 type Model struct {
@@ -82,7 +62,7 @@ func NewModel() Model {
 			makeRow("Charmander", "Fire", colorFire, 265760, 31.2, 5.25),
 			makeRow("Charizard", "Fire", colorFire, 567763, 25.6, 7.56),
 		}).
-			Border(customBorder).
+			BorderRounded().
 			WithBaseStyle(styleBase).
 			WithPageSize(6).
 			SortByDesc(columnKeyConversations).
