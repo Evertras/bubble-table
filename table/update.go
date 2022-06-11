@@ -52,8 +52,10 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	return m, cmd
 }
 
-// nolint: cyclop // This is just a series of Matches tests
+// nolint: cyclop // This is a series of Matches tests with minimal logic
 func (m *Model) handleKeypress(msg tea.KeyMsg) {
+	previousRowIndex := m.rowCursorIndex
+
 	if key.Matches(msg, m.keyMap.RowDown) {
 		m.moveHighlightDown()
 	}
@@ -97,10 +99,19 @@ func (m *Model) handleKeypress(msg tea.KeyMsg) {
 	if key.Matches(msg, m.keyMap.ScrollLeft) {
 		m.scrollLeft()
 	}
+
+	if m.rowCursorIndex != previousRowIndex {
+		m.appendUserEvent(UserEventHighlightedIndexChanged{
+			PreviousRowIndex: previousRowIndex,
+			SelectedRowIndex: m.rowCursorIndex,
+		})
+	}
 }
 
 // Update responds to input from the user or other messages from Bubble Tea.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+	m.clearUserEvents()
+
 	if !m.focused {
 		return m, nil
 	}

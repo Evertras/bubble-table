@@ -45,6 +45,8 @@ keys can be customized with a KeyMap.
 
 Can make rows selectable, and fetch the current selections.
 
+Events can be checked for user interactions.
+
 Pagination can be set with a given page size, which automatically generates a
 simple footer to show the current page and total pages.
 
