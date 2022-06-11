@@ -30,3 +30,33 @@ func (m *Model) GetIsFilterActive() bool {
 func (m *Model) GetCurrentFilter() string {
 	return m.filterTextInput.Value()
 }
+
+// GetVisibleRows returns sorted and filtered rows.
+func (m Model) GetVisibleRows() []Row {
+	rows := make([]Row, len(m.rows))
+	copy(rows, m.rows)
+	if m.filtered {
+		rows = m.getFilteredRows(rows)
+	}
+	rows = getSortedRows(m.sortOrder, rows)
+
+	return rows
+}
+
+// GetHighlightedRowIndex returns the index of the Row that's currently highlighted
+// by the user.
+func (m *Model) GetHighlightedRowIndex() int {
+	return m.rowCursorIndex
+}
+
+// GetFocused returns whether or not the table is focused and is receiving inputs.
+func (m *Model) GetFocused() bool {
+	return m.focused
+}
+
+// GetHorizontalScrollColumnOffset returns how many columns to the right the table
+// has been scrolled.  0 means the table is all the way to the left, which is
+// the starting default.
+func (m *Model) GetHorizontalScrollColumnOffset() int {
+	return m.horizontalScrollOffsetCol
+}
