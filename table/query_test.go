@@ -160,3 +160,13 @@ func TestGetHorizontalScrollColumnOffset(t *testing.T) {
 		"Should still be 0 after trying to go left again",
 	)
 }
+
+func TestGetHeaderVisibility(t *testing.T) {
+	model := New([]Column{})
+
+	assert.True(t, model.GetHeaderVisibility(), "Header should be visible by default")
+
+	model = model.WithHeaderVisibility(false)
+
+	assert.False(t, model.GetHeaderVisibility(), "Header was not set to hidden")
+}

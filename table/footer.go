@@ -9,7 +9,7 @@ func (m Model) hasFooter() bool {
 	return m.footerVisible && (m.staticFooter != "" || m.pageSize != 0 || m.filtered)
 }
 
-func (m Model) renderFooter(width int) string {
+func (m Model) renderFooter(width int, includeTop bool) string {
 	if !m.hasFooter() {
 		return ""
 	}
@@ -17,6 +17,10 @@ func (m Model) renderFooter(width int) string {
 	const borderAdjustment = 2
 
 	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(width - borderAdjustment)
+
+	if includeTop {
+		styleFooter.BorderTop(true)
+	}
 
 	if m.staticFooter != "" {
 		return styleFooter.Render(m.staticFooter)

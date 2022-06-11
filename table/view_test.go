@@ -139,6 +139,20 @@ func TestSingleRowView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestTableWithNoRowsAndHiddenHeaderHidesTable(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithHeaderVisibility(false)
+
+	const expectedTable = ""
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestSimple3x3(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),
@@ -175,6 +189,40 @@ func TestSimple3x3(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestSimple3x3WithHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithHeaderVisibility(false)
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃ 1,1┃ 2,1┃ 3,1┃
+┃ 1,2┃ 2,2┃ 3,2┃
+┃ 1,3┃ 2,3┃ 3,3┃
+┗━━━━┻━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestSingleHeaderWithFooter(t *testing.T) {
 	model := New([]Column{
 		NewColumn("id", "ID", 4),
@@ -183,6 +231,21 @@ func TestSingleHeaderWithFooter(t *testing.T) {
 	const expectedTable = `┏━━━━┓
 ┃  ID┃
 ┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSingleColumnWithFooterAndHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).
+		WithStaticFooter("Foot").
+		WithHeaderVisibility(false)
+
+	const expectedTable = `┏━━━━┓
 ┃Foot┃
 ┗━━━━┛`
 	rendered := model.View()
@@ -226,6 +289,25 @@ func TestSingleRowWithFooterViewAndBaseStyle(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestSingleRowWithFooterViewAndBaseStyleWithHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).
+		WithStaticFooter("Footer").
+		WithBaseStyle(lipgloss.NewStyle().Align(lipgloss.Left)).
+		WithHeaderVisibility(false)
+
+	const expectedTable = `┏━━━━━━━━━━━━━━┓
+┃Footer        ┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestSingleColumnWithFooterView(t *testing.T) {
 	model := New([]Column{
 		NewColumn("id", "ID", 4),
@@ -237,6 +319,29 @@ func TestSingleColumnWithFooterView(t *testing.T) {
 	const expectedTable = `┏━━━━┓
 ┃  ID┃
 ┣━━━━┫
+┃   1┃
+┃   2┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestSingleColumnWithFooterViewAndHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{"id": "1"}),
+			NewRow(RowData{"id": "2"}),
+		}).
+		WithStaticFooter("Foot").
+		WithHeaderVisibility(false)
+
+	const expectedTable = `┏━━━━┓
 ┃   1┃
 ┃   2┃
 ┣━━━━┫

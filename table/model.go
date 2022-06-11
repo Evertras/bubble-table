@@ -34,6 +34,9 @@ type Model struct {
 	selectedText   string
 	unselectedText string
 
+	// Header
+	headerVisible bool
+
 	// Footers
 	footerVisible bool
 	staticFooter  string
@@ -78,6 +81,7 @@ func New(columns []Column) Model {
 		columns:        make([]Column, len(columns)),
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
+		headerVisible:  true,
 		footerVisible:  true,
 		keyMap:         DefaultKeyMap(),
 

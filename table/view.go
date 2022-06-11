@@ -16,17 +16,38 @@ func (m Model) View() string {
 
 	body := strings.Builder{}
 
-	rowStrs := []string{m.renderHeaders()}
+	rowStrs := make([]string, 0, 1)
+
+	headers := m.renderHeaders()
 
 	startRowIndex, endRowIndex := m.VisibleIndices()
+
+	if m.headerVisible {
+		rowStrs = append(rowStrs, headers)
+	} else if endRowIndex-startRowIndex > 0 {
+		// nolint: gomnd // This is just getting the first newlined substring
+		split := strings.SplitN(headers, "\n", 2)
+		rowStrs = append(rowStrs, split[0])
+	}
+
 	for i := startRowIndex; i <= endRowIndex; i++ {
 		rowStrs = append(rowStrs, m.renderRow(i, i == endRowIndex))
 	}
 
-	footer := m.renderFooter(lipgloss.Width(rowStrs[0]))
+	var footer string
+
+	if len(rowStrs) > 0 {
+		footer = m.renderFooter(lipgloss.Width(rowStrs[0]), false)
+	} else {
+		footer = m.renderFooter(lipgloss.Width(headers), true)
+	}
 
 	if footer != "" {
 		rowStrs = append(rowStrs, footer)
+	}
+
+	if len(rowStrs) == 0 {
+		return ""
 	}
 
 	body.WriteString(lipgloss.JoinVertical(lipgloss.Left, rowStrs...))

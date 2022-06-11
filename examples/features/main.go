@@ -156,6 +156,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
 			cmds = append(cmds, tea.Quit)
+
+		case "i":
+			m.tableModel = m.tableModel.WithHeaderVisibility(!m.tableModel.GetHeaderVisibility())
 		}
 	}
 
@@ -167,6 +170,7 @@ func (m Model) View() string {
 
 	body.WriteString("A (chaotic) table demo with all features enabled!\n")
 	body.WriteString("Press left/right or page up/down to move pages\n")
+	body.WriteString("Press 'i' to toggle the header visibility\n")
 	body.WriteString("Press space/enter to select a row, q or ctrl+c to quit\n")
 
 	selectedIDs := []string{}
