@@ -70,7 +70,7 @@ func (m Model) KeyMap() KeyMap {
 func (m Model) SelectableRows(selectable bool) Model {
 	m.selectableRows = selectable
 
-	hasSelectColumn := m.columns[0].key == columnKeySelect
+	hasSelectColumn := len(m.columns) > 0 && m.columns[0].key == columnKeySelect
 
 	if hasSelectColumn != selectable {
 		if selectable {
