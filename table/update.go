@@ -33,9 +33,16 @@ func (m *Model) toggleSelect() {
 	rows := make([]Row, len(m.GetVisibleRows()))
 	copy(rows, m.GetVisibleRows())
 
-	rows[m.rowCursorIndex].selected = !rows[m.rowCursorIndex].selected
+	currentSelectedState := rows[m.rowCursorIndex].selected
+
+	rows[m.rowCursorIndex].selected = !currentSelectedState
 
 	m.rows = rows
+
+	m.appendUserEvent(UserEventRowSelectToggled{
+		RowIndex:   m.rowCursorIndex,
+		IsSelected: !currentSelectedState,
+	})
 }
 
 func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {

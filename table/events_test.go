@@ -97,3 +97,78 @@ func TestUserEventHighlightedIndexChanged(t *testing.T) {
 	events = model.GetLastUpdateUserEvents()
 	assert.Len(t, events, 0, "There's no row to change to for an empty table, event shouldn't exist")
 }
+
+// nolint: funlen // This is a bunch of checks in a row, this is fine
+func TestUserEventRowSelectToggled(t *testing.T) {
+	// Don't need any actual row data for this
+	empty := RowData{}
+
+	model := New([]Column{}).
+		Focused(true).
+		WithRows(
+			[]Row{
+				NewRow(empty),
+				NewRow(empty),
+				NewRow(empty),
+				NewRow(empty),
+			},
+		).
+		SelectableRows(true)
+
+	hitDown := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyDown})
+	}
+
+	hitSelectToggle := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeySpace})
+	}
+
+	checkEvent := func(events []UserEvent, expectedRowIndex int, expectedSelectionState bool) {
+		if len(events) != 1 {
+			assert.FailNow(t, "Asked to check events with len of not 1, test is bad")
+		}
+
+		switch event := events[0].(type) {
+		case UserEventRowSelectToggled:
+			assert.Equal(t, expectedRowIndex, event.RowIndex, "Row index wrong")
+			assert.Equal(t, expectedSelectionState, event.IsSelected, "Selection state wrong")
+
+		default:
+			assert.Failf(t, "Event is not expected type UserEventRowSelectToggled", "%+v", event)
+		}
+	}
+
+	events := model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 0, "Should be empty when nothing has happened")
+
+	// Try initial selection
+	hitSelectToggle()
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 1, "Missing event for selection toggle")
+	checkEvent(events, 0, true)
+
+	// Do some no-op
+	model, _ = model.Update(nil)
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 0, "Events not cleared between Updates")
+
+	// Check deselection
+	hitSelectToggle()
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 1, "Missing event to toggle select for second time")
+	checkEvent(events, 0, false)
+
+	// Try one row down... note that the row change event should clear after the
+	// first keypress
+	hitDown()
+	hitSelectToggle()
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 1, "Missing event after scrolling down")
+	checkEvent(events, 1, true)
+
+	// Check edge case of empty table
+	model = model.WithRows([]Row{})
+	hitSelectToggle()
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 0, "There's no row to select for an empty table, event shouldn't exist")
+}
