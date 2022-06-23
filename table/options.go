@@ -9,12 +9,12 @@ import (
 func (m Model) WithHighlightedRow(index int) Model {
 	m.rowCursorIndex = index
 
-	if m.rowCursorIndex < 0 {
-		m.rowCursorIndex = 0
-	}
-
 	if m.rowCursorIndex >= len(m.GetVisibleRows()) {
 		m.rowCursorIndex = len(m.GetVisibleRows()) - 1
+	}
+
+	if m.rowCursorIndex < 0 {
+		m.rowCursorIndex = 0
 	}
 
 	m.currentPage = m.expectedPageForRowIndex(m.rowCursorIndex)
@@ -35,6 +35,10 @@ func (m Model) WithRows(rows []Row) Model {
 
 	if m.rowCursorIndex >= len(m.rows) {
 		m.rowCursorIndex = len(m.rows) - 1
+	}
+
+	if m.rowCursorIndex < 0 {
+		m.rowCursorIndex = 0
 	}
 
 	if m.pageSize != 0 {
