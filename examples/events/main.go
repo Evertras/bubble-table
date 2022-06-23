@@ -42,26 +42,6 @@ var (
 		elementWater:    "#44f",
 		elementPlant:    "#8b8",
 	}
-
-	customBorder = table.Border{
-		Top:    "─",
-		Left:   "│",
-		Right:  "│",
-		Bottom: "─",
-
-		TopRight:    "╮",
-		TopLeft:     "╭",
-		BottomRight: "╯",
-		BottomLeft:  "╰",
-
-		TopJunction:    "┬",
-		LeftJunction:   "├",
-		RightJunction:  "┤",
-		BottomJunction: "┴",
-		InnerJunction:  "┼",
-
-		InnerDivider: "│",
-	}
 )
 
 type Pokemon struct {
@@ -102,6 +82,8 @@ type Model struct {
 	pokeTable table.Model
 
 	currentPokemonData Pokemon
+
+	lastSelectedEvent table.UserEventRowSelectToggled
 }
 
 func NewModel() Model {
@@ -126,10 +108,11 @@ func NewModel() Model {
 			table.NewColumn(columnKeyName, "Name", 13),
 			table.NewColumn(columnKeyElement, "Element", 10),
 		}).WithRows(rows).
-			Border(customBorder).
+			BorderRounded().
 			WithBaseStyle(styleBase).
 			WithPageSize(4).
-			Focused(true),
+			Focused(true).
+			SelectableRows(true),
 		currentPokemonData: pokemon[0],
 	}
 }
@@ -148,7 +131,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 
 	for _, e := range m.pokeTable.GetLastUpdateUserEvents() {
-		switch e.(type) {
+		switch e := e.(type) {
 		case table.UserEventHighlightedIndexChanged:
 			// We can pretend this is an async data retrieval, but really we already
 			// have the data, so just return it after some fake delay.  Also note
@@ -161,6 +144,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				return selectedPokemon
 			})
+
+		case table.UserEventRowSelectToggled:
+			m.lastSelectedEvent = e
 		}
 	}
 
@@ -182,7 +168,8 @@ func (m Model) View() string {
 	view := lipgloss.JoinVertical(
 		lipgloss.Left,
 		styleSubtle.Render("Press q or ctrl+c to quit"),
-		fmt.Sprintf("%s (%s)", m.currentPokemonData.Name, m.currentPokemonData.Element),
+		fmt.Sprintf("Highlighted (200 ms delay): %s (%s)", m.currentPokemonData.Name, m.currentPokemonData.Element),
+		fmt.Sprintf("Last selected event: %d (%v)", m.lastSelectedEvent.RowIndex, m.lastSelectedEvent.IsSelected),
 		lipgloss.NewStyle().Foreground(lipgloss.Color("#8c8")).
 			Render(":D %"+fmt.Sprintf("%.1f", m.currentPokemonData.PositiveSentimentPercent)),
 		lipgloss.NewStyle().Foreground(lipgloss.Color("#c88")).
