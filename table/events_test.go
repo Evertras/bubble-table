@@ -91,4 +91,9 @@ func TestUserEventHighlightedIndexChanged(t *testing.T) {
 	hitDown()
 	events = model.GetLastUpdateUserEvents()
 	assert.Len(t, events, 0, "There's no row to change to for single row table, event shouldn't exist")
+
+	model = model.WithRows([]Row{})
+	hitDown()
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 0, "There's no row to change to for an empty table, event shouldn't exist")
 }
