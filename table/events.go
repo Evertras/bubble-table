@@ -40,3 +40,11 @@ type UserEventHighlightedIndexChanged struct {
 	// SelectedRow is the row index that is now selected
 	SelectedRowIndex int
 }
+
+// UserEventRowSelectToggled indicates that the user has either selected or
+// deselected a row by toggling the selection.  The event contains information
+// about which row index was selected and whether it was selected or deselected.
+type UserEventRowSelectToggled struct {
+	RowIndex   int
+	IsSelected bool
+}
