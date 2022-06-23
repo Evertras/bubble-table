@@ -29,6 +29,9 @@ type Model struct {
 	selectableRows bool
 	rowCursorIndex int
 
+	// Events
+	lastUpdateUserEvents []UserEvent
+
 	// Styles
 	baseStyle      lipgloss.Style
 	highlightStyle lipgloss.Style

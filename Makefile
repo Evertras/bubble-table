@@ -10,6 +10,10 @@ example-metadata:
 example-dimensions:
 	@go run ./examples/dimensions/main.go
 
+.PHONY: example-events
+example-events:
+	@go run ./examples/events/main.go
+
 .PHONY: example-features
 example-features:
 	@go run ./examples/features/main.go
