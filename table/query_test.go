@@ -170,3 +170,13 @@ func TestGetHeaderVisibility(t *testing.T) {
 
 	assert.False(t, model.GetHeaderVisibility(), "Header was not set to hidden")
 }
+
+func TestGetPaginationWrapping(t *testing.T) {
+	model := New([]Column{})
+
+	assert.True(t, model.GetPaginationWrapping(), "Pagination wrapping should default to true")
+
+	model = model.WithPaginationWrapping(false)
+
+	assert.False(t, model.GetPaginationWrapping(), "Pagination wrapping setting did not update after setting option")
+}

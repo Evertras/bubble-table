@@ -161,9 +161,17 @@ func (m Model) WithPageSize(pageSize int) Model {
 	return m
 }
 
-// WithNoPagination disable pagination in the table.
+// WithNoPagination disables pagination in the table.
 func (m Model) WithNoPagination() Model {
 	m.pageSize = 0
+
+	return m
+}
+
+// WithPaginationWrapping sets whether to wrap around from the beginning to the
+// end when navigating through pages.  Defaults to true.
+func (m Model) WithPaginationWrapping(wrapping bool) Model {
+	m.paginationWrapping = wrapping
 
 	return m
 }

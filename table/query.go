@@ -66,3 +66,10 @@ func (m *Model) GetHorizontalScrollColumnOffset() int {
 func (m *Model) GetHeaderVisibility() bool {
 	return m.headerVisible
 }
+
+// GetPaginationWrapping returns true if pagination wrapping is enabled, or false
+// if disabled.  If disabled, navigating through pages will stop at the first
+// and last pages.
+func (m *Model) GetPaginationWrapping() bool {
+	return m.paginationWrapping
+}

@@ -151,6 +151,15 @@ func TestFocusedMovesWhenMoveKeysPressedPaged(t *testing.T) {
 
 	model, _ = model.Update(keyEnd)
 	assert.Equal(t, "third", curID(), "Hitting end a second time should not move pages")
+
+	// Disable pagination wrapping and ensure it sticks
+	model = model.WithPaginationWrapping(false)
+	model, _ = model.Update(keyRight)
+	assert.Equal(t, "third", curID(), "Did not stay on last page, may have wrapped")
+
+	model, _ = model.Update(keyHome)
+	model, _ = model.Update(keyLeft)
+	assert.Equal(t, "first", curID(), "Did not stay on first page, may have wrapped")
 }
 
 func TestFocusedMovesWithCustomKeyMap(t *testing.T) {
