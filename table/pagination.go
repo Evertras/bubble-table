@@ -59,7 +59,11 @@ func (m *Model) pageDown() {
 	maxPageIndex := m.MaxPages() - 1
 
 	if m.currentPage > maxPageIndex {
-		m.currentPage = 0
+		if m.paginationWrapping {
+			m.currentPage = 0
+		} else {
+			m.currentPage = maxPageIndex
+		}
 	}
 
 	m.rowCursorIndex = m.currentPage * m.pageSize
@@ -75,7 +79,11 @@ func (m *Model) pageUp() {
 	maxPageIndex := m.MaxPages() - 1
 
 	if m.currentPage < 0 {
-		m.currentPage = maxPageIndex
+		if m.paginationWrapping {
+			m.currentPage = maxPageIndex
+		} else {
+			m.currentPage = 0
+		}
 	}
 
 	m.rowCursorIndex = m.currentPage * m.pageSize

@@ -48,8 +48,9 @@ type Model struct {
 	staticFooter  string
 
 	// Pagination
-	pageSize    int
-	currentPage int
+	pageSize           int
+	currentPage        int
+	paginationWrapping bool
 
 	// Sorting, where a stable sort is applied from first element to last so
 	// that elements are grouped by the later elements.
@@ -96,6 +97,8 @@ func New(columns []Column) Model {
 
 		filterTextInput: filterInput,
 		baseStyle:       lipgloss.NewStyle().Align(lipgloss.Right),
+
+		paginationWrapping: true,
 	}
 
 	// Do a full deep copy to avoid unexpected edits
