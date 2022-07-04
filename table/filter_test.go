@@ -227,7 +227,11 @@ func TestFilterWithSetValue(t *testing.T) {
 
 	// Make sure it holds true after an update
 	model, _ = model.Update(tea.KeyRight)
-
 	filteredRows = model.getFilteredRows(rows)
 	assert.Len(t, filteredRows, 1)
+
+	// Remove filter
+	model = model.WithFilterInputValue("")
+	filteredRows = model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 3)
 }
