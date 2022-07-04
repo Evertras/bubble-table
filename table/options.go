@@ -284,6 +284,15 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 	return m
 }
 
+// WithFilterInputValue sets the filter value to the given string, immediately
+// applying it as if the user had typed it in.  Useful for external filter inputs
+// that are not necessarily a text input.
+func (m Model) WithFilterInputValue(value string) Model {
+	m.filterTextInput.SetValue(value)
+
+	return m
+}
+
 // WithFooterVisibility sets the visibility of the footer.
 func (m Model) WithFooterVisibility(visibility bool) Model {
 	m.footerVisible = visibility

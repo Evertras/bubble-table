@@ -204,3 +204,34 @@ func TestFilterWithExternalTextInput(t *testing.T) {
 
 	assert.Len(t, filteredRows, 1)
 }
+
+func TestFilterWithSetValue(t *testing.T) {
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := []Row{
+		NewRow(RowData{
+			"title":       "AAA",
+			"description": "",
+		}),
+		NewRow(RowData{
+			"title":       "BBB",
+			"description": "",
+		}),
+		// Empty
+		NewRow(RowData{}),
+	}
+	model := New(columns).WithRows(rows).Filtered(true)
+	model = model.WithFilterInputValue("AaA")
+
+	filteredRows := model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 1)
+
+	// Make sure it holds true after an update
+	model, _ = model.Update(tea.KeyRight)
+	filteredRows = model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 1)
+
+	// Remove filter
+	model = model.WithFilterInputValue("")
+	filteredRows = model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 3)
+}
