@@ -17,6 +17,7 @@ func (m Model) renderFooter(width int, includeTop bool) string {
 	const borderAdjustment = 2
 
 	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(width - borderAdjustment)
+	inlineStyle := m.baseStyle.Copy().Inline(true)
 
 	if includeTop {
 		styleFooter.BorderTop(true)
@@ -34,7 +35,9 @@ func (m Model) renderFooter(width int, includeTop bool) string {
 
 	// paged feature enabled
 	if m.pageSize != 0 {
-		sections = append(sections, fmt.Sprintf("%d/%d", m.CurrentPage(), m.MaxPages()))
+		// Need to apply inline style here in case of filter input cursor, because
+		// the input cursor resets the style after rendering
+		sections = append(sections, inlineStyle.Render(fmt.Sprintf("%d/%d", m.CurrentPage(), m.MaxPages())))
 	}
 
 	footerText := strings.Join(sections, " ")
