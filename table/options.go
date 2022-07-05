@@ -289,6 +289,7 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 // that are not necessarily a text input.
 func (m Model) WithFilterInputValue(value string) Model {
 	m.filterTextInput.SetValue(value)
+	m.filterTextInput.Blur()
 
 	return m
 }
