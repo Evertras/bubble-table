@@ -25,6 +25,12 @@ func (m *Model) GetIsFilterActive() bool {
 	return m.filterTextInput.Value() != ""
 }
 
+// GetIsFilterInputFocused returns true if the table's built-in filter input is
+// currently focused.
+func (m *Model) GetIsFilterInputFocused() bool {
+	return m.filterTextInput.Focused()
+}
+
 // GetCurrentFilter returns the current filter text being applied, or an empty
 // string if none is applied.
 func (m *Model) GetCurrentFilter() string {
