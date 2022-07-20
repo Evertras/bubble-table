@@ -172,3 +172,36 @@ func TestUserEventRowSelectToggled(t *testing.T) {
 	events = model.GetLastUpdateUserEvents()
 	assert.Len(t, events, 0, "There's no row to select for an empty table, event shouldn't exist")
 }
+
+func TestFilterFocusEvents(t *testing.T) {
+	model := New([]Column{}).Filtered(true).Focused(true)
+
+	events := model.GetLastUpdateUserEvents()
+
+	assert.Empty(t, events, "Unexpected events to start")
+
+	// Start filter
+	model, _ = model.Update(tea.KeyMsg{
+		Type:  tea.KeyRunes,
+		Runes: []rune{'/'},
+	})
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 1, "Only expected one event")
+	switch events[0].(type) {
+	case UserEventFilterInputFocused:
+	default:
+		assert.FailNow(t, "Unexpected event type")
+	}
+
+	// Stop filter
+	model, _ = model.Update(tea.KeyMsg{
+		Type: tea.KeyEnter,
+	})
+	events = model.GetLastUpdateUserEvents()
+	assert.Len(t, events, 1, "Only expected one event")
+	switch events[0].(type) {
+	case UserEventFilterInputUnfocused:
+	default:
+		assert.FailNow(t, "Unexpected event type")
+	}
+}
