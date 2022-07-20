@@ -180,3 +180,22 @@ func TestGetPaginationWrapping(t *testing.T) {
 
 	assert.False(t, model.GetPaginationWrapping(), "Pagination wrapping setting did not update after setting option")
 }
+
+func TestGetIsFilterInputFocused(t *testing.T) {
+	model := New([]Column{}).Filtered(true).Focused(true)
+
+	assert.False(t, model.GetIsFilterInputFocused(), "Text input shouldn't start focused")
+
+	model, _ = model.Update(tea.KeyMsg{
+		Type:  tea.KeyRunes,
+		Runes: []rune{'/'},
+	})
+
+	assert.True(t, model.GetIsFilterInputFocused(), "Did not trigger text input")
+
+	model, _ = model.Update(tea.KeyMsg{
+		Type: tea.KeyEnter,
+	})
+
+	assert.False(t, model.GetIsFilterInputFocused(), "Should no longer be focused after hitting enter")
+}
