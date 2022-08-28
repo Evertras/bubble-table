@@ -26,37 +26,38 @@ func NewModel() Model {
 		simpleTable: table.New([]table.Column{
 			table.NewColumn(columnKeyName, "Name", 13),
 			table.NewColumn(columnKeyType, "Type", 13),
-			table.NewColumn(columnKeyWins, "Wins", 5),
+			table.NewColumn(columnKeyWins, "Win %", 8).
+				WithFormatString("%.1f%%"),
 		}).WithRows([]table.Row{
 			table.NewRow(table.RowData{
 				columnKeyName: "ピカピカ",
 				columnKeyType: "Pikachu",
-				columnKeyWins: 4,
+				columnKeyWins: 78.3,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Zapmouse",
 				columnKeyType: "Pikachu",
-				columnKeyWins: 3,
+				columnKeyWins: 3.3,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Burninator",
 				columnKeyType: "Charmander",
-				columnKeyWins: 8,
+				columnKeyWins: 32.1,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Alphonse",
 				columnKeyType: "Pikachu",
-				columnKeyWins: 13,
+				columnKeyWins: 13.8,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Trogdor",
 				columnKeyType: "Charmander",
-				columnKeyWins: 9,
+				columnKeyWins: 99.9,
 			}),
 			table.NewRow(table.RowData{
 				columnKeyName: "Dihydrogen Monoxide",
 				columnKeyType: "Squirtle",
-				columnKeyWins: 31,
+				columnKeyWins: 31.348,
 			}),
 		}),
 	}

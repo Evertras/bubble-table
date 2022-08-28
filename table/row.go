@@ -71,12 +71,18 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 			data = ""
 		}
 
+		fmtString := "%v"
+
+		if column.fmtString != "" {
+			fmtString = column.fmtString
+		}
+
 		switch entry := data.(type) {
 		case StyledCell:
-			str = fmt.Sprintf("%v", entry.Data)
+			str = fmt.Sprintf(fmtString, entry.Data)
 			cellStyle = entry.Style.Copy().Inherit(cellStyle)
 		default:
-			str = fmt.Sprintf("%v", entry)
+			str = fmt.Sprintf(fmtString, entry)
 		}
 	}
 

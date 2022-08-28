@@ -1127,3 +1127,25 @@ func Test3x3WithRoundedBorder(t *testing.T) {
 
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestSingleColumnViewSortedAndFormatted(t *testing.T) {
+	model := New([]Column{
+		NewColumn("name", "Name", 5),
+		NewColumn("val", "Value", 7).
+			WithFormatString("~%.2f"),
+	}).WithRows([]Row{
+		NewRow(RowData{"name": "π", "val": 3.14}),
+		NewRow(RowData{"name": "Φ", "val": 1.618}),
+	}).SortByAsc("val")
+
+	const expectedTable = `┏━━━━━┳━━━━━━━┓
+┃ Name┃  Value┃
+┣━━━━━╋━━━━━━━┫
+┃    Φ┃  ~1.62┃
+┃    π┃  ~3.14┃
+┗━━━━━┻━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
