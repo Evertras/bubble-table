@@ -51,8 +51,12 @@ func NewModel() Model {
 			table.NewColumn(columnKeyName, "Name", 13),
 			table.NewColumn(columnKeyElement, "Element", 10),
 			table.NewColumn(columnKeyConversations, "# Conversations", 15),
-			table.NewColumn(columnKeyPositiveSentiment, ":D %", 5).WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#8c8"))),
-			table.NewColumn(columnKeyNegativeSentiment, ":( %", 5).WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#c88"))),
+			table.NewColumn(columnKeyPositiveSentiment, ":D %", 6).
+				WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#8c8"))).
+				WithFormatString("%.1f%%"),
+			table.NewColumn(columnKeyNegativeSentiment, ":( %", 6).
+				WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#c88"))).
+				WithFormatString("%.1f%%"),
 		}).WithRows([]table.Row{
 			makeRow("Pikachu", "Electric", colorElectric, 2300648, 21.9, 8.54),
 			makeRow("Eevee", "Normal", colorNormal, 636373, 26.4, 7.37),

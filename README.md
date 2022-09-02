@@ -9,7 +9,7 @@
 A customizable, interactive table component for the
 [Bubble Tea framework](https://github.com/charmbracelet/bubbletea).
 
-![Styled table](https://user-images.githubusercontent.com/5923958/156778142-cc1a32e1-1b1e-4a65-b699-187f39f0f946.png)
+![Styled table](https://user-images.githubusercontent.com/5923958/188168029-0de392c8-dbb0-47da-93a0-d2a6e3d46838.png)
 
 [View above sample source code](./examples/pokemon)
 
