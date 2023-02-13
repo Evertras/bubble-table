@@ -41,6 +41,12 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 			continue
 		}
 
+		// Extract internal StyledCell data
+		switch dataV := data.(type) {
+		case StyledCell:
+			data = dataV.Data
+		}
+
 		target := ""
 		switch dataV := data.(type) {
 		case string:
@@ -48,10 +54,8 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 
 		case fmt.Stringer:
 			target = dataV.String()
-
-		case StyledCell:
-			target = dataV.Data.(string)
 		}
+
 		if strings.Contains(strings.ToLower(target), strings.ToLower(filter)) {
 			return true
 		}
