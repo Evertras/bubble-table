@@ -180,7 +180,8 @@ func TestHorizontalScrollingWithFooterAndFrozenCols(t *testing.T) {
 }
 
 // This is long due to literal strings
-// nolint: funlen
+//
+//nolint:funlen
 func TestHorizontalScrollStopsAtLastColumnBeingVisible(t *testing.T) {
 	model := New([]Column{
 		NewColumn("Name", "Name", 4),
@@ -285,7 +286,8 @@ func TestNoScrollingWhenEntireTableIsVisible(t *testing.T) {
 }
 
 // This is long because of test cases
-// nolint: funlen
+//
+//nolint:funlen
 func TestHorizontalScrollingStopEdgeCases(t *testing.T) {
 	tests := []struct {
 		numCols      int

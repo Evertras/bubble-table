@@ -268,7 +268,8 @@ func TestPaginationHighlightFirstOnPageDown(t *testing.T) {
 }
 
 // This is long because of various test cases, not because of logic
-// nolint: funlen
+//
+//nolint:funlen
 func TestExpectedPageForRowIndex(t *testing.T) {
 	tests := []struct {
 		name         string

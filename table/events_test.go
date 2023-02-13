@@ -21,7 +21,7 @@ func TestUserEventsEmptyWhenNothingHappens(t *testing.T) {
 	assert.Len(t, events, 0, "Should be empty when no changes made in Update")
 }
 
-// nolint: funlen // This is a bunch of checks in a row, this is fine
+//nolint:funlen // This is a bunch of checks in a row, this is fine
 func TestUserEventHighlightedIndexChanged(t *testing.T) {
 	// Don't need any actual row data for this
 	empty := RowData{}
@@ -98,7 +98,7 @@ func TestUserEventHighlightedIndexChanged(t *testing.T) {
 	assert.Len(t, events, 0, "There's no row to change to for an empty table, event shouldn't exist")
 }
 
-// nolint: funlen // This is a bunch of checks in a row, this is fine
+//nolint:funlen // This is a bunch of checks in a row, this is fine
 func TestUserEventRowSelectToggled(t *testing.T) {
 	// Don't need any actual row data for this
 	empty := RowData{}

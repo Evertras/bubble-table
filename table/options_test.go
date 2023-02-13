@@ -64,7 +64,8 @@ func TestWithHighlightedRowSetTooHigh(t *testing.T) {
 }
 
 // This is long only because it's a lot of repetitive test cases
-// nolint: funlen
+//
+//nolint:funlen
 func TestPageOptions(t *testing.T) {
 	const (
 		pageSize = 5
