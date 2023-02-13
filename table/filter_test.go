@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/lipgloss"
 	"testing"
 	"time"
 
@@ -65,6 +66,24 @@ func TestIsRowMatched(t *testing.T) {
 		}),
 		"2021",
 	))
+}
+
+func TestIsRowMatchedForStyled(t *testing.T) {
+	columns := []Column{
+		NewColumn("title", "title", 10).WithFiltered(true),
+		NewColumn("description", "description", 10)}
+
+	assert.True(t, isRowMatched(columns,
+		NewRow(RowData{
+			"title":       "AAA",
+			"description": "",
+		}), "AA"))
+
+	assert.True(t, isRowMatched(columns,
+		NewRow(RowData{
+			"title":       NewStyledCell("AAA", lipgloss.NewStyle()),
+			"description": "",
+		}), "AA"))
 }
 
 func TestGetFilteredRowsNoColumnFiltered(t *testing.T) {
