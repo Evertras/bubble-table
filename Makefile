@@ -72,7 +72,7 @@ coverage.out: table/*.go go.*
 .PHONY: fmt
 fmt: ./bin/gci
 	@go fmt ./...
-	@./bin/gci write --skip-generated -s standard,default ./table/*.go
+	@./bin/gci write --skip-generated ./table/*.go
 
 ./bin/golangci-lint:
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v1.51.1

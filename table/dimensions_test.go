@@ -8,6 +8,7 @@ import (
 )
 
 // This function is only long because of repetitive test definitions, this is fine
+//
 //nolint:funlen
 func TestColumnUpdateWidths(t *testing.T) {
 	tests := []struct {
