@@ -71,7 +71,8 @@ func TestIsRowMatched(t *testing.T) {
 func TestIsRowMatchedForStyled(t *testing.T) {
 	columns := []Column{
 		NewColumn("title", "title", 10).WithFiltered(true),
-		NewColumn("description", "description", 10)}
+		NewColumn("description", "description", 10),
+	}
 
 	assert.True(t, isRowMatched(columns,
 		NewRow(RowData{
@@ -84,6 +85,32 @@ func TestIsRowMatchedForStyled(t *testing.T) {
 			"title":       NewStyledCell("AAA", lipgloss.NewStyle()),
 			"description": "",
 		}), "AA"))
+}
+
+func TestIsRowMatchedForNonStringer(t *testing.T) {
+	columns := []Column{
+		NewColumn("val", "val", 10).WithFiltered(true),
+	}
+
+	assert.True(t, isRowMatched(columns,
+		NewRow(RowData{
+			"val": 12,
+		}), "12"))
+
+	assert.True(t, isRowMatched(columns,
+		NewRow(RowData{
+			"val": 12,
+		}), "1"))
+
+	assert.True(t, isRowMatched(columns,
+		NewRow(RowData{
+			"val": 12,
+		}), "2"))
+
+	assert.False(t, isRowMatched(columns,
+		NewRow(RowData{
+			"val": 12,
+		}), "3"))
 }
 
 func TestGetFilteredRowsNoColumnFiltered(t *testing.T) {

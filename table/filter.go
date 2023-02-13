@@ -54,6 +54,9 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 
 		case fmt.Stringer:
 			target = dataV.String()
+
+		default:
+			target = fmt.Sprintf("%v", data)
 		}
 
 		if strings.Contains(strings.ToLower(target), strings.ToLower(filter)) {
