@@ -70,9 +70,13 @@ coverage.out: table/*.go go.*
 	@go test -coverprofile=coverage.out ./table
 
 .PHONY: fmt
-fmt:
+fmt: ./bin/gci
 	@go fmt ./...
+	@./bin/gci write --skip-generated ./table/*.go
 
 ./bin/golangci-lint:
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v1.44.2
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v1.51.1
+
+./bin/gci:
+	GOBIN=$(shell pwd)/bin go install github.com/daixiang0/gci@v0.9.1
 

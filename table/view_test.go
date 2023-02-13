@@ -647,7 +647,8 @@ func TestSimple3x3StyleOverridesAsBaseColumnRowCell(t *testing.T) {
 }
 
 // This is a long test due to typing and multiple big table strings, that's okay
-// nolint: funlen
+//
+//nolint:funlen
 func Test3x3WithFilterFooter(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4).WithFiltered(true),

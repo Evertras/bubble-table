@@ -77,7 +77,8 @@ func TestPageKeysDoNothingWhenNoPages(t *testing.T) {
 
 // This is a long test with a lot of movement keys pressed, that's okay because
 // it's simply repetitive and tracking the same kind of state change many times
-// nolint: funlen
+//
+//nolint:funlen
 func TestFocusedMovesWhenMoveKeysPressedPaged(t *testing.T) {
 	cols := []Column{
 		NewColumn("id", "ID", 3),

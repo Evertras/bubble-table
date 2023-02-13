@@ -43,7 +43,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-// nolint: nestif // This has many ifs, but they're short
+//nolint:nestif // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
@@ -94,7 +94,8 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 
 // This is long and could use some refactoring in the future, but not quite sure
 // how to pick it apart yet.
-// nolint: funlen, cyclop, gocognit
+//
+//nolint:funlen, cyclop, gocognit
 func (m Model) renderRow(rowIndex int, last bool) string {
 	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]

@@ -59,7 +59,9 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	return m, cmd
 }
 
-// nolint: cyclop // This is a series of Matches tests with minimal logic
+// This is a series of Matches tests with minimal logic
+//
+//nolint:cyclop
 func (m *Model) handleKeypress(msg tea.KeyMsg) {
 	previousRowIndex := m.rowCursorIndex
 

@@ -1,12 +1,12 @@
 package table
 
 import (
-	"github.com/charmbracelet/lipgloss"
 	"testing"
 	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/stretchr/testify/assert"
 )
 
