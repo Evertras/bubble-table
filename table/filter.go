@@ -41,16 +41,19 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 			continue
 		}
 
+		target := ""
 		switch dataV := data.(type) {
 		case string:
-			if strings.Contains(strings.ToLower(dataV), strings.ToLower(filter)) {
-				return true
-			}
+			target = dataV
 
 		case fmt.Stringer:
-			if strings.Contains(strings.ToLower(dataV.String()), strings.ToLower(filter)) {
-				return true
-			}
+			target = dataV.String()
+
+		case StyledCell:
+			target = dataV.Data.(string)
+		}
+		if strings.Contains(strings.ToLower(target), strings.ToLower(filter)) {
+			return true
 		}
 	}
 
