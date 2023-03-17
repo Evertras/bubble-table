@@ -183,18 +183,22 @@ func TestSelectRowsProgramatically(t *testing.T) {
 		},
 	}
 
-	model := New([]Column{
+	baseModel := New([]Column{
 		NewColumn(col, col, 1),
 	})
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
-			sel := model.WithRows(tt.rows).SelectedRows()
+			model := baseModel.WithRows(tt.rows)
+			sel := model.SelectedRows()
 
 			assert.Equal(t, len(tt.selectedIds), len(sel))
 			for i, id := range tt.selectedIds {
 				assert.Equal(t, id, sel[i].Data[col], "expecting row %d to have same %s column value", i)
 			}
+
+			model = model.WithAllRowsDeselected()
+			assert.Len(t, model.SelectedRows(), 0, "Did not deselect all rows")
 		})
 	}
 }

@@ -364,3 +364,18 @@ func (m Model) WithMissingDataIndicatorStyled(styled StyledCell) Model {
 
 	return m
 }
+
+// WithAllRowsDeselected deselects any rows that are currently selected.
+func (m Model) WithAllRowsDeselected() Model {
+	rows := m.GetVisibleRows()
+
+	for i, row := range rows {
+		if row.selected {
+			rows[i] = row.Selected(false)
+		}
+	}
+
+	m.rows = rows
+
+	return m
+}
