@@ -1,6 +1,7 @@
 package table
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -280,4 +281,35 @@ func TestFilterWithSetValue(t *testing.T) {
 	model = model.WithFilterInputValue("")
 	filteredRows = model.getFilteredRows(rows)
 	assert.Len(t, filteredRows, 3)
+}
+
+func BenchmarkFilteredScrolling(b *testing.B) {
+	// Scrolling through a filtered table with many rows should be quick
+	// https://github.com/Evertras/bubble-table/issues/135
+	const rowCount = 40000
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := make([]Row, rowCount)
+
+	for i := 0; i < rowCount; i++ {
+		rows[i] = NewRow(RowData{
+			"title": fmt.Sprintf("%d", i),
+		})
+	}
+
+	model := New(columns).WithRows(rows).Filtered(true)
+	model = model.WithFilterInputValue("1")
+
+	hitKey := func(key rune) {
+		model, _ = model.Update(
+			tea.KeyMsg{
+				Type:  tea.KeyRunes,
+				Runes: []rune{key},
+			})
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		hitKey('j')
+	}
 }
