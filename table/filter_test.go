@@ -242,10 +242,15 @@ func TestFilterWithExternalTextInput(t *testing.T) {
 		// Empty
 		NewRow(RowData{}),
 	}
-	model := New(columns).WithRows(rows).Filtered(true)
+
+	// Page size 1 to test scrolling back if input changes
+	model := New(columns).WithRows(rows).Filtered(true).WithPageSize(1)
+	model.pageDown()
+	assert.Equal(t, 2, model.CurrentPage(), "Should start on second page for test")
 	input := textinput.New()
 	input.SetValue("AaA")
 	model = model.WithFilterInput(input)
+	assert.Equal(t, 1, model.CurrentPage(), "Did not go back to first page")
 
 	filteredRows := model.getFilteredRows(rows)
 
@@ -266,8 +271,14 @@ func TestFilterWithSetValue(t *testing.T) {
 		// Empty
 		NewRow(RowData{}),
 	}
-	model := New(columns).WithRows(rows).Filtered(true)
+
+	// Page size 1 to make sure we scroll back correctly
+	model := New(columns).WithRows(rows).Filtered(true).WithPageSize(1)
+	model.pageDown()
+	assert.Equal(t, 2, model.CurrentPage(), "Should start on second page for test")
 	model = model.WithFilterInputValue("AaA")
+
+	assert.Equal(t, 1, model.CurrentPage(), "Did not go back to first page")
 
 	filteredRows := model.getFilteredRows(rows)
 	assert.Len(t, filteredRows, 1)

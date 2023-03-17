@@ -279,6 +279,10 @@ func (m Model) WithColumns(columns []Column) Model {
 // filtering rather than using the built-in default.  This allows for external
 // text input controls to be used.
 func (m Model) WithFilterInput(input textinput.Model) Model {
+	if m.filterTextInput.Value() != input.Value() {
+		m.pageFirst()
+	}
+
 	m.filterTextInput = input
 
 	return m
@@ -288,6 +292,10 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 // applying it as if the user had typed it in.  Useful for external filter inputs
 // that are not necessarily a text input.
 func (m Model) WithFilterInputValue(value string) Model {
+	if m.filterTextInput.Value() != value {
+		m.pageFirst()
+	}
+
 	m.filterTextInput.SetValue(value)
 	m.filterTextInput.Blur()
 
