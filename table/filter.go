@@ -47,7 +47,7 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 			data = dataV.Data
 		}
 
-		target := ""
+		var target string
 		switch dataV := data.(type) {
 		case string:
 			target = dataV

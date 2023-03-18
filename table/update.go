@@ -38,6 +38,7 @@ func (m *Model) toggleSelect() {
 	rows[m.rowCursorIndex].selected = !currentSelectedState
 
 	m.rows = rows
+	m.visibleRowCacheUpdated = false
 
 	m.appendUserEvent(UserEventRowSelectToggled{
 		RowIndex:   m.rowCursorIndex,
@@ -55,6 +56,7 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	}
 	m.filterTextInput, cmd = m.filterTextInput.Update(msg)
 	m.pageFirst()
+	m.visibleRowCacheUpdated = false
 
 	return m, cmd
 }
@@ -125,6 +127,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focused {
 		return m, nil
 	}
+
+	m.visibleRowCacheUpdated = false
 
 	if m.filterTextInput.Focused() {
 		var cmd tea.Cmd
