@@ -25,3 +25,6 @@ vendor/
 # Envrc with direnv
 .envrc
 
+# Sandbox area for experimenting without worrying about git
+sandbox
+
