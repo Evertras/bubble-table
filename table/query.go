@@ -38,13 +38,20 @@ func (m *Model) GetCurrentFilter() string {
 }
 
 // GetVisibleRows returns sorted and filtered rows.
-func (m Model) GetVisibleRows() []Row {
+func (m *Model) GetVisibleRows() []Row {
+	if m.visibleRowCacheUpdated {
+		return m.visibleRowCache
+	}
+
 	rows := make([]Row, len(m.rows))
 	copy(rows, m.rows)
 	if m.filtered {
 		rows = m.getFilteredRows(rows)
 	}
 	rows = getSortedRows(m.sortOrder, rows)
+
+	m.visibleRowCache = rows
+	m.visibleRowCacheUpdated = true
 
 	return rows
 }

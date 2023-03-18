@@ -32,6 +32,7 @@ func (m Model) HeaderStyle(style lipgloss.Style) Model {
 // WithRows sets the rows to show as data in the table.
 func (m Model) WithRows(rows []Row) Model {
 	m.rows = rows
+	m.visibleRowCacheUpdated = false
 
 	if m.rowCursorIndex >= len(m.rows) {
 		m.rowCursorIndex = len(m.rows) - 1
@@ -129,6 +130,7 @@ func (m Model) Focused(focused bool) Model {
 // Filtered allows the table to show rows that match the filter.
 func (m Model) Filtered(filtered bool) Model {
 	m.filtered = filtered
+	m.visibleRowCacheUpdated = false
 
 	return m
 }
@@ -284,6 +286,7 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 	}
 
 	m.filterTextInput = input
+	m.visibleRowCacheUpdated = false
 
 	return m
 }
@@ -298,6 +301,7 @@ func (m Model) WithFilterInputValue(value string) Model {
 
 	m.filterTextInput.SetValue(value)
 	m.filterTextInput.Blur()
+	m.visibleRowCacheUpdated = false
 
 	return m
 }
