@@ -324,3 +324,54 @@ func BenchmarkFilteredScrolling(b *testing.B) {
 		hitKey('j')
 	}
 }
+
+func BenchmarkFilteredScrollingPaged(b *testing.B) {
+	// Scrolling through a filtered table with many rows should be quick
+	// https://github.com/Evertras/bubble-table/issues/135
+	const rowCount = 40000
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := make([]Row, rowCount)
+
+	for i := 0; i < rowCount; i++ {
+		rows[i] = NewRow(RowData{
+			"title": fmt.Sprintf("%d", i),
+		})
+	}
+
+	model := New(columns).WithRows(rows).Filtered(true).WithPageSize(50)
+	model = model.WithFilterInputValue("1")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		model, _ = model.Update(
+			tea.KeyMsg{
+				Type:  tea.KeyRunes,
+				Runes: []rune{'j'},
+			})
+	}
+}
+
+func BenchmarkFilteredRenders(b *testing.B) {
+	// Rendering a filtered table should be fast
+	// https://github.com/Evertras/bubble-table/issues/135
+	const rowCount = 40000
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := make([]Row, rowCount)
+
+	for i := 0; i < rowCount; i++ {
+		rows[i] = NewRow(RowData{
+			"title": fmt.Sprintf("%d", i),
+		})
+	}
+
+	model := New(columns).WithRows(rows).Filtered(true).WithPageSize(50)
+	model = model.WithFilterInputValue("1")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		// Don't care about result, just rendering
+		_ = model.View()
+	}
+}
