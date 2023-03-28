@@ -28,6 +28,8 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 
 	checkedAny := false
 
+	filterLower := strings.ToLower(filter)
+
 	for _, column := range columns {
 		if !column.filterable {
 			continue
@@ -59,7 +61,7 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 			target = fmt.Sprintf("%v", data)
 		}
 
-		if strings.Contains(strings.ToLower(target), strings.ToLower(filter)) {
+		if strings.Contains(strings.ToLower(target), filterLower) {
 			return true
 		}
 	}
