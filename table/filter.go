@@ -6,14 +6,15 @@ import (
 )
 
 func (m Model) getFilteredRows(rows []Row) []Row {
-	if !m.filtered || m.filterTextInput.Value() == "" {
+	filterInputValue := m.filterTextInput.Value()
+	if !m.filtered || filterInputValue == "" {
 		return rows
 	}
 
 	filteredRows := make([]Row, 0)
 
 	for _, row := range rows {
-		if isRowMatched(m.columns, row, m.filterTextInput.Value()) {
+		if isRowMatched(m.columns, row, filterInputValue) {
 			filteredRows = append(filteredRows, row)
 		}
 	}
