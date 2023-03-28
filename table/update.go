@@ -101,6 +101,7 @@ func (m *Model) handleKeypress(msg tea.KeyMsg) {
 	}
 
 	if key.Matches(msg, m.keyMap.FilterClear) {
+		m.visibleRowCacheUpdated = false
 		m.filterTextInput.Reset()
 	}
 
@@ -127,8 +128,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focused {
 		return m, nil
 	}
-
-	m.visibleRowCacheUpdated = false
 
 	if m.filterTextInput.Focused() {
 		var cmd tea.Cmd
