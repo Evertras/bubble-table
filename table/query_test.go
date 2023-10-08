@@ -171,6 +171,16 @@ func TestGetHeaderVisibility(t *testing.T) {
 	assert.False(t, model.GetHeaderVisibility(), "Header was not set to hidden")
 }
 
+func TestGetFooterVisibility(t *testing.T) {
+	model := New([]Column{})
+
+	assert.True(t, model.GetFooterVisibility(), "Footer should be visible by default")
+
+	model = model.WithFooterVisibility(false)
+
+	assert.False(t, model.GetFooterVisibility(), "Footer was not set to hidden")
+}
+
 func TestGetPaginationWrapping(t *testing.T) {
 	model := New([]Column{})
 
