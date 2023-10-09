@@ -26,6 +26,7 @@ func NewModel() Model {
 		table.NewColumn(columnKeyAuthor, "Author", 13).WithFiltered(true),
 		table.NewColumn(columnKeyDescription, "Description", 50),
 	}
+
 	return Model{
 		table: table.
 			New(columns).
@@ -74,6 +75,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// global
 		if msg.String() == "ctrl+c" {
 			cmds = append(cmds, tea.Quit)
+
 			return m, tea.Batch(cmds...)
 		}
 		// event to filter
@@ -81,9 +83,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if msg.String() == "enter" {
 				m.filterTextInput.Blur()
 			} else {
-				m.filterTextInput, cmd = m.filterTextInput.Update(msg)
+				m.filterTextInput, _ = m.filterTextInput.Update(msg)
 			}
 			m.table = m.table.WithFilterInput(m.filterTextInput)
+
 			return m, tea.Batch(cmds...)
 		}
 
@@ -98,7 +101,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.table, cmd = m.table.Update(msg)
 			cmds = append(cmds, cmd)
 		}
-
 	}
 
 	return m, tea.Batch(cmds...)
@@ -108,7 +110,8 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	body.WriteString("A filtered simple default table\n" +
-		"Currently filter by Title and Author, press / + letters to start filtering, and escape to clear filter.\nPress q or ctrl+c to quit\n\n")
+		"Currently filter by Title and Author, press / + letters to start filtering, and escape to clear filter.\n" +
+		"Press q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.filterTextInput.View() + "\n")
 	body.WriteString(m.table.View())
