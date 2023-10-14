@@ -31,14 +31,14 @@ func (m *Model) TotalRows() int {
 
 // VisibleIndices returns the current visible rows by their 0 based index.
 // Useful for custom pagination footers.
-func (m *Model) VisibleIndices() (start, end int) {
+func (m *Model) VisibleIndices() (start, end, count int) {
 	totalRows := len(m.GetVisibleRows())
 
 	if m.pageSize == 0 {
 		start = 0
 		end = totalRows - 1
 
-		return start, end
+		return start, end, totalRows
 	}
 
 	start = m.pageSize * m.currentPage
@@ -48,7 +48,7 @@ func (m *Model) VisibleIndices() (start, end int) {
 		end = totalRows - 1
 	}
 
-	return start, end
+	return start, end, m.pageSize
 }
 
 func (m *Model) pageDown() {

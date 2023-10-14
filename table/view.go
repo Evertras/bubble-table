@@ -20,7 +20,7 @@ func (m Model) View() string {
 
 	headers := m.renderHeaders()
 
-	startRowIndex, endRowIndex := m.VisibleIndices()
+	startRowIndex, endRowIndex, numRows := m.VisibleIndices()
 
 	if m.headerVisible {
 		rowStrs = append(rowStrs, headers)
