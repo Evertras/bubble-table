@@ -1344,13 +1344,15 @@ func TestMinimumHeightSingleColumnWithFooter(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestMinimumHeightInvalid(t *testing.T) {
+func TestMinimumHeightExtraRow(t *testing.T) {
 	model := New([]Column{
 		NewColumn("id", "ID", 4),
 	}).WithStaticFooter("Foot").WithMinimumHeight(6)
 
 	const expectedTable = `┏━━━━┓
 ┃  ID┃
+┣━━━━┫
+┃    ┃
 ┣━━━━┫
 ┃Foot┃
 ┗━━━━┛`

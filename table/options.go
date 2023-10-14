@@ -228,19 +228,6 @@ func (m Model) WithTargetWidth(totalWidth int) Model {
 }
 
 // WithMinimumHeight sets the minimum total height of the table, including borders.
-//
-// There is an edge case if the table has no rows and the minimum height is small, e.g.
-//
-//	table.New([]table.Column{table.NewColumn("id", "ID", 3)}).WithMinimumHeight(4)
-//
-// would expect to render
-//
-//	┏━━━┓
-//	┃ ID┃
-//	┣━━━┫
-//	┗━━━┛
-//
-// However, it is not possible to render a row with zero height, so this is invalid.
 func (m Model) WithMinimumHeight(minimumHeight int) Model {
 	m.minimumHeight = minimumHeight
 

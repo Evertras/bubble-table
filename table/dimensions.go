@@ -97,5 +97,15 @@ func (m *Model) calculatePadding(numRows int) int {
 		return 0
 	}
 
-	return m.minimumHeight - m.metaHeight - numRows - 1 // additional 1 for bottom border
+	padding := m.minimumHeight - m.metaHeight - numRows - 1 // additional 1 for bottom border
+
+	if padding == 0 && numRows == 0 {
+		// This is an edge case where we want to add 1 additional line of height, i.e.
+		// add a border without an empty row. However, this is not possible, so we need
+		// to add an extra row which will result in the table being 1 row taller than
+		// the requested minimum height.
+		return 1
+	}
+
+	return padding
 }
