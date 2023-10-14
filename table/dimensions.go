@@ -1,5 +1,9 @@
 package table
 
+import (
+	"github.com/charmbracelet/lipgloss"
+)
+
 func (m *Model) recalculateWidth() {
 	if m.targetTotalWidth != 0 {
 		m.totalWidth = m.targetTotalWidth
@@ -70,4 +74,28 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 		// Take borders into account for the actual style
 		cols[index].style = cols[index].style.Width(width)
 	}
+}
+
+func (m *Model) recalculateHeight() {
+	header := m.renderHeaders()
+	headerHeight := 1 // Header always has the top border
+	if m.headerVisible {
+		headerHeight = lipgloss.Height(header)
+	}
+
+	footer := m.renderFooter(lipgloss.Width(header), false)
+	var footerHeight int
+	if footer != "" {
+		footerHeight = lipgloss.Height(footer)
+	}
+
+	m.metaHeight = headerHeight + footerHeight
+}
+
+func (m *Model) calculatePadding(numRows int) int {
+	if m.minimumHeight == 0 {
+		return 0
+	}
+
+	return m.minimumHeight - m.metaHeight - numRows - 1 // additional 1 for bottom border
 }

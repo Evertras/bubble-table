@@ -82,6 +82,13 @@ type Model struct {
 
 	// Calculated maximum column we can scroll to before the last is displayed
 	maxHorizontalColumnIndex int
+
+	// Minimum total height of the table
+	minimumHeight int
+
+	// Internal cached calculation, the height of the header and footer
+	// including borders. Used to determine how many padding rows to add.
+	metaHeight int
 }
 
 // New creates a new table ready for further modifications.
