@@ -1361,3 +1361,25 @@ func TestMinimumHeightExtraRow(t *testing.T) {
 
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestMinimumHeightSmallerThanTable(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": "1"}),
+		NewRow(RowData{"id": "2"}),
+	}).WithStaticFooter("Foot").WithMinimumHeight(7)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃   1┃
+┃   2┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}

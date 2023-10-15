@@ -107,5 +107,10 @@ func (m *Model) calculatePadding(numRows int) int {
 		return 1
 	}
 
+	if padding < 0 {
+		// Table is already larger than minimum height, do nothing.
+		return 0
+	}
+
 	return padding
 }
