@@ -14,13 +14,23 @@ const (
 	columnKeyElement     = "element"
 	columnKeyDescription = "description"
 
-	minWidth = 30
+	minWidth  = 30
+	minHeight = 8
+
+	// Add a fixed margin to account for description & instructions
+	fixedVerticalMargin = 4
 )
 
 type Model struct {
-	flexTable   table.Model
-	totalMargin int
+	flexTable table.Model
+
+	// Window dimensions
 	totalWidth  int
+	totalHeight int
+
+	// Table dimensions
+	horizontalMargin int
+	verticalMargin   int
 }
 
 func NewModel() Model {
@@ -69,20 +79,33 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, tea.Quit)
 
 		case "left":
-			if m.totalWidth-m.totalMargin > minWidth {
-				m.totalMargin++
+			if m.calculateWidth() > minWidth {
+				m.horizontalMargin++
 				m.recalculateTable()
 			}
 
 		case "right":
-			if m.totalMargin > 0 {
-				m.totalMargin--
+			if m.horizontalMargin > 0 {
+				m.horizontalMargin--
+				m.recalculateTable()
+			}
+
+		case "up":
+			if m.calculateHeight() > minHeight {
+				m.verticalMargin++
+				m.recalculateTable()
+			}
+
+		case "down":
+			if m.verticalMargin > 0 {
+				m.verticalMargin--
 				m.recalculateTable()
 			}
 		}
 
 	case tea.WindowSizeMsg:
 		m.totalWidth = msg.Width
+		m.totalHeight = msg.Height
 
 		m.recalculateTable()
 	}
@@ -91,13 +114,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) recalculateTable() {
-	m.flexTable = m.flexTable.WithTargetWidth(m.totalWidth - m.totalMargin)
+	m.flexTable = m.flexTable.
+		WithTargetWidth(m.calculateWidth()).
+		WithMinimumHeight(m.calculateHeight())
+}
+
+func (m Model) calculateWidth() int {
+	return m.totalWidth - m.horizontalMargin
+}
+
+func (m Model) calculateHeight() int {
+	return m.totalHeight - m.verticalMargin - fixedVerticalMargin
 }
 
 func (m Model) View() string {
 	strs := []string{
-		"A flexible table that fills available space (Name is fixed-width)",
-		fmt.Sprintf("Target size: %d (left/right to adjust)", m.totalWidth-m.totalMargin),
+		"A flexible table that fills available space (Name column is fixed-width)",
+		fmt.Sprintf("Target size: %d W ⨉ %d H (arrow keys to adjust)",
+			m.calculateWidth(), m.calculateHeight()),
 		"Press q or ctrl+c to quit",
 		m.flexTable.View(),
 	}
