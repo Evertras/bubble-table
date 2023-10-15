@@ -124,7 +124,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 
 	// Write a custom footer
-	start, end, _ := m.tableWithRowIndices.VisibleIndices()
+	start, end := m.tableWithRowIndices.VisibleIndices()
 	m.tableWithRowIndices = m.tableWithRowIndices.WithStaticFooter(
 		fmt.Sprintf("%d-%d of %d", start+1, end+1, m.tableWithRowIndices.TotalRows()),
 	)

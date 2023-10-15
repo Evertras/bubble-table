@@ -33,7 +33,7 @@ func paginationRowID(row Row) int {
 }
 
 func getVisibleRows(m *Model) []Row {
-	start, end, _ := m.VisibleIndices()
+	start, end := m.VisibleIndices()
 
 	return m.GetVisibleRows()[start : end+1]
 }

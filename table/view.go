@@ -22,7 +22,8 @@ func (m Model) View() string {
 
 	headers := m.renderHeaders()
 
-	startRowIndex, endRowIndex, numRows := m.VisibleIndices()
+	startRowIndex, endRowIndex := m.VisibleIndices()
+	numRows := endRowIndex - startRowIndex + 1
 
 	padding := m.calculatePadding(numRows)
 
