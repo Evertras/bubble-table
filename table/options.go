@@ -132,6 +132,10 @@ func (m Model) Filtered(filtered bool) Model {
 	m.filtered = filtered
 	m.visibleRowCacheUpdated = false
 
+	if m.minimumHeight > 0 {
+		m.recalculateHeight()
+	}
+
 	return m
 }
 
@@ -145,6 +149,10 @@ func (m Model) StartFilterTyping() Model {
 // WithStaticFooter adds a footer that only displays the given text.
 func (m Model) WithStaticFooter(footer string) Model {
 	m.staticFooter = footer
+
+	if m.minimumHeight > 0 {
+		m.recalculateHeight()
+	}
 
 	return m
 }
@@ -160,12 +168,20 @@ func (m Model) WithPageSize(pageSize int) Model {
 		m.currentPage = maxPages - 1
 	}
 
+	if m.minimumHeight > 0 {
+		m.recalculateHeight()
+	}
+
 	return m
 }
 
 // WithNoPagination disables pagination in the table.
 func (m Model) WithNoPagination() Model {
 	m.pageSize = 0
+
+	if m.minimumHeight > 0 {
+		m.recalculateHeight()
+	}
 
 	return m
 }
@@ -207,6 +223,15 @@ func (m Model) WithTargetWidth(totalWidth int) Model {
 	m.targetTotalWidth = totalWidth
 
 	m.recalculateWidth()
+
+	return m
+}
+
+// WithMinimumHeight sets the minimum total height of the table, including borders.
+func (m Model) WithMinimumHeight(minimumHeight int) Model {
+	m.minimumHeight = minimumHeight
+
+	m.recalculateHeight()
 
 	return m
 }
@@ -310,12 +335,20 @@ func (m Model) WithFilterInputValue(value string) Model {
 func (m Model) WithFooterVisibility(visibility bool) Model {
 	m.footerVisible = visibility
 
+	if m.minimumHeight > 0 {
+		m.recalculateHeight()
+	}
+
 	return m
 }
 
 // WithHeaderVisibility sets the visibility of the header.
 func (m Model) WithHeaderVisibility(visibility bool) Model {
 	m.headerVisible = visibility
+
+	if m.minimumHeight > 0 {
+		m.recalculateHeight()
+	}
 
 	return m
 }

@@ -139,6 +139,36 @@ func TestPageOptions(t *testing.T) {
 	assert.Contains(t, model.renderFooter(10, false), "6/6")
 }
 
+func TestMinimumHeightOptions(t *testing.T) {
+	columns := []Column{
+		NewColumn("ka", "a", 3),
+		NewColumn("kb", "b", 4),
+		NewColumn("kc", "c", 5),
+	}
+
+	model := New(columns).WithMinimumHeight(10)
+	assert.Equal(t, 10, model.minimumHeight)
+	assert.Equal(t, 3, model.metaHeight)
+
+	model = model.WithPageSize(2)
+	assert.Equal(t, 5, model.metaHeight)
+
+	model = model.WithNoPagination()
+	assert.Equal(t, 3, model.metaHeight)
+
+	model = model.WithStaticFooter("footer with\nmultiple lines")
+	assert.Equal(t, 6, model.metaHeight)
+
+	model = model.WithStaticFooter("").Filtered(true)
+	assert.Equal(t, 5, model.metaHeight)
+
+	model = model.WithFooterVisibility(false)
+	assert.Equal(t, 3, model.metaHeight)
+
+	model = model.WithHeaderVisibility(false)
+	assert.Equal(t, 1, model.metaHeight)
+}
+
 // This is long only because the test cases are larger
 //
 //nolint:funlen

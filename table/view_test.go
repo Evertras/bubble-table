@@ -139,6 +139,26 @@ func TestSingleRowView(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestSingleRowViewWithHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).
+		WithHeaderVisibility(false).
+		WithRows([]Row{
+			NewRow(RowData{"1": "a", "2": "b", "3": "c"}),
+		})
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   a┃   b┃   c┃
+┗━━━━┻━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 func TestTableWithNoRowsAndHiddenHeaderHidesTable(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),
@@ -1145,6 +1165,219 @@ func TestSingleColumnViewSortedAndFormatted(t *testing.T) {
 ┃    Φ┃  ~1.62┃
 ┃    π┃  ~3.14┃
 ┗━━━━━┻━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleCellView(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithMinimumHeight(5)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃    ┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleColumnView(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": "1"}),
+		NewRow(RowData{"id": "2"}),
+	}).WithMinimumHeight(8)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃   1┃
+┃   2┃
+┃    ┃
+┃    ┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightHeaderNoData(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithMinimumHeight(5)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃    ┃    ┃    ┃
+┗━━━━┻━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleRowWithHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).
+		WithHeaderVisibility(false).
+		WithRows([]Row{
+			NewRow(RowData{"1": "a", "2": "b", "3": "c"}),
+		}).
+		WithMinimumHeight(4)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   a┃   b┃   c┃
+┃    ┃    ┃    ┃
+┗━━━━┻━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightNoRowsAndHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithHeaderVisibility(false).WithMinimumHeight(3)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃    ┃    ┃    ┃
+┗━━━━┻━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleColumnNoDataWithFooter(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithStaticFooter("Foot").WithMinimumHeight(7)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃    ┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleColumnWithFooterAndHiddenHeader(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).
+		WithStaticFooter("Foot").
+		WithHeaderVisibility(false).
+		WithMinimumHeight(6)
+
+	const expectedTable = `┏━━━━┓
+┃    ┃
+┃    ┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleRowWithFooter(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithStaticFooter("Footer").WithMinimumHeight(7)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃    ┃    ┃    ┃
+┣━━━━┻━━━━┻━━━━┫
+┃        Footer┃
+┗━━━━━━━━━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSingleColumnWithFooter(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": "1"}),
+		NewRow(RowData{"id": "2"}),
+	}).WithStaticFooter("Foot").WithMinimumHeight(9)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃   1┃
+┃   2┃
+┃    ┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightExtraRow(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithStaticFooter("Foot").WithMinimumHeight(6)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃    ┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMinimumHeightSmallerThanTable(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": "1"}),
+		NewRow(RowData{"id": "2"}),
+	}).WithStaticFooter("Foot").WithMinimumHeight(7)
+
+	const expectedTable = `┏━━━━┓
+┃  ID┃
+┣━━━━┫
+┃   1┃
+┃   2┃
+┣━━━━┫
+┃Foot┃
+┗━━━━┛`
 
 	rendered := model.View()
 

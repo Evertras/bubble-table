@@ -92,23 +92,32 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	return cellStr
 }
 
-// This is long and could use some refactoring in the future, but not quite sure
-// how to pick it apart yet.
-//
-//nolint:funlen, cyclop, gocognit
 func (m Model) renderRow(rowIndex int, last bool) string {
-	numColumns := len(m.columns)
 	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
-	totalRenderedWidth := 0
-
-	columnStrings := []string{}
 
 	rowStyle := row.Style.Copy()
 
 	if m.focused && highlighted {
 		rowStyle = rowStyle.Inherit(m.highlightStyle)
 	}
+
+	return m.renderRowData(row, rowStyle, last)
+}
+
+func (m Model) renderBlankRow(last bool) string {
+	return m.renderRowData(NewRow(nil), lipgloss.NewStyle(), last)
+}
+
+// This is long and could use some refactoring in the future, but not quite sure
+// how to pick it apart yet.
+//
+//nolint:funlen, cyclop, gocognit
+func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string {
+	numColumns := len(m.columns)
+
+	columnStrings := []string{}
+	totalRenderedWidth := 0
 
 	stylesInner, stylesLast := m.styleRows()
 

@@ -149,3 +149,87 @@ func TestColumnUpdateWidths(t *testing.T) {
 		})
 	}
 }
+
+// This function is long because it has many test cases
+//
+//nolint:funlen
+func TestRecalculateHeight(t *testing.T) {
+	columns := []Column{
+		NewColumn("ka", "a", 3),
+		NewColumn("kb", "b", 4),
+		NewColumn("kc", "c", 5),
+	}
+
+	rows := []Row{
+		NewRow(RowData{"ka": 1, "kb": 23, "kc": "zyx"}),
+		NewRow(RowData{"ka": 3, "kb": 34, "kc": "wvu"}),
+		NewRow(RowData{"ka": 5, "kb": 45, "kc": "zyx"}),
+		NewRow(RowData{"ka": 7, "kb": 56, "kc": "wvu"}),
+	}
+
+	tests := []struct {
+		name           string
+		model          Model
+		expectedHeight int
+	}{
+		{
+			name:           "Default header",
+			model:          New(columns).WithRows(rows),
+			expectedHeight: 3,
+		},
+		{
+			name:           "Empty page with default header",
+			model:          New(columns),
+			expectedHeight: 3,
+		},
+		{
+			name:           "Filtered with default header",
+			model:          New(columns).WithRows(rows).Filtered(true),
+			expectedHeight: 5,
+		},
+		{
+			name:           "Static footer one line",
+			model:          New(columns).WithRows(rows).WithStaticFooter("single line"),
+			expectedHeight: 5,
+		},
+		{
+			name: "Static footer overflow",
+			model: New(columns).WithRows(rows).
+				WithStaticFooter("single line but it's long"),
+			expectedHeight: 6,
+		},
+		{
+			name: "Static footer multi-line",
+			model: New(columns).WithRows(rows).
+				WithStaticFooter("footer with\nmultiple lines"),
+			expectedHeight: 6,
+		},
+		{
+			name:           "Paginated",
+			model:          New(columns).WithRows(rows).WithPageSize(2),
+			expectedHeight: 5,
+		},
+		{
+			name:           "No pagination",
+			model:          New(columns).WithRows(rows).WithPageSize(2).WithNoPagination(),
+			expectedHeight: 3,
+		},
+		{
+			name:           "Footer not visible",
+			model:          New(columns).WithRows(rows).Filtered(true).WithFooterVisibility(false),
+			expectedHeight: 3,
+		},
+		{
+			name:           "Header not visible",
+			model:          New(columns).WithRows(rows).WithHeaderVisibility(false),
+			expectedHeight: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.model.recalculateHeight()
+			assert.Equal(t, test.expectedHeight, test.model.metaHeight)
+		})
+	}
+}
