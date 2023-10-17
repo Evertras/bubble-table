@@ -61,20 +61,20 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	} else if column.key == columnKeyOverflowLeft {
 		str = "<"
 	} else {
+		fmtString := "%v"
+
 		var data interface{}
 
 		if entry, exists := row.Data[column.key]; exists {
 			data = entry
+
+			if column.fmtString != "" {
+				fmtString = column.fmtString
+			}
 		} else if m.missingDataIndicator != nil {
 			data = m.missingDataIndicator
 		} else {
 			data = ""
-		}
-
-		fmtString := "%v"
-
-		if column.fmtString != "" {
-			fmtString = column.fmtString
 		}
 
 		switch entry := data.(type) {
