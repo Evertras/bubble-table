@@ -89,6 +89,9 @@ type Model struct {
 	// Internal cached calculation, the height of the header and footer
 	// including borders. Used to determine how many padding rows to add.
 	metaHeight int
+
+	// If true, the table will be multiline
+	multiline bool
 }
 
 // New creates a new table ready for further modifications.

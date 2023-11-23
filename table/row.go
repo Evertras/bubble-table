@@ -44,7 +44,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-//nolint:nestif // This has many ifs, but they're short
+//nolint:nestif,cyclop // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
@@ -87,8 +87,9 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		}
 	}
 
-	if true { // TODO: add wrap flag
+	if m.multiline {
 		str = wordwrap.String(str, column.width)
+		cellStyle = cellStyle.Align(lipgloss.Top)
 	} else {
 		str = limitStr(str, column.width)
 	}
@@ -125,8 +126,17 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 	columnStrings := []string{}
 	totalRenderedWidth := 0
+	rawColumnsStrings := []string{}
 
 	stylesInner, stylesLast := m.styleRows()
+
+	maxCellHeight := 0
+
+	for _, column := range m.columns {
+		cellStr := m.renderRowColumnData(row, column, rowStyle, lipgloss.NewStyle())
+		maxCellHeight = max(maxCellHeight, lipgloss.Height(cellStr))
+		rawColumnsStrings = append(rawColumnsStrings, cellStr)
+	}
 
 	for columnIndex, column := range m.columns {
 		var borderStyle lipgloss.Style
@@ -137,7 +147,6 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		} else {
 			rowStyles = stylesLast
 		}
-
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			var borderStyle lipgloss.Style
 
@@ -167,7 +176,10 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 			borderStyle = rowStyles.right
 		}
 
-		cellStr := m.renderRowColumnData(row, column, rowStyle, borderStyle)
+		cellStyle := rowStyle.Copy().Inherit(column.style).
+			Inherit(m.baseStyle).Height(maxCellHeight)
+		cellStyle = cellStyle.Inherit(borderStyle)
+		cellStr := cellStyle.Render(rawColumnsStrings[columnIndex])
 
 		if m.maxTotalWidth != 0 {
 			renderedWidth := lipgloss.Width(cellStr)

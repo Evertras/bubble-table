@@ -424,3 +424,10 @@ func (m Model) WithAllRowsDeselected() Model {
 
 	return m
 }
+
+// WithMultiline sets whether or not to wrap text in cells to multiple lines.
+func (m Model) WithMultiline(multiline bool) Model {
+	m.multiline = multiline
+
+	return m
+}
