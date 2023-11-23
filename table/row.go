@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wordwrap"
 )
 
 // RowData is a map of string column keys to interface{} data.  Data with a key
@@ -86,8 +87,14 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		}
 	}
 
+	if true { // TODO: add wrap flag
+		str = wordwrap.String(str, column.width)
+	} else {
+		str = limitStr(str, column.width)
+	}
+
 	cellStyle = cellStyle.Inherit(borderStyle)
-	cellStr := cellStyle.Render(limitStr(str, column.width))
+	cellStr := cellStyle.Render(str)
 
 	return cellStr
 }
