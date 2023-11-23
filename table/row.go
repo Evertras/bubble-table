@@ -89,7 +89,6 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 
 	if m.multiline {
 		str = wordwrap.String(str, column.width)
-		cellStyle = cellStyle.Align(lipgloss.Top)
 	} else {
 		str = limitStr(str, column.width)
 	}
