@@ -146,6 +146,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		} else {
 			rowStyles = stylesLast
 		}
+
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			var borderStyle lipgloss.Style
 
