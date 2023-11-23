@@ -29,7 +29,6 @@ func TestColumnTitle(t *testing.T) {
 			assert.Equal(t, test.expected, col.Title())
 		})
 	}
-
 }
 
 func TestColumnKey(t *testing.T) {
@@ -53,7 +52,6 @@ func TestColumnKey(t *testing.T) {
 			assert.Equal(t, test.expected, col.Key())
 		})
 	}
-
 }
 
 func TestColumnWidth(t *testing.T) {
@@ -77,7 +75,6 @@ func TestColumnWidth(t *testing.T) {
 			assert.Equal(t, test.expected, col.Width())
 		})
 	}
-
 }
 
 func TestColumnFlexFactor(t *testing.T) {
@@ -101,7 +98,6 @@ func TestColumnFlexFactor(t *testing.T) {
 			assert.Equal(t, test.expected, col.FlexFactor())
 		})
 	}
-
 }
 
 func TestColumnIsFlex(t *testing.T) {
@@ -142,11 +138,10 @@ func TestColumnIsFlex(t *testing.T) {
 
 	for _, test := range testsRegularColumn {
 		t.Run(fmt.Sprintf("width %d gives %t", test.width, test.expected), func(t *testing.T) {
-			col := NewColumn("key", "title", 10)
+			col := NewColumn("key", "title", test.width)
 			assert.Equal(t, test.expected, col.IsFlex())
 		})
 	}
-
 }
 
 func TestColumnFilterable(t *testing.T) {
