@@ -126,16 +126,15 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 	columnStrings := []string{}
 	totalRenderedWidth := 0
-	rawColumnsStrings := []string{}
 
 	stylesInner, stylesLast := m.styleRows()
 
-	maxCellHeight := 0
-
-	for _, column := range m.columns {
-		cellStr := m.renderRowColumnData(row, column, rowStyle, lipgloss.NewStyle())
-		maxCellHeight = max(maxCellHeight, lipgloss.Height(cellStr))
-		rawColumnsStrings = append(rawColumnsStrings, cellStr)
+	maxCellHeight := 1
+	if m.multiline {
+		for _, column := range m.columns {
+			cellStr := m.renderRowColumnData(row, column, rowStyle, lipgloss.NewStyle())
+			maxCellHeight = max(maxCellHeight, lipgloss.Height(cellStr))
+		}
 	}
 
 	for columnIndex, column := range m.columns {
@@ -147,6 +146,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		} else {
 			rowStyles = stylesLast
 		}
+		rowStyle = rowStyle.Copy().Height(maxCellHeight)
 
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			var borderStyle lipgloss.Style
@@ -177,10 +177,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 			borderStyle = rowStyles.right
 		}
 
-		cellStyle := rowStyle.Copy().Inherit(column.style).
-			Inherit(m.baseStyle).Height(maxCellHeight)
-		cellStyle = cellStyle.Inherit(borderStyle)
-		cellStr := cellStyle.Render(rawColumnsStrings[columnIndex])
+		cellStr := m.renderRowColumnData(row, column, rowStyle, borderStyle)
 
 		if m.maxTotalWidth != 0 {
 			renderedWidth := lipgloss.Width(cellStr)
