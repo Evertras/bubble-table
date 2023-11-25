@@ -1543,7 +1543,7 @@ func TestMultilineEnabled(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestMultilineDisabled(t *testing.T) {
+func TestMultilineDisabledByDefault(t *testing.T) {
 	model := New([]Column{
 		NewColumn("name", "Name", 4),
 	}).
@@ -1552,6 +1552,29 @@ func TestMultilineDisabled(t *testing.T) {
 			NewRow(RowData{"name": "BBB"}),
 		})
 		// WithMultiline(false)
+
+	assert.False(t, model.multiline)
+
+	const expectedTable = `┏━━━━┓
+┃Name┃
+┣━━━━┫
+┃AAA…┃
+┃ BBB┃
+┗━━━━┛`
+
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMultilineDisabledExplicite(t *testing.T) {
+	model := New([]Column{
+		NewColumn("name", "Name", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{"name": "AAAAAAAAAAAAAAAAAA"}),
+			NewRow(RowData{"name": "BBB"}),
+		}).
+		WithMultiline(false)
 
 	assert.False(t, model.multiline)
 
