@@ -1515,3 +1515,76 @@ func TestMinimumHeightSmallerThanTable(t *testing.T) {
 
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestMultilineEnabled(t *testing.T) {
+	model := New([]Column{
+		NewColumn("name", "Name", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{"name": "AAAAAAAAAAAAAAAAAA"}),
+			NewRow(RowData{"name": "BBB"}),
+		}).
+		WithMultiline(true)
+
+	assert.True(t, model.multiline)
+
+	const expectedTable = `┏━━━━┓
+┃Name┃
+┣━━━━┫
+┃AAAA┃
+┃AAAA┃
+┃AAAA┃
+┃AAAA┃
+┃AA  ┃
+┃BBB ┃
+┗━━━━┛`
+
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMultilineDisabledByDefault(t *testing.T) {
+	model := New([]Column{
+		NewColumn("name", "Name", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{"name": "AAAAAAAAAAAAAAAAAA"}),
+			NewRow(RowData{"name": "BBB"}),
+		})
+		// WithMultiline(false)
+
+	assert.False(t, model.multiline)
+
+	const expectedTable = `┏━━━━┓
+┃Name┃
+┣━━━━┫
+┃AAA…┃
+┃ BBB┃
+┗━━━━┛`
+
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestMultilineDisabledExplicite(t *testing.T) {
+	model := New([]Column{
+		NewColumn("name", "Name", 4),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{"name": "AAAAAAAAAAAAAAAAAA"}),
+			NewRow(RowData{"name": "BBB"}),
+		}).
+		WithMultiline(false)
+
+	assert.False(t, model.multiline)
+
+	const expectedTable = `┏━━━━┓
+┃Name┃
+┣━━━━┫
+┃AAA…┃
+┃ BBB┃
+┗━━━━┛`
+
+	rendered := model.View()
+	assert.Equal(t, expectedTable, rendered)
+}

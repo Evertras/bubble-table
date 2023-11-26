@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wordwrap"
 )
 
 // RowData is a map of string column keys to interface{} data.  Data with a key
@@ -43,7 +44,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-//nolint:nestif // This has many ifs, but they're short
+//nolint:nestif,cyclop // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
@@ -86,8 +87,15 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		}
 	}
 
+	if m.multiline {
+		str = wordwrap.String(str, column.width)
+		cellStyle = cellStyle.Align(lipgloss.Top)
+	} else {
+		str = limitStr(str, column.width)
+	}
+
 	cellStyle = cellStyle.Inherit(borderStyle)
-	cellStr := cellStyle.Render(limitStr(str, column.width))
+	cellStr := cellStyle.Render(str)
 
 	return cellStr
 }
@@ -121,6 +129,14 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 	stylesInner, stylesLast := m.styleRows()
 
+	maxCellHeight := 1
+	if m.multiline {
+		for _, column := range m.columns {
+			cellStr := m.renderRowColumnData(row, column, rowStyle, lipgloss.NewStyle())
+			maxCellHeight = max(maxCellHeight, lipgloss.Height(cellStr))
+		}
+	}
+
 	for columnIndex, column := range m.columns {
 		var borderStyle lipgloss.Style
 		var rowStyles borderStyleRow
@@ -130,6 +146,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		} else {
 			rowStyles = stylesLast
 		}
+		rowStyle = rowStyle.Copy().Height(maxCellHeight)
 
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			var borderStyle lipgloss.Style

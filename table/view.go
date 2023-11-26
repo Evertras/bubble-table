@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// View renders the table.  It does not end in a newline, so that it can be
+// View renders the table. It does not end in a newline, so that it can be
 // composed with other elements more consistently.
 //
 //nolint:cyclop

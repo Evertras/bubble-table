@@ -18,6 +18,10 @@ example-events:
 example-features:
 	@go run ./examples/features/main.go
 
+.PHONY: example-multiline
+example-multiline:
+	@go run ./examples/multiline/main.go
+
 .PHONY: example-filter
 example-filter:
 	@go run ./examples/filter/*.go
