@@ -46,7 +46,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 
 //nolint:nestif,cyclop // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
-	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
+	cellStyle := forceInheritStyles(rowStyle.Copy(), column.style, m.baseStyle)
 
 	var str string
 
