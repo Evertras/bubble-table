@@ -299,6 +299,11 @@ func (m Model) WithColumns(columns []Column) Model {
 
 	m.recalculateWidth()
 
+	if m.selectableRows {
+		// Re-add the selectable column
+		m = m.SelectableRows(true)
+	}
+
 	return m
 }
 
