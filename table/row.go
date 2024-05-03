@@ -2,6 +2,7 @@ package table
 
 import (
 	"fmt"
+	"sync/atomic"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/reflow/wordwrap"
@@ -21,13 +22,21 @@ type Row struct {
 	Data  RowData
 
 	selected bool
+
+	// id is an internal unique ID to match rows after they're copied
+	id uint32
 }
+
+var lastRowID uint32 = 1
 
 // NewRow creates a new row and copies the given row data.
 func NewRow(data RowData) Row {
 	row := Row{
 		Data: make(map[string]interface{}),
+		id:   lastRowID,
 	}
+
+	atomic.AddUint32(&lastRowID, 1)
 
 	for key, val := range data {
 		// Doesn't deep copy val, but close enough for now...

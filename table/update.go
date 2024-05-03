@@ -32,17 +32,31 @@ func (m *Model) toggleSelect() {
 
 	rows := m.GetVisibleRows()
 
-	currentSelectedState := rows[m.rowCursorIndex].selected
+	rowID := rows[m.rowCursorIndex].id
 
-	rows[m.rowCursorIndex].selected = !currentSelectedState
+	currentSelectedState := false
 
-	m.rows = rows
+	for i := range m.rows {
+		if m.rows[i].id == rowID {
+			currentSelectedState = m.rows[i].selected
+			m.rows[i].selected = !m.rows[i].selected
+		}
+	}
+
 	m.visibleRowCacheUpdated = false
 
 	m.appendUserEvent(UserEventRowSelectToggled{
 		RowIndex:   m.rowCursorIndex,
 		IsSelected: !currentSelectedState,
 	})
+}
+
+func (m *Model) getUnderlyingRowIndex() int {
+	if !m.filtered || m.filterTextInput.Value() == "" {
+		return m.rowCursorIndex
+	}
+
+	return 0
 }
 
 func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
