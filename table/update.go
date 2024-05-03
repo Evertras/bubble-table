@@ -51,14 +51,6 @@ func (m *Model) toggleSelect() {
 	})
 }
 
-func (m *Model) getUnderlyingRowIndex() int {
-	if !m.filtered || m.filterTextInput.Value() == "" {
-		return m.rowCursorIndex
-	}
-
-	return 0
-}
-
 func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
