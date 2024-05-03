@@ -30,8 +30,7 @@ func (m *Model) toggleSelect() {
 		return
 	}
 
-	rows := make([]Row, len(m.GetVisibleRows()))
-	copy(rows, m.GetVisibleRows())
+	rows := m.GetVisibleRows()
 
 	currentSelectedState := rows[m.rowCursorIndex].selected
 
