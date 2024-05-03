@@ -330,3 +330,82 @@ func TestFilterWithKeypresses(t *testing.T) {
 
 	assert.Len(t, visible, 2)
 }
+
+// This is a long test with a lot of movement keys pressed, that's okay because
+// it's simply repetitive and tracking the same kind of state change many times
+//
+//nolint:funlen
+func TestSelectOnFilteredTableDoesntLoseRows(t *testing.T) {
+	// Issue: https://github.com/Evertras/bubble-table/issues/170
+	//
+	// Basically, if you filter a table and then select a row, then
+	// clear the filter, then all the other rows should still exist.
+
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+	}
+
+	model := New(cols).WithRows([]Row{
+		NewRow(RowData{"name": "Charmander"}),
+		NewRow(RowData{"name": "Pikachu"}),
+	}).Focused(true).Filtered(true).SelectableRows(true)
+
+	hitKey := func(key rune) {
+		model, _ = model.Update(tea.KeyMsg{
+			Type:  tea.KeyRunes,
+			Runes: []rune{key},
+		})
+	}
+
+	hitEnter := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	}
+
+	hitEscape := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEscape})
+	}
+
+	hitSpacebar := func() {
+		model, _ = model.Update(tea.KeyMsg{Type: tea.KeySpace})
+	}
+
+	// First, apply the filter
+	//
+	// Note that we try and filter for the second row, "Pikachu"
+	// so that we can better ensure everything is stably intact
+	visible := model.GetVisibleRows()
+
+	assert.Len(t, visible, 2)
+	hitKey(rune(model.KeyMap().Filter.Keys()[0][0]))
+	assert.Len(t, visible, 2)
+	hitKey('p')
+	hitKey('i')
+	hitKey('k')
+
+	visible = model.GetVisibleRows()
+
+	assert.Len(t, visible, 1)
+
+	hitEnter()
+
+	// Now apply the selection toggle
+	hitSpacebar()
+
+	visible = model.GetVisibleRows()
+	assert.Len(t, visible, 1)
+	assert.True(t, visible[0].selected)
+
+	// Now clear the filter and make sure everything is intact
+	hitEscape()
+
+	visible = model.GetVisibleRows()
+
+	assert.Len(t, visible, 2)
+
+	if t.Failed() {
+		return
+	}
+
+	assert.False(t, visible[0].selected)
+	assert.True(t, visible[1].selected)
+}

@@ -13,9 +13,14 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+      # For whatever reason, 1.21.9 blows up because it can't
+      # find 'max' in some go lib... pinning to 1.21.4 fixes this
+      - name: Install Go
+        uses: actions/setup-go@v4
         with:
-          version: v1.51.1
+          go-version: 1.21.4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Lint
+        run: make lint
 
