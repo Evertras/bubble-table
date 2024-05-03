@@ -16,5 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Lint
-        run: make lint
+        run: |
+          go mod tidy
+          make lint
 
