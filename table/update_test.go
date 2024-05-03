@@ -331,6 +331,10 @@ func TestFilterWithKeypresses(t *testing.T) {
 	assert.Len(t, visible, 2)
 }
 
+// This is a long test with a lot of movement keys pressed, that's okay because
+// it's simply repetitive and tracking the same kind of state change many times
+//
+//nolint:funlen
 func TestSelectOnFilteredTableDoesntLoseRows(t *testing.T) {
 	// Issue: https://github.com/Evertras/bubble-table/issues/170
 	//
