@@ -30,6 +30,7 @@ func NewModel() Model {
 			Filtered(true).
 			Focused(true).
 			WithPageSize(10).
+			SelectableRows(true).
 			WithRows([]table.Row{
 				table.NewRow(table.RowData{
 					columnKeyTitle:       "Computer Systems : A Programmer's Perspective",
