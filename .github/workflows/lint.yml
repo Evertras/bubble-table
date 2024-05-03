@@ -13,9 +13,8 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.51.1
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Lint
+        run: make lint
 
