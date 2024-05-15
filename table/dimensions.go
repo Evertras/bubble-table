@@ -5,6 +5,13 @@ import (
 )
 
 func (m *Model) recalculateWidth() {
+	hiddenColumns := 0
+	for _, column := range m.columns {
+		if column.hidden {
+			hiddenColumns++
+		}
+	}
+
 	if m.targetTotalWidth != 0 {
 		m.totalWidth = m.targetTotalWidth
 	} else {
@@ -14,7 +21,7 @@ func (m *Model) recalculateWidth() {
 			total += column.width
 		}
 
-		m.totalWidth = total + len(m.columns) + 1
+		m.totalWidth = total + len(m.columns) + 1 - hiddenColumns
 	}
 
 	updateColumnWidths(m.columns, m.targetTotalWidth)
@@ -25,11 +32,22 @@ func (m *Model) recalculateWidth() {
 // Updates column width in-place.  This could be optimized but should be called
 // very rarely so we prioritize simplicity over performance here.
 func updateColumnWidths(cols []Column, totalWidth int) {
-	totalFlexWidth := totalWidth - len(cols) - 1
+	hiddenColumns := 0
+	for _, column := range cols {
+		if column.hidden {
+			hiddenColumns++
+		}
+	}
+
+	totalFlexWidth := totalWidth - len(cols) - 1 + hiddenColumns
 	totalFlexFactor := 0
 	flexGCD := 0
 
 	for index, col := range cols {
+		if col.hidden {
+			continue
+		}
+
 		if !col.isFlex() {
 			totalFlexWidth -= col.width
 			cols[index].style = col.style.Width(col.width)
@@ -51,7 +69,7 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 	leftoverWidth := totalFlexWidth % totalFlexFactor
 
 	for index := range cols {
-		if !cols[index].isFlex() {
+		if cols[index].hidden || !cols[index].isFlex() {
 			continue
 		}
 

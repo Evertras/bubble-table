@@ -1,6 +1,8 @@
 package table
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+)
 
 // This is long and could use some refactoring in the future, but unsure of how
 // to pick it apart right now.
@@ -21,7 +23,16 @@ func (m Model) renderHeaders() string {
 		return borderStyle.Render(headerSection)
 	}
 
-	for columnIndex, column := range m.columns {
+	columns := make([]Column, 0, len(m.columns))
+	for _, column := range m.columns {
+		if column.hidden {
+			continue
+		}
+
+		columns = append(columns, column)
+	}
+
+	for columnIndex, column := range columns {
 		var borderStyle lipgloss.Style
 
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
@@ -45,7 +56,7 @@ func (m Model) renderHeaders() string {
 
 		if len(headerStrings) == 0 {
 			borderStyle = headerStyles.left.Copy()
-		} else if columnIndex < len(m.columns)-1 {
+		} else if columnIndex < len(columns)-1 {
 			borderStyle = headerStyles.inner.Copy()
 		} else {
 			borderStyle = headerStyles.right.Copy()
@@ -63,7 +74,7 @@ func (m Model) renderHeaders() string {
 
 			targetWidth := m.maxTotalWidth - overflowColWidth
 
-			if columnIndex == len(m.columns)-1 {
+			if columnIndex == len(columns)-1 {
 				// If this is the last header, we don't need to account for the
 				// overflow arrow column
 				targetWidth = m.maxTotalWidth

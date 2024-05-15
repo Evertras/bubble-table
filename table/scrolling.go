@@ -13,7 +13,16 @@ func (m *Model) scrollLeft() {
 }
 
 func (m *Model) recalculateLastHorizontalColumn() {
-	if m.horizontalScrollFreezeColumnsCount >= len(m.columns) {
+	columns := make([]Column, 0, len(m.columns))
+	for _, column := range m.columns {
+		if column.hidden {
+			continue
+		}
+
+		columns = append(columns, column)
+	}
+
+	if m.horizontalScrollFreezeColumnsCount >= len(columns) {
 		m.maxHorizontalColumnIndex = 0
 
 		return
@@ -34,14 +43,14 @@ func (m *Model) recalculateLastHorizontalColumn() {
 	visibleWidth := borderAdjustment + leftOverflowWidth
 
 	for i := 0; i < m.horizontalScrollFreezeColumnsCount; i++ {
-		visibleWidth += m.columns[i].width + borderAdjustment
+		visibleWidth += columns[i].width + borderAdjustment
 	}
 
-	m.maxHorizontalColumnIndex = len(m.columns) - 1
+	m.maxHorizontalColumnIndex = len(columns) - 1
 
 	// Work backwards from the right
-	for i := len(m.columns) - 1; i >= m.horizontalScrollFreezeColumnsCount && visibleWidth <= m.maxTotalWidth; i-- {
-		visibleWidth += m.columns[i].width + borderAdjustment
+	for i := len(columns) - 1; i >= m.horizontalScrollFreezeColumnsCount && visibleWidth <= m.maxTotalWidth; i-- {
+		visibleWidth += columns[i].width + borderAdjustment
 
 		if visibleWidth <= m.maxTotalWidth {
 			m.maxHorizontalColumnIndex = i - m.horizontalScrollFreezeColumnsCount

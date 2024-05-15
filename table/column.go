@@ -14,6 +14,7 @@ type Column struct {
 
 	filterable bool
 	filterFunc func(interface{}, string) bool
+	hidden     bool
 	style      lipgloss.Style
 
 	fmtString string
@@ -28,6 +29,7 @@ func NewColumn(key, title string, width int) Column {
 
 		filterable: false,
 		filterFunc: nil,
+		hidden:     false,
 	}
 }
 
@@ -81,6 +83,12 @@ func (c Column) WithFormatString(fmtString string) Column {
 	return c
 }
 
+func (c Column) WithHidden(hidden bool) Column {
+	c.hidden = hidden
+
+	return c
+}
+
 func (c *Column) isFlex() bool {
 	return c.flexFactor != 0
 }
@@ -97,11 +105,19 @@ func (c Column) Key() string {
 
 // Width returns the width of the column.
 func (c Column) Width() int {
+	if c.hidden {
+		return 0
+	}
+
 	return c.width
 }
 
 // FlexFactor returns the flex factor of the column.
 func (c Column) FlexFactor() int {
+	if c.hidden {
+		return 0
+	}
+
 	return c.flexFactor
 }
 
