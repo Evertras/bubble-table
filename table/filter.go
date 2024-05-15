@@ -44,6 +44,14 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 			continue
 		}
 
+		if column.filterFunc != nil {
+			if column.filterFunc(data, filter) {
+				return true
+			}
+
+			continue
+		}
+
 		// Extract internal StyledCell data
 		switch dataV := data.(type) {
 		case StyledCell:

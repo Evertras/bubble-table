@@ -13,6 +13,7 @@ type Column struct {
 	flexFactor int
 
 	filterable bool
+	filterFunc func(interface{}, string) bool
 	style      lipgloss.Style
 
 	fmtString string
@@ -26,6 +27,7 @@ func NewColumn(key, title string, width int) Column {
 		width: width,
 
 		filterable: false,
+		filterFunc: nil,
 	}
 }
 
@@ -56,6 +58,12 @@ func (c Column) WithStyle(style lipgloss.Style) Column {
 // or not (false).
 func (c Column) WithFiltered(filterable bool) Column {
 	c.filterable = filterable
+
+	return c
+}
+
+func (c Column) WithFilterFunc(filterFunc func(interface{}, string) bool) Column {
+	c.filterFunc = filterFunc
 
 	return c
 }
