@@ -5,6 +5,30 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// RowStyleFuncInput is the input to the style function that can
+// be applied to each row.  This is useful for things like zebra
+// striping or other data-based styles.
+//
+// Note that we use a struct here to allow for future expansion
+// while keeping backwards compatibility.
+type RowStyleFuncInput struct {
+	// Index is the index of the row, starting at 0.
+	Index int
+
+	// Row is the full row data.
+	Row Row
+}
+
+// WithRowStyleFunc sets a function that can be used to apply a style to each row
+// based on the row data.  This is useful for things like zebra striping or other
+// data-based styles.  It can be safely set to nil to remove it later.
+// This style is applied after the base style and before individual row styles.
+func (m Model) WithRowStyleFunc(f func(RowStyleFuncInput) lipgloss.Style) Model {
+	m.rowStyleFunc = f
+
+	return m
+}
+
 // WithHighlightedRow sets the highlighted row to the given index.
 func (m Model) WithHighlightedRow(index int) Model {
 	m.rowCursorIndex = index

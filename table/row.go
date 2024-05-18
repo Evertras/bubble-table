@@ -115,6 +115,15 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	rowStyle := row.Style.Copy()
 
+	if m.rowStyleFunc != nil {
+		styleResult := m.rowStyleFunc(RowStyleFuncInput{
+			Index: rowIndex,
+			Row:   row,
+		})
+
+		rowStyle = rowStyle.Inherit(styleResult)
+	}
+
 	if m.focused && highlighted {
 		rowStyle = rowStyle.Inherit(m.highlightStyle)
 	}
