@@ -31,9 +31,30 @@ type Model struct {
 	data []*SomeData
 }
 
+func rowStyleFunc(input table.RowStyleFuncInput) lipgloss.Style {
+	calculatedStyle := lipgloss.NewStyle()
+
+	switch input.Row.Data[columnKeyStatus] {
+	case "Critical":
+		calculatedStyle = styleCritical.Copy()
+	case "Stable":
+		calculatedStyle = styleStable.Copy()
+	case "Good":
+		calculatedStyle = styleGood.Copy()
+	}
+
+	if input.Index%2 == 0 {
+		calculatedStyle = calculatedStyle.Background(lipgloss.Color("#222"))
+	} else {
+		calculatedStyle = calculatedStyle.Background(lipgloss.Color("#444"))
+	}
+
+	return calculatedStyle
+}
+
 func NewModel() Model {
 	return Model{
-		table:       table.New(generateColumns(0)),
+		table:       table.New(generateColumns(0)).WithRowStyleFunc(rowStyleFunc),
 		updateDelay: time.Second,
 	}
 }
@@ -151,18 +172,6 @@ func generateRowsFromData(data []*SomeData) []table.Row {
 			columnKeyScore:  entry.Score,
 			columnKeyStatus: entry.Status,
 		})
-
-		// Highlight different statuses
-		switch entry.Status {
-		case "Critical":
-			row = row.WithStyle(styleCritical)
-
-		case "Stable":
-			row = row.WithStyle(styleStable)
-
-		case "Good":
-			row = row.WithStyle(styleGood)
-		}
 
 		rows = append(rows, row)
 	}

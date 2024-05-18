@@ -41,6 +41,9 @@ determining overrides.  The default base style is a basic right-alignment.
 [See the main feature example](./examples/features) to see styles and
 how they override each other.
 
+Styles can also be applied via a style function which can be used to apply
+zebra striping, data-specific formatting, etc.
+
 Can be focused to highlight a row and navigate with up/down (and j/k).  These
 keys can be customized with a KeyMap.
 

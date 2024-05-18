@@ -40,6 +40,7 @@ type Model struct {
 	baseStyle      lipgloss.Style
 	highlightStyle lipgloss.Style
 	headerStyle    lipgloss.Style
+	rowStyleFunc   func(RowStyleFuncInput) lipgloss.Style
 	border         Border
 	selectedText   string
 	unselectedText string
