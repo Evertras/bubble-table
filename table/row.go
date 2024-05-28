@@ -131,6 +131,8 @@ func (m Model) renderBlankRow(last bool) string {
 //
 //nolint:funlen, cyclop, gocognit
 func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string {
+	numColumns := len(m.columns)
+
 	columnStrings := []string{}
 	totalRenderedWidth := 0
 
@@ -178,7 +180,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 		if len(columnStrings) == 0 {
 			borderStyle = rowStyles.left
-		} else if columnIndex < len(m.columns)-1 {
+		} else if columnIndex < numColumns-1 {
 			borderStyle = rowStyles.inner
 		} else {
 			borderStyle = rowStyles.right

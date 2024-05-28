@@ -1,8 +1,6 @@
 package table
 
-import (
-	"github.com/charmbracelet/lipgloss"
-)
+import "github.com/charmbracelet/lipgloss"
 
 // This is long and could use some refactoring in the future, but unsure of how
 // to pick it apart right now.
