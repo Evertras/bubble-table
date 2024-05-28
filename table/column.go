@@ -14,7 +14,6 @@ type Column struct {
 
 	filterable bool
 	filterFunc func(interface{}, string) bool
-	hidden     bool
 	style      lipgloss.Style
 
 	fmtString string
@@ -29,7 +28,6 @@ func NewColumn(key, title string, width int) Column {
 
 		filterable: false,
 		filterFunc: nil,
-		hidden:     false,
 	}
 }
 
@@ -64,6 +62,7 @@ func (c Column) WithFiltered(filterable bool) Column {
 	return c
 }
 
+// WithFilterFunc adds a filter function to the column.
 func (c Column) WithFilterFunc(filterFunc func(interface{}, string) bool) Column {
 	c.filterFunc = filterFunc
 
@@ -79,12 +78,6 @@ func (c Column) WithFilterFunc(filterFunc func(interface{}, string) bool) Column
 // instead of '3.0' and using '%.2f' will fail because '3' is an integer.
 func (c Column) WithFormatString(fmtString string) Column {
 	c.fmtString = fmtString
-
-	return c
-}
-
-func (c Column) WithHidden(hidden bool) Column {
-	c.hidden = hidden
 
 	return c
 }
@@ -105,19 +98,11 @@ func (c Column) Key() string {
 
 // Width returns the width of the column.
 func (c Column) Width() int {
-	if c.hidden {
-		return 0
-	}
-
 	return c.width
 }
 
 // FlexFactor returns the flex factor of the column.
 func (c Column) FlexFactor() int {
-	if c.hidden {
-		return 0
-	}
-
 	return c.flexFactor
 }
 

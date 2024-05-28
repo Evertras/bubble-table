@@ -12,16 +12,7 @@ import (
 //nolint:cyclop
 func (m Model) View() string {
 	// Safety valve for empty tables
-	columns := make([]Column, 0, len(m.columns))
-	for _, column := range m.columns {
-		if column.hidden {
-			continue
-		}
-
-		columns = append(columns, column)
-	}
-
-	if len(columns) == 0 {
+	if len(m.columns) == 0 {
 		return ""
 	}
 

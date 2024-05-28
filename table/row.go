@@ -131,17 +131,6 @@ func (m Model) renderBlankRow(last bool) string {
 //
 //nolint:funlen, cyclop, gocognit
 func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string {
-	columns := make([]Column, 0, len(m.columns))
-	for _, column := range m.columns {
-		if column.hidden {
-			continue
-		}
-
-		columns = append(columns, column)
-	}
-
-	numColumns := len(columns)
-
 	columnStrings := []string{}
 	totalRenderedWidth := 0
 
@@ -149,13 +138,13 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 	maxCellHeight := 1
 	if m.multiline {
-		for _, column := range columns {
+		for _, column := range m.columns {
 			cellStr := m.renderRowColumnData(row, column, rowStyle, lipgloss.NewStyle())
 			maxCellHeight = max(maxCellHeight, lipgloss.Height(cellStr))
 		}
 	}
 
-	for columnIndex, column := range columns {
+	for columnIndex, column := range m.columns {
 		var borderStyle lipgloss.Style
 		var rowStyles borderStyleRow
 
@@ -189,7 +178,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 		if len(columnStrings) == 0 {
 			borderStyle = rowStyles.left
-		} else if columnIndex < numColumns-1 {
+		} else if columnIndex < len(m.columns)-1 {
 			borderStyle = rowStyles.inner
 		} else {
 			borderStyle = rowStyles.right
@@ -207,7 +196,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 			targetWidth := m.maxTotalWidth - overflowColWidth
 
-			if columnIndex == len(columns)-1 {
+			if columnIndex == len(m.columns)-1 {
 				// If this is the last header, we don't need to account for the
 				// overflow arrow column
 				targetWidth = m.maxTotalWidth
