@@ -17,12 +17,16 @@ type RowStyleFuncInput struct {
 
 	// Row is the full row data.
 	Row Row
+
+	// IsHighlighted is true if the row is currently highlighted.
+	IsHighlighted bool
 }
 
 // WithRowStyleFunc sets a function that can be used to apply a style to each row
 // based on the row data.  This is useful for things like zebra striping or other
 // data-based styles.  It can be safely set to nil to remove it later.
 // This style is applied after the base style and before individual row styles.
+// This will override any HighlightStyle settings.
 func (m Model) WithRowStyleFunc(f func(RowStyleFuncInput) lipgloss.Style) Model {
 	m.rowStyleFunc = f
 
@@ -136,7 +140,8 @@ func (m Model) SelectedRows() []Row {
 }
 
 // HighlightStyle sets a custom style to use when the row is being highlighted
-// by the cursor.
+// by the cursor.  This should not be used with WithRowStyleFunc.  Instead, use
+// the IsHighlighted field in the style function.
 func (m Model) HighlightStyle(style lipgloss.Style) Model {
 	m.highlightStyle = style
 

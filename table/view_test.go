@@ -849,6 +849,59 @@ func TestStyleFuncAppliesAfterBaseStyleAndColStylesAndBeforeRowStyle(t *testing.
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestStyleFuncAppliesHighlighted(t *testing.T) {
+	styleFunc := func(input RowStyleFuncInput) lipgloss.Style {
+		if input.IsHighlighted {
+			return lipgloss.NewStyle().Align(lipgloss.Center)
+		}
+
+		if input.Index%2 == 0 {
+			return lipgloss.NewStyle().Align(lipgloss.Right)
+		}
+
+		return lipgloss.NewStyle().Align(lipgloss.Left)
+	}
+
+	model := New([]Column{
+		NewColumn("1", "1", 6),
+		NewColumn("2", "2", 6),
+		NewColumn("3", "3", 6),
+	}).
+		WithRowStyleFunc(styleFunc).
+		Focused(true)
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 5; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).
+		WithHighlightedRow(2)
+
+	const expectedTable = `┏━━━━━━┳━━━━━━┳━━━━━━┓
+┃     1┃     2┃     3┃
+┣━━━━━━╋━━━━━━╋━━━━━━┫
+┃   1,1┃   2,1┃   3,1┃
+┃1,2   ┃2,2   ┃3,2   ┃
+┃ 1,3  ┃ 2,3  ┃ 3,3  ┃
+┃1,4   ┃2,4   ┃3,4   ┃
+┃   1,5┃   2,5┃   3,5┃
+┗━━━━━━┻━━━━━━┻━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
 // This is a long test due to typing and multiple big table strings, that's okay
 //
 //nolint:funlen
