@@ -117,14 +117,13 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 
 	if m.rowStyleFunc != nil {
 		styleResult := m.rowStyleFunc(RowStyleFuncInput{
-			Index: rowIndex,
-			Row:   row,
+			Index:         rowIndex,
+			Row:           row,
+			IsHighlighted: m.focused && highlighted,
 		})
 
 		rowStyle = rowStyle.Inherit(styleResult)
-	}
-
-	if m.focused && highlighted {
+	} else if m.focused && highlighted {
 		rowStyle = rowStyle.Inherit(m.highlightStyle)
 	}
 
