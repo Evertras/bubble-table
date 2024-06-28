@@ -17,14 +17,11 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 		if m.filterFunc != nil {
 			if m.filterFunc(row, filterInputValue) {
 				filteredRows = append(filteredRows, row)
-
-				// continue so we don't add the same row multiple times
-				continue
 			}
-		}
-
-		if isRowMatched(m.columns, row, filterInputValue) {
-			filteredRows = append(filteredRows, row)
+		} else {
+			if isRowMatched(m.columns, row, filterInputValue) {
+				filteredRows = append(filteredRows, row)
+			}
 		}
 	}
 
