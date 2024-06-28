@@ -338,8 +338,9 @@ func (m Model) WithFilterInputValue(value string) Model {
 
 // WithFilterFunc adds a filter function to the model. If the function returns a
 // truthy value, the row will be included in the filtered results. If the function
-// is nil, all rows will be included.
-func (m Model) WithFilterFunc(filterFunc func(Row) bool) Model {
+// is nil, all rows will be included. The filter input is passed as the second
+// argument to the function.
+func (m Model) WithFilterFunc(filterFunc func(Row, string) bool) Model {
 	m.filterFunc = filterFunc
 
 	return m

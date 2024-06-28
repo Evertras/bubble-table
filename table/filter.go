@@ -15,7 +15,7 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 
 	for _, row := range rows {
 		if m.filterFunc != nil {
-			if m.filterFunc(row) {
+			if m.filterFunc(row, filterInputValue) {
 				filteredRows = append(filteredRows, row)
 
 				// continue so we don't add the same row multiple times

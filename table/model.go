@@ -63,7 +63,7 @@ type Model struct {
 	// Filter
 	filtered        bool
 	filterTextInput textinput.Model
-	filterFunc      func(Row) bool // a truthy return value means the row matched
+	filterFunc      func(Row, string) bool
 
 	// For flex columns
 	targetTotalWidth int
