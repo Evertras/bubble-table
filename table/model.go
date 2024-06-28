@@ -111,7 +111,7 @@ func New(columns []Column) Model {
 		unselectedText: "[ ]",
 
 		filterTextInput: filterInput,
-		filterFunc:      func(Row) bool { return true },
+		filterFunc:      nil,
 		baseStyle:       lipgloss.NewStyle().Align(lipgloss.Right),
 
 		paginationWrapping: true,
