@@ -336,6 +336,13 @@ func (m Model) WithFilterInputValue(value string) Model {
 	return m
 }
 
+// WithFilterFunc adds a filter function to the model.
+func (m Model) WithFilterFunc(filterFunc func(Row) bool) Model {
+	m.filterFunc = filterFunc
+
+	return m
+}
+
 // WithFooterVisibility sets the visibility of the footer.
 func (m Model) WithFooterVisibility(visibility bool) Model {
 	m.footerVisible = visibility
