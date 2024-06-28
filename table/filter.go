@@ -14,8 +14,14 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 	filteredRows := make([]Row, 0)
 
 	for _, row := range rows {
-		if isRowMatched(m.columns, row, filterInputValue) {
-			filteredRows = append(filteredRows, row)
+		if m.filterFunc != nil {
+			if m.filterFunc(row, filterInputValue) {
+				filteredRows = append(filteredRows, row)
+			}
+		} else {
+			if isRowMatched(m.columns, row, filterInputValue) {
+				filteredRows = append(filteredRows, row)
+			}
 		}
 	}
 
