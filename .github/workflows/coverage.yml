@@ -15,7 +15,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.17.6"
+          go-version: "1.18.10"
 
       - name: Check out code
         uses: actions/checkout@v4
@@ -35,4 +35,3 @@ jobs:
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: goveralls -coverprofile=covprofile -service=github
-
