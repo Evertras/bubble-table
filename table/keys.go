@@ -86,7 +86,6 @@ func DefaultKeyMap() KeyMap {
 	}
 }
 
-
 // FullHelp returns a multi row view of all the helpkeys that are defined. Needed to fullfil the 'help.Model' interface
 // Also appends all user defined extra keys to the help
 func (m Model) FullHelp() [][]key.Binding {

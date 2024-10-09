@@ -142,4 +142,3 @@ func New(columns []Column) Model {
 func (m Model) Init() tea.Cmd {
 	return nil
 }
-
