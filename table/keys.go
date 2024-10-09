@@ -30,44 +30,85 @@ type KeyMap struct {
 	ScrollLeft key.Binding
 }
 
-// DefaultKeyMap returns a set of sensible defaults for controlling a focused table.
+// FullHelp  returns a all keys help views in several rows. Needed to fullfil the 'help.Model' interface
+
+// DefaultKeyMap returns a set of sensible defaults for controlling a focused table, with explenation help texts.
 func DefaultKeyMap() KeyMap {
 	return KeyMap{
 		RowDown: key.NewBinding(
 			key.WithKeys("down", "j"),
+			key.WithHelp("↓/j", "move down"),
 		),
 		RowUp: key.NewBinding(
 			key.WithKeys("up", "k"),
+			key.WithHelp("↑/k", "move up"),
 		),
 		RowSelectToggle: key.NewBinding(
 			key.WithKeys(" ", "enter"),
+			key.WithHelp("<space>/enter", "select row"),
 		),
 		PageDown: key.NewBinding(
 			key.WithKeys("right", "l", "pgdown"),
+			key.WithHelp("→/h/page down", "Pervious Page"),
 		),
 		PageUp: key.NewBinding(
 			key.WithKeys("left", "h", "pgup"),
+			key.WithHelp("←/h/page up", "Next Page"),
 		),
 		PageFirst: key.NewBinding(
 			key.WithKeys("home", "g"),
+			key.WithHelp("home/g", "First Page"),
 		),
 		PageLast: key.NewBinding(
 			key.WithKeys("end", "G"),
+			key.WithHelp("end/G", "Last Page"),
 		),
 		Filter: key.NewBinding(
 			key.WithKeys("/"),
+			key.WithHelp("/", "filter"),
 		),
 		FilterBlur: key.NewBinding(
 			key.WithKeys("enter", "esc"),
+			key.WithHelp("enter/esc", "unfocus"),
 		),
 		FilterClear: key.NewBinding(
 			key.WithKeys("esc"),
+			key.WithHelp("esc", "clear filter"),
 		),
 		ScrollRight: key.NewBinding(
 			key.WithKeys("shift+right"),
+			key.WithHelp("shift+→", "scroll right"),
 		),
 		ScrollLeft: key.NewBinding(
 			key.WithKeys("shift+left"),
+			key.WithHelp("shift+←", "scroll left"),
 		),
 	}
+}
+
+
+// FullHelp returns a multi row view of all the helpkeys that are defined. Needed to fullfil the 'help.Model' interface
+// Also appends all user defined extra keys to the help
+func (m Model) FullHelp() [][]key.Binding {
+	kb := [][]key.Binding{
+		{m.keyMap.RowDown, m.keyMap.RowUp, m.keyMap.RowSelectToggle},
+		{m.keyMap.PageDown, m.keyMap.PageUp, m.keyMap.PageFirst, m.keyMap.PageLast},
+		{m.keyMap.Filter, m.keyMap.FilterBlur, m.keyMap.FilterClear, m.keyMap.ScrollRight, m.keyMap.ScrollLeft},
+	}
+	if m.AdditionalFullHelpKeys != nil {
+		kb = append(kb, m.AdditionalFullHelpKeys())
+	}
+	return kb
+}
+
+// ShortHelp just returns a single row of help views. Needed to fullfil the 'help.Model' interface
+// Also appends all user defined extra keys to the help
+func (m Model) ShortHelp() []key.Binding {
+	kb := []key.Binding{
+		m.keyMap.RowDown, m.keyMap.RowUp, m.keyMap.RowSelectToggle, m.keyMap.PageDown, m.keyMap.PageUp, m.keyMap.Filter, m.keyMap.FilterBlur, m.keyMap.FilterClear,
+	}
+	if m.AdditionalShortHelpKeys != nil {
+		kb = append(kb, m.AdditionalShortHelpKeys()...)
+	}
+	return kb
 }
