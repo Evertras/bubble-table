@@ -14,17 +14,14 @@ func TestKeyMapShortHelp(t *testing.T) {
 	model := New(columns)
 	km := DefaultKeyMap()
 	model.WithKeyMap(km)
-	assert.Nil(t, model.AdditionalShortHelpKeys)
+	assert.Nil(t, model.additionalShortHelpKeys)
 	assert.Equal(t, model.ShortHelp(), []key.Binding{
 		model.keyMap.RowDown, model.keyMap.RowUp, model.keyMap.RowSelectToggle, model.keyMap.PageDown, model.keyMap.PageUp, model.keyMap.Filter, model.keyMap.FilterBlur, model.keyMap.FilterClear})
 
 	// Testing if the 'adding of keys' works too.
-	model.AdditionalShortHelpKeys = func() []key.Binding {
-		return []key.Binding{
-			key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "Testing additional keybinds")),
-		}
-	}
-	assert.NotNil(t, model.AdditionalShortHelpKeys)
+	keys := []key.Binding{key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "Testing additional keybinds"))}
+	model = model.WithAdditionalShortHelpKeys(keys)
+	assert.NotNil(t, model.additionalShortHelpKeys)
 	assert.Equal(t, model.ShortHelp(), []key.Binding{
 		model.keyMap.RowDown, model.keyMap.RowUp, model.keyMap.RowSelectToggle, model.keyMap.PageDown, model.keyMap.PageUp, model.keyMap.Filter, model.keyMap.FilterBlur, model.keyMap.FilterClear, key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "Testing additional keybinds"))})
 
@@ -36,7 +33,7 @@ func TestKeyMapFullHelp(t *testing.T) {
 	model := New(columns)
 	km := DefaultKeyMap()
 	model.WithKeyMap(km)
-	assert.Nil(t, model.AdditionalFullHelpKeys)
+	assert.Nil(t, model.additionalFullHelpKeys)
 	assert.Equal(t,
 		model.FullHelp(),
 		[][]key.Binding{
@@ -45,12 +42,9 @@ func TestKeyMapFullHelp(t *testing.T) {
 			{model.keyMap.Filter, model.keyMap.FilterBlur, model.keyMap.FilterClear, model.keyMap.ScrollRight, model.keyMap.ScrollLeft}},
 	)
 	// Testing if the 'adding of keys' works too.
-	model.AdditionalFullHelpKeys = func() []key.Binding {
-		return []key.Binding{
-			key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "Testing additional keybinds")),
-		}
-	}
-	assert.NotNil(t, model.AdditionalFullHelpKeys)
+	keys := []key.Binding{key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "Testing additional keybinds"))}
+	model = model.WithAdditionalFullHelpKeys(keys)
+	assert.NotNil(t, model.additionalFullHelpKeys)
 	assert.Equal(t,
 		model.FullHelp(),
 		[][]key.Binding{

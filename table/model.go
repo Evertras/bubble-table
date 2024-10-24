@@ -41,8 +41,8 @@ type Model struct {
 	// You have to supply a keybinding like this:
 	// key.NewBinding( key.WithKeys("shift+left"), key.WithHelp("shift+←", "scroll left"))
 	// It needs both 'WithKeys' and 'WithHelp'
-	AdditionalShortHelpKeys func() []key.Binding
-	AdditionalFullHelpKeys  func() []key.Binding
+	additionalShortHelpKeys func() []key.Binding
+	additionalFullHelpKeys  func() []key.Binding
 
 	selectableRows bool
 	rowCursorIndex int

@@ -30,9 +30,7 @@ type KeyMap struct {
 	ScrollLeft key.Binding
 }
 
-// FullHelp  returns a all keys help views in several rows. Needed to fullfil the 'help.Model' interface
-
-// DefaultKeyMap returns a set of sensible defaults for controlling a focused table, with explenation help texts.
+// DefaultKeyMap returns a set of sensible defaults for controlling a focused table with help text.
 func DefaultKeyMap() KeyMap {
 	return KeyMap{
 		RowDown: key.NewBinding(
@@ -49,7 +47,7 @@ func DefaultKeyMap() KeyMap {
 		),
 		PageDown: key.NewBinding(
 			key.WithKeys("right", "l", "pgdown"),
-			key.WithHelp("→/h/page down", "Pervious Page"),
+			key.WithHelp("→/h/page down", "Previous Page"),
 		),
 		PageUp: key.NewBinding(
 			key.WithKeys("left", "h", "pgup"),
@@ -86,28 +84,30 @@ func DefaultKeyMap() KeyMap {
 	}
 }
 
-// FullHelp returns a multi row view of all the helpkeys that are defined. Needed to fullfil the 'help.Model' interface
-// Also appends all user defined extra keys to the help
+// FullHelp returns a multi row view of all the helpkeys that are defined. Needed to fullfil the 'help.Model' interface.
+// Also appends all user defined extra keys to the help.
 func (m Model) FullHelp() [][]key.Binding {
-	kb := [][]key.Binding{
+	keyBinds := [][]key.Binding{
 		{m.keyMap.RowDown, m.keyMap.RowUp, m.keyMap.RowSelectToggle},
 		{m.keyMap.PageDown, m.keyMap.PageUp, m.keyMap.PageFirst, m.keyMap.PageLast},
 		{m.keyMap.Filter, m.keyMap.FilterBlur, m.keyMap.FilterClear, m.keyMap.ScrollRight, m.keyMap.ScrollLeft},
 	}
-	if m.AdditionalFullHelpKeys != nil {
-		kb = append(kb, m.AdditionalFullHelpKeys())
+	if m.additionalFullHelpKeys != nil {
+		keyBinds = append(keyBinds, m.additionalFullHelpKeys())
 	}
-	return kb
+
+	return keyBinds
 }
 
-// ShortHelp just returns a single row of help views. Needed to fullfil the 'help.Model' interface
-// Also appends all user defined extra keys to the help
+// ShortHelp just returns a single row of help views. Needed to fullfil the 'help.Model' interface.
+// Also appends all user defined extra keys to the help.
 func (m Model) ShortHelp() []key.Binding {
-	kb := []key.Binding{
+	keyBinds := []key.Binding{
 		m.keyMap.RowDown, m.keyMap.RowUp, m.keyMap.RowSelectToggle, m.keyMap.PageDown, m.keyMap.PageUp, m.keyMap.Filter, m.keyMap.FilterBlur, m.keyMap.FilterClear,
 	}
-	if m.AdditionalShortHelpKeys != nil {
-		kb = append(kb, m.AdditionalShortHelpKeys()...)
+	if m.additionalShortHelpKeys != nil {
+		keyBinds = append(keyBinds, m.additionalShortHelpKeys()...)
 	}
-	return kb
+
+	return keyBinds
 }

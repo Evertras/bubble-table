@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -464,4 +465,19 @@ func (m Model) WithMultiline(multiline bool) Model {
 	m.multiline = multiline
 
 	return m
+}
+
+func (m Model) WithAdditionalShortHelpKeys(keys []key.Binding) Model {
+	m.additionalShortHelpKeys = func() []key.Binding {
+		return keys
+	}
+	return m
+}
+
+func (m Model) WithAdditionalFullHelpKeys(keys []key.Binding) Model {
+	m.additionalFullHelpKeys = func() []key.Binding {
+		return keys
+	}
+	return m
+
 }
