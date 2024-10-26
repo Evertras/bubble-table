@@ -92,6 +92,7 @@ func (m Model) WithKeyMap(keyMap KeyMap) Model {
 
 // KeyMap returns a copy of the current key map in use.
 func (m Model) KeyMap() KeyMap {
+
 	return m.keyMap
 }
 
@@ -301,6 +302,7 @@ func (m Model) PageFirst() Model {
 // be set to the top row of the page if the page changed.
 func (m Model) WithCurrentPage(currentPage int) Model {
 	if m.pageSize == 0 || currentPage == m.CurrentPage() {
+
 		return m
 	}
 
@@ -467,6 +469,7 @@ func (m Model) WithMultiline(multiline bool) Model {
 	return m
 }
 
+// WithAdditionalShortHelpKeys enables you to add more keybindings to the 'short help' view.
 func (m Model) WithAdditionalShortHelpKeys(keys []key.Binding) Model {
 	m.additionalShortHelpKeys = func() []key.Binding {
 		return keys
@@ -474,6 +477,8 @@ func (m Model) WithAdditionalShortHelpKeys(keys []key.Binding) Model {
 	return m
 }
 
+
+// WithAdditionalShortHelpKeys enables you to add more keybindings to the 'full help' view.
 func (m Model) WithAdditionalFullHelpKeys(keys []key.Binding) Model {
 	m.additionalFullHelpKeys = func() []key.Binding {
 		return keys

@@ -47,19 +47,19 @@ func DefaultKeyMap() KeyMap {
 		),
 		PageDown: key.NewBinding(
 			key.WithKeys("right", "l", "pgdown"),
-			key.WithHelp("→/h/page down", "Previous Page"),
+			key.WithHelp("→/h/page down", "next page"),
 		),
 		PageUp: key.NewBinding(
 			key.WithKeys("left", "h", "pgup"),
-			key.WithHelp("←/h/page up", "Next Page"),
+			key.WithHelp("←/h/page up", "previous page"),
 		),
 		PageFirst: key.NewBinding(
 			key.WithKeys("home", "g"),
-			key.WithHelp("home/g", "First Page"),
+			key.WithHelp("home/g", "first page"),
 		),
 		PageLast: key.NewBinding(
 			key.WithKeys("end", "G"),
-			key.WithHelp("end/G", "Last Page"),
+			key.WithHelp("end/G", "last page"),
 		),
 		Filter: key.NewBinding(
 			key.WithKeys("/"),
