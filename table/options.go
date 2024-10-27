@@ -474,15 +474,17 @@ func (m Model) WithAdditionalShortHelpKeys(keys []key.Binding) Model {
 	m.additionalShortHelpKeys = func() []key.Binding {
 		return keys
 	}
+
 	return m
 }
 
 
-// WithAdditionalShortHelpKeys enables you to add more keybindings to the 'full help' view.
+// WithAdditionalFullHelpKeys enables you to add more keybindings to the 'full help' view.
 func (m Model) WithAdditionalFullHelpKeys(keys []key.Binding) Model {
 	m.additionalFullHelpKeys = func() []key.Binding {
 		return keys
 	}
+
 	return m
 
 }
