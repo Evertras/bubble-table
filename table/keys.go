@@ -103,7 +103,14 @@ func (m Model) FullHelp() [][]key.Binding {
 // Also appends all user defined extra keys to the help.
 func (m Model) ShortHelp() []key.Binding {
 	keyBinds := []key.Binding{
-		m.keyMap.RowDown, m.keyMap.RowUp, m.keyMap.RowSelectToggle, m.keyMap.PageDown, m.keyMap.PageUp, m.keyMap.Filter, m.keyMap.FilterBlur, m.keyMap.FilterClear,
+		m.keyMap.RowDown,
+		m.keyMap.RowUp,
+		m.keyMap.RowSelectToggle,
+		m.keyMap.PageDown,
+		m.keyMap.PageUp,
+		m.keyMap.Filter,
+		m.keyMap.FilterBlur,
+		m.keyMap.FilterClear,
 	}
 	if m.additionalShortHelpKeys != nil {
 		keyBinds = append(keyBinds, m.additionalShortHelpKeys()...)
