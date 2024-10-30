@@ -9,7 +9,6 @@ import (
 )
 
 func TestKeyMapShortHelp(t *testing.T) {
-
 	columns := []Column{NewColumn("c1", "Column1", 10)}
 	model := New(columns)
 	km := DefaultKeyMap()
@@ -25,7 +24,6 @@ func TestKeyMapShortHelp(t *testing.T) {
 		model.keyMap.FilterBlur,
 		model.keyMap.FilterClear},
 	)
-
 	// Testing if the 'adding of keys' works too.
 	keys := []key.Binding{key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "Testing additional keybinds"))}
 	model = model.WithAdditionalShortHelpKeys(keys)
@@ -45,11 +43,9 @@ func TestKeyMapShortHelp(t *testing.T) {
 				"Testing additional keybinds"),
 		),
 	})
-
 }
 
 func TestKeyMapFullHelp(t *testing.T) {
-
 	columns := []Column{NewColumn("c1", "Column1", 10)}
 	model := New(columns)
 	km := DefaultKeyMap()

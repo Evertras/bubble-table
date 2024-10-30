@@ -92,7 +92,6 @@ func (m Model) WithKeyMap(keyMap KeyMap) Model {
 
 // KeyMap returns a copy of the current key map in use.
 func (m Model) KeyMap() KeyMap {
-
 	return m.keyMap
 }
 
@@ -305,7 +304,6 @@ func (m Model) WithCurrentPage(currentPage int) Model {
 
 		return m
 	}
-
 	if currentPage < 1 {
 		currentPage = 1
 	} else {
@@ -315,7 +313,6 @@ func (m Model) WithCurrentPage(currentPage int) Model {
 			currentPage = maxPages
 		}
 	}
-
 	m.currentPage = currentPage - 1
 	m.rowCursorIndex = m.currentPage * m.pageSize
 
