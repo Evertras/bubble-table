@@ -301,7 +301,6 @@ func (m Model) PageFirst() Model {
 // be set to the top row of the page if the page changed.
 func (m Model) WithCurrentPage(currentPage int) Model {
 	if m.pageSize == 0 || currentPage == m.CurrentPage() {
-
 		return m
 	}
 	if currentPage < 1 {
