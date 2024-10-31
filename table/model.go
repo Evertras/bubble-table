@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -28,8 +29,21 @@ type Model struct {
 	missingDataIndicator interface{}
 
 	// Interaction
-	focused        bool
-	keyMap         KeyMap
+	focused bool
+	keyMap  KeyMap
+
+	// Taken from: 'Bubbles/List'
+	// Additional key mappings for the short and full help views. This allows
+	// you to add additional key mappings to the help menu without
+	// re-implementing the help component. Of course, you can also disable the
+	// list's help component and implement a new one if you need more
+	// flexibility.
+	// You have to supply a keybinding like this:
+	// key.NewBinding( key.WithKeys("shift+left"), key.WithHelp("shift+←", "scroll left"))
+	// It needs both 'WithKeys' and 'WithHelp'
+	additionalShortHelpKeys func() []key.Binding
+	additionalFullHelpKeys  func() []key.Binding
+
 	selectableRows bool
 	rowCursorIndex int
 

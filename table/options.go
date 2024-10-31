@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -302,7 +303,6 @@ func (m Model) WithCurrentPage(currentPage int) Model {
 	if m.pageSize == 0 || currentPage == m.CurrentPage() {
 		return m
 	}
-
 	if currentPage < 1 {
 		currentPage = 1
 	} else {
@@ -312,7 +312,6 @@ func (m Model) WithCurrentPage(currentPage int) Model {
 			currentPage = maxPages
 		}
 	}
-
 	m.currentPage = currentPage - 1
 	m.rowCursorIndex = m.currentPage * m.pageSize
 
@@ -462,6 +461,24 @@ func (m Model) WithAllRowsDeselected() Model {
 // WithMultiline sets whether or not to wrap text in cells to multiple lines.
 func (m Model) WithMultiline(multiline bool) Model {
 	m.multiline = multiline
+
+	return m
+}
+
+// WithAdditionalShortHelpKeys enables you to add more keybindings to the 'short help' view.
+func (m Model) WithAdditionalShortHelpKeys(keys []key.Binding) Model {
+	m.additionalShortHelpKeys = func() []key.Binding {
+		return keys
+	}
+
+	return m
+}
+
+// WithAdditionalFullHelpKeys enables you to add more keybindings to the 'full help' view.
+func (m Model) WithAdditionalFullHelpKeys(keys []key.Binding) Model {
+	m.additionalFullHelpKeys = func() []key.Binding {
+		return keys
+	}
 
 	return m
 }
