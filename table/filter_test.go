@@ -294,6 +294,51 @@ func TestFilterWithSetValue(t *testing.T) {
 	assert.Len(t, filteredRows, 3)
 }
 
+func TestFilterFunc(t *testing.T) {
+	const (
+		colTitle = "title"
+		colDesc  = "description"
+	)
+
+	columns := []Column{NewColumn("title", "title", 10).WithFiltered(true)}
+	rows := []Row{
+		NewRow(RowData{
+			colTitle: "AAA",
+			colDesc:  "",
+		}),
+		NewRow(RowData{
+			colTitle: "BBB",
+			colDesc:  "",
+		}),
+		// Empty
+		NewRow(RowData{}),
+	}
+
+	filterFunc := func(r Row, s string) bool {
+		// Completely arbitrary check for testing purposes
+		title := fmt.Sprintf("%v", r.Data["title"])
+
+		return title == "AAA" && s == "x"
+	}
+
+	// First check that the table won't match with different case
+	model := New(columns).WithRows(rows).Filtered(true)
+	model = model.WithFilterInputValue("x")
+
+	filteredRows := model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 0)
+
+	// The filter func should then match the one row
+	model = model.WithFilterFunc(filterFunc)
+	filteredRows = model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 1)
+
+	// Remove filter
+	model = model.WithFilterInputValue("")
+	filteredRows = model.getFilteredRows(rows)
+	assert.Len(t, filteredRows, 3)
+}
+
 func BenchmarkFilteredScrolling(b *testing.B) {
 	// Scrolling through a filtered table with many rows should be quick
 	// https://github.com/Evertras/bubble-table/issues/135
