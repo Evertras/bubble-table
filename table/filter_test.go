@@ -317,6 +317,7 @@ func TestFilterFunc(t *testing.T) {
 	filterFunc := func(r Row, s string) bool {
 		// Completely arbitrary check for testing purposes
 		title := fmt.Sprintf("%v", r.Data["title"])
+
 		return title == "AAA" && s == "x"
 	}
 
