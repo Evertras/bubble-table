@@ -371,6 +371,8 @@ func (m Model) WithFilterInputValue(value string) Model {
 func (m Model) WithFilterFunc(shouldInclude func(row Row, filterInput string) bool) Model {
 	m.filterFunc = shouldInclude
 
+	m.visibleRowCacheUpdated = false
+
 	return m
 }
 
