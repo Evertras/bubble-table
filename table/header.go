@@ -1,6 +1,6 @@
 package table
 
-import lipgloss "github.com/charmbracelet/lipgloss/v2"
+import "github.com/charmbracelet/lipgloss/v2"
 
 // This is long and could use some refactoring in the future, but unsure of how
 // to pick it apart right now.

@@ -7,7 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/v2/textinput"
 	tea "github.com/charmbracelet/bubbletea/v2"
-	lipgloss "github.com/charmbracelet/lipgloss/v2"
+	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/stretchr/testify/assert"
 )
 

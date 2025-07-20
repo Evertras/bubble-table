@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea/v2"
-	lipgloss "github.com/charmbracelet/lipgloss/v2"
+	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/mattn/go-runewidth"
 	"github.com/stretchr/testify/assert"
 )
