@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/evertras/bubble-table/table"
 )
 
@@ -152,7 +152,7 @@ func (m Model) View() string {
 func main() {
 	p := tea.NewProgram(NewModel())
 
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
