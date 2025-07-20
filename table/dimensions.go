@@ -32,7 +32,13 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 	for index, col := range cols {
 		if !col.isFlex() {
 			totalFlexWidth -= col.width
-			cols[index].style = col.style.Width(col.width)
+
+			borderAdjustment := 1
+			if index == 0 {
+				borderAdjustment = 2
+			}
+
+			cols[index].style = col.style.Width(col.width + borderAdjustment)
 		} else {
 			totalFlexFactor += col.flexFactor
 			flexGCD = gcd(flexGCD, col.flexFactor)
