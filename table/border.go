@@ -1,6 +1,6 @@
 package table
 
-import "github.com/charmbracelet/lipgloss"
+import "github.com/charmbracelet/lipgloss/v2"
 
 // Border defines the borders in and around the table.
 type Border struct {

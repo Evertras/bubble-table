@@ -1,9 +1,9 @@
 package table
 
 import (
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/bubbles/v2/key"
+	"github.com/charmbracelet/bubbles/v2/textinput"
+	lipgloss "github.com/charmbracelet/lipgloss/v2"
 )
 
 // RowStyleFuncInput is the input to the style function that can

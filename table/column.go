@@ -1,7 +1,7 @@
 package table
 
 import (
-	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/v2"
 )
 
 // Column is a column in the table.

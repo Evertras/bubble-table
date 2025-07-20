@@ -3,8 +3,8 @@ package table
 import (
 	"testing"
 
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/bubbles/v2/textinput"
+	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -121,11 +121,17 @@ func TestGetHorizontalScrollColumnOffset(t *testing.T) {
 		Focused(true)
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Mod:  tea.ModShift,
+			Code: tea.KeyRight,
+		})
 	}
 
 	hitScrollLeft := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftLeft})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Mod:  tea.ModShift,
+			Code: tea.KeyLeft,
+		})
 	}
 
 	assert.Equal(
@@ -196,15 +202,14 @@ func TestGetIsFilterInputFocused(t *testing.T) {
 
 	assert.False(t, model.GetIsFilterInputFocused(), "Text input shouldn't start focused")
 
-	model, _ = model.Update(tea.KeyMsg{
-		Type:  tea.KeyRunes,
-		Runes: []rune{'/'},
+	model, _ = model.Update(tea.KeyPressMsg{
+		Code: '/',
 	})
 
 	assert.True(t, model.GetIsFilterInputFocused(), "Did not trigger text input")
 
-	model, _ = model.Update(tea.KeyMsg{
-		Type: tea.KeyEnter,
+	model, _ = model.Update(tea.KeyPressMsg{
+		Code: tea.KeyEnter,
 	})
 
 	assert.False(t, model.GetIsFilterInputFocused(), "Should no longer be focused after hitting enter")

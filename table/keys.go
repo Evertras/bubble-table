@@ -1,6 +1,6 @@
 package table
 
-import "github.com/charmbracelet/bubbles/key"
+import "github.com/charmbracelet/bubbles/v2/key"
 
 // KeyMap defines the keybindings for the table when it's focused.
 type KeyMap struct {

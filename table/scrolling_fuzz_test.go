@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -78,7 +78,10 @@ func FuzzHorizontalScrollingStopEdgeCases(f *testing.F) {
 			Focused(true)
 
 		hitScrollRight := func() {
-			model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+			model, _ = model.Update(tea.KeyPressMsg{
+				Code: tea.KeyRight,
+				Mod:  tea.ModShift,
+			})
 		}
 
 		// Excessive scrolling attempts to be sure

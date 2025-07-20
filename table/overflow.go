@@ -1,6 +1,6 @@
 package table
 
-import "github.com/charmbracelet/lipgloss"
+import lipgloss "github.com/charmbracelet/lipgloss/v2"
 
 const columnKeyOverflowRight = "___overflow_r___"
 const columnKeyOverflowLeft = "___overflow_l__"

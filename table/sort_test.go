@@ -3,7 +3,7 @@ package table
 import (
 	"testing"
 
-	"github.com/charmbracelet/lipgloss"
+	lipgloss "github.com/charmbracelet/lipgloss/v2"
 	"github.com/stretchr/testify/assert"
 )
 

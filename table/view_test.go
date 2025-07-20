@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	lipgloss "github.com/charmbracelet/lipgloss/v2"
 	"github.com/mattn/go-runewidth"
 	"github.com/stretchr/testify/assert"
 )
@@ -942,9 +942,8 @@ func Test3x3WithFilterFooter(t *testing.T) {
 
 	hitKey := func(key rune) {
 		model, _ = model.Update(
-			tea.KeyMsg{
-				Type:  tea.KeyRunes,
-				Runes: []rune{key},
+			tea.KeyPressMsg{
+				Code: key,
 			})
 	}
 
@@ -970,7 +969,7 @@ func Test3x3WithFilterFooter(t *testing.T) {
 ┃            /3┃
 ┗━━━━━━━━━━━━━━┛`
 
-	model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 
 	assert.Equal(t, expectedFilteredDoneTable, model.View())
 }

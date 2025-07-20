@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/bubbles/v2/key"
+	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,11 +40,17 @@ func TestHorizontalScrolling(t *testing.T) {
 ┗━┻━━━━┻━━━━┻━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Code: tea.KeyRight,
+			Mod:  tea.ModShift,
+		})
 	}
 
 	hitScrollLeft := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftLeft})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Code: tea.KeyLeft,
+			Mod:  tea.ModShift,
+		})
 	}
 
 	assert.Equal(t, expectedTableOriginal, model.View())
@@ -158,11 +164,17 @@ func TestHorizontalScrollingWithFooterAndFrozenCols(t *testing.T) {
 ┗━━━━━━━━━━━━━━━━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Code: tea.KeyRight,
+			Mod:  tea.ModShift,
+		})
 	}
 
 	hitScrollLeft := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftLeft})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Code: tea.KeyLeft,
+			Mod:  tea.ModShift,
+		})
 	}
 
 	assert.Equal(t, expectedTableOriginal, model.View())
@@ -229,7 +241,10 @@ func TestHorizontalScrollStopsAtLastColumnBeingVisible(t *testing.T) {
 ┗━━━━━━━━━━━━━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Code: tea.KeyRight,
+			Mod:  tea.ModShift,
+		})
 	}
 
 	assert.Equal(t, expectedTableLeft, model.View())
@@ -275,7 +290,10 @@ func TestNoScrollingWhenEntireTableIsVisible(t *testing.T) {
 ┗━━━━━━━━━━━━━━━━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+		model, _ = model.Update(tea.KeyPressMsg{
+			Code: tea.KeyRight,
+			Mod:  tea.ModShift,
+		})
 	}
 
 	assert.Equal(t, expectedTable, model.View())
@@ -348,7 +366,10 @@ func TestHorizontalScrollingStopEdgeCases(t *testing.T) {
 				Focused(true)
 
 			hitScrollRight := func() {
-				model, _ = model.Update(tea.KeyMsg{Type: tea.KeyShiftRight})
+				model, _ = model.Update(tea.KeyPressMsg{
+					Code: tea.KeyRight,
+					Mod:  tea.ModShift,
+				})
 			}
 
 			// Excessive scrolling attempts to be sure
@@ -407,11 +428,11 @@ func TestHorizontalScrollingWithCustomKeybind(t *testing.T) {
 ┗━┻━━━━┻━━━━┻━━━━┛`
 
 	hitScrollRight := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyRight})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyRight})
 	}
 
 	hitScrollLeft := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyLeft})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyLeft})
 	}
 
 	assert.Equal(t, expectedTableOriginal, model.View())

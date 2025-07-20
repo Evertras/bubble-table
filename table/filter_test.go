@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/bubbles/v2/textinput"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	lipgloss "github.com/charmbracelet/lipgloss/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -212,7 +212,7 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 	assert.Equal(t, 5, model.TotalRows())
 
 	model.filterTextInput.SetValue("c")
-	model, _ = model.updateFilterTextInput(tea.KeyMsg{})
+	model, _ = model.updateFilterTextInput(tea.KeyPressMsg{})
 	assert.Len(t, model.GetVisibleRows(), 1)
 	assert.Equal(t, 1, model.PageSize())
 	assert.Equal(t, 1, model.CurrentPage())
@@ -220,7 +220,7 @@ func TestGetFilteredRowsRefocusAfterFilter(t *testing.T) {
 	assert.Equal(t, 1, model.TotalRows())
 
 	model.filterTextInput.SetValue("not-exist")
-	model, _ = model.updateFilterTextInput(tea.KeyMsg{})
+	model, _ = model.updateFilterTextInput(tea.KeyPressMsg{})
 	assert.Len(t, model.GetVisibleRows(), 0)
 	assert.Equal(t, 1, model.PageSize())
 	assert.Equal(t, 1, model.CurrentPage())
@@ -357,9 +357,8 @@ func BenchmarkFilteredScrolling(b *testing.B) {
 
 	hitKey := func(key rune) {
 		model, _ = model.Update(
-			tea.KeyMsg{
-				Type:  tea.KeyRunes,
-				Runes: []rune{key},
+			tea.KeyPressMsg{
+				Code: key,
 			})
 	}
 
@@ -390,9 +389,8 @@ func BenchmarkFilteredScrollingPaged(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		model, _ = model.Update(
-			tea.KeyMsg{
-				Type:  tea.KeyRunes,
-				Runes: []rune{'j'},
+			tea.KeyPressMsg{
+				Code: 'j',
 			})
 	}
 }
