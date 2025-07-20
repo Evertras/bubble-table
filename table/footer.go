@@ -16,7 +16,7 @@ func (m Model) renderFooter(width int, includeTop bool) string {
 
 	const borderAdjustment = 2
 
-	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(width - borderAdjustment)
+	styleFooter := m.baseStyle.Inherit(m.border.styleFooter).Width(width - borderAdjustment)
 
 	if includeTop {
 		styleFooter = styleFooter.BorderTop(true)

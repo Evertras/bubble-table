@@ -32,7 +32,7 @@ var lastRowID uint32 = 1
 // NewRow creates a new row and copies the given row data.
 func NewRow(data RowData) Row {
 	row := Row{
-		Data: make(map[string]interface{}),
+		Data: make(map[string]any),
 		id:   lastRowID,
 	}
 
@@ -48,14 +48,14 @@ func NewRow(data RowData) Row {
 
 // WithStyle uses the given style for the text in the row.
 func (r Row) WithStyle(style lipgloss.Style) Row {
-	r.Style = style.Copy()
+	r.Style = style
 
 	return r
 }
 
 //nolint:nestif,cyclop // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
-	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
+	cellStyle := rowStyle.Inherit(column.style).Inherit(m.baseStyle)
 
 	var str string
 
@@ -73,7 +73,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	} else {
 		fmtString := "%v"
 
-		var data interface{}
+		var data any
 
 		if entry, exists := row.Data[column.key]; exists {
 			data = entry
@@ -90,7 +90,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		switch entry := data.(type) {
 		case StyledCell:
 			str = fmt.Sprintf(fmtString, entry.Data)
-			cellStyle = entry.Style.Copy().Inherit(cellStyle)
+			cellStyle = entry.Style.Inherit(cellStyle)
 		default:
 			str = fmt.Sprintf(fmtString, entry)
 		}
@@ -113,7 +113,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
 
-	rowStyle := row.Style.Copy()
+	rowStyle := row.Style
 
 	if m.rowStyleFunc != nil {
 		styleResult := m.rowStyleFunc(RowStyleFuncInput{
@@ -163,15 +163,15 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		} else {
 			rowStyles = stylesLast
 		}
-		rowStyle = rowStyle.Copy().Height(maxCellHeight)
+		rowStyle = rowStyle.Height(maxCellHeight)
 
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			var borderStyle lipgloss.Style
 
 			if columnIndex == 0 {
-				borderStyle = rowStyles.left.Copy()
+				borderStyle = rowStyles.left
 			} else {
-				borderStyle = rowStyles.inner.Copy()
+				borderStyle = rowStyles.inner
 			}
 
 			rendered := m.renderRowColumnData(row, genOverflowColumnLeft(1), rowStyle, borderStyle)

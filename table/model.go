@@ -116,7 +116,7 @@ func New(columns []Column) Model {
 	filterInput.Prompt = "/"
 	model := Model{
 		columns:        make([]Column, len(columns)),
-		highlightStyle: defaultHighlightStyle.Copy(),
+		highlightStyle: defaultHighlightStyle,
 		border:         borderDefault,
 		headerVisible:  true,
 		footerVisible:  true,

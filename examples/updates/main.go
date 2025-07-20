@@ -36,11 +36,11 @@ func rowStyleFunc(input table.RowStyleFuncInput) lipgloss.Style {
 
 	switch input.Row.Data[columnKeyStatus] {
 	case "Critical":
-		calculatedStyle = styleCritical.Copy()
+		calculatedStyle = styleCritical
 	case "Stable":
-		calculatedStyle = styleStable.Copy()
+		calculatedStyle = styleStable
 	case "Good":
-		calculatedStyle = styleGood.Copy()
+		calculatedStyle = styleGood
 	}
 
 	if input.Index%2 == 0 {

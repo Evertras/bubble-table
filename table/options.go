@@ -53,7 +53,7 @@ func (m Model) WithHighlightedRow(index int) Model {
 
 // HeaderStyle sets the style to apply to the header text, such as color or bold.
 func (m Model) HeaderStyle(style lipgloss.Style) Model {
-	m.headerStyle = style.Copy()
+	m.headerStyle = style
 
 	return m
 }

@@ -107,7 +107,7 @@ func (b *Border) generateStyles() {
 
 	// The footer is a single cell with the top taken off... usually.  We can
 	// re-enable the top if needed this way for certain format configurations.
-	b.styleFooter = b.styleSingleCell.Copy().
+	b.styleFooter = b.styleSingleCell.
 		Align(lipgloss.Right).
 		BorderBottom(true).
 		BorderRight(true).
@@ -119,7 +119,7 @@ func (b *Border) styleLeftWithFooter(original lipgloss.Style) lipgloss.Style {
 
 	border.BottomLeft = b.LeftJunction
 
-	return original.Copy().BorderStyle(border)
+	return original.BorderStyle(border)
 }
 
 func (b *Border) styleRightWithFooter(original lipgloss.Style) lipgloss.Style {
@@ -127,7 +127,7 @@ func (b *Border) styleRightWithFooter(original lipgloss.Style) lipgloss.Style {
 
 	border.BottomRight = b.RightJunction
 
-	return original.Copy().BorderStyle(border)
+	return original.BorderStyle(border)
 }
 
 func (b *Border) styleBothWithFooter(original lipgloss.Style) lipgloss.Style {
@@ -136,7 +136,7 @@ func (b *Border) styleBothWithFooter(original lipgloss.Style) lipgloss.Style {
 	border.BottomLeft = b.LeftJunction
 	border.BottomRight = b.RightJunction
 
-	return original.Copy().BorderStyle(border)
+	return original.BorderStyle(border)
 }
 
 // This function is long, but it's just repetitive...
@@ -348,9 +348,9 @@ type borderStyleRow struct {
 }
 
 func (b *borderStyleRow) inherit(s lipgloss.Style) {
-	b.left = b.left.Copy().Inherit(s)
-	b.inner = b.inner.Copy().Inherit(s)
-	b.right = b.right.Copy().Inherit(s)
+	b.left = b.left.Inherit(s)
+	b.inner = b.inner.Inherit(s)
+	b.right = b.right.Inherit(s)
 }
 
 // There's a lot of branches here, but splitting it up further would make it

@@ -26,9 +26,9 @@ func (m Model) renderHeaders() string {
 
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			if columnIndex == 0 {
-				borderStyle = headerStyles.left.Copy()
+				borderStyle = headerStyles.left
 			} else {
-				borderStyle = headerStyles.inner.Copy()
+				borderStyle = headerStyles.inner
 			}
 
 			rendered := renderHeader(genOverflowColumnLeft(1), borderStyle)
@@ -44,11 +44,11 @@ func (m Model) renderHeaders() string {
 		}
 
 		if len(headerStrings) == 0 {
-			borderStyle = headerStyles.left.Copy()
+			borderStyle = headerStyles.left
 		} else if columnIndex < len(m.columns)-1 {
-			borderStyle = headerStyles.inner.Copy()
+			borderStyle = headerStyles.inner
 		} else {
-			borderStyle = headerStyles.right.Copy()
+			borderStyle = headerStyles.right
 		}
 
 		rendered := renderHeader(column, borderStyle)
