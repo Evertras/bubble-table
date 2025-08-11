@@ -376,6 +376,12 @@ func (m Model) WithFilterFunc(shouldInclude func(row Row, filterInput string) bo
 	return m
 }
 
+func (m Model) WithFuzzyFilter() Model {
+	m.filterFunc = NewFuzzyFilter(m.columns)
+
+	return m
+}
+
 // WithFooterVisibility sets the visibility of the footer.
 func (m Model) WithFooterVisibility(visibility bool) Model {
 	m.footerVisible = visibility

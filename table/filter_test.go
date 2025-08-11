@@ -420,3 +420,115 @@ func BenchmarkFilteredRenders(b *testing.B) {
 		_ = model.View()
 	}
 }
+
+func TestFuzzyFilter_EmptyFilterMatchesAll(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+	}
+	rows := []Row{
+		NewRow(RowData{"name": "Acme Steel"}),
+		NewRow(RowData{"name": "Globex"}),
+	}
+
+	ff := NewFuzzyFilter(cols)
+
+	for i, r := range rows {
+		if !ff(r, "") {
+			t.Fatalf("row %d should match empty filter", i)
+		}
+	}
+}
+
+func TestFuzzyFilter_SubsequenceAcrossColumns(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+		NewColumn("city", "City", 10).WithFiltered(true),
+	}
+	row := NewRow(RowData{
+		"name": "Acme",
+		"city": "Stuttgart",
+	})
+
+	ff := NewFuzzyFilter(cols)
+
+	// subsequence match: "agt" appears in order inside "stuttgart"
+	if !ff(row, "agt") {
+		t.Fatalf("expected subsequence 'agt' to match 'Stuttgart'")
+	}
+	// case-insensitive
+	if !ff(row, "ACM") {
+		t.Fatalf("expected case-insensitive subsequence to match 'Acme'")
+	}
+	// not a subsequence
+	if ff(row, "zzt") {
+		t.Fatalf("did not expect 'zzt' to match")
+	}
+}
+
+func TestFuzzyFilter_MultiToken_AND(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+		NewColumn("dept", "Dept", 10).WithFiltered(true),
+	}
+	row := NewRow(RowData{
+		"name": "Wayne Enterprises",
+		"dept": "R&D",
+	})
+
+	ff := NewFuzzyFilter(cols)
+
+	// Both tokens must match as subsequences somewhere in the concatenated haystack
+	if !ff(row, "wy ent") { // "wy" in Wayne, "ent" in Enterprises
+		t.Fatalf("expected multi-token AND to match")
+	}
+	if ff(row, "wy zzz") {
+		t.Fatalf("expected multi-token AND to fail when a token doesn't match")
+	}
+}
+
+func TestFuzzyFilter_IgnoresNonFilterableColumns(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+		NewColumn("secret", "Secret", 10).WithFiltered(false), // should be ignored
+	}
+	row := NewRow(RowData{
+		"name":   "Acme",
+		"secret": "topsecretpattern",
+	})
+
+	ff := NewFuzzyFilter(cols)
+
+	if ff(row, "topsecret") {
+		t.Fatalf("should not match on non-filterable column content")
+	}
+}
+
+func TestFuzzyFilter_UnwrapsStyledCell(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+	}
+	row := NewRow(RowData{
+		"name": NewStyledCell("Nakatomi Plaza", lipgloss.NewStyle()),
+	})
+
+	ff := NewFuzzyFilter(cols)
+
+	if !ff(row, "nak plz") {
+		t.Fatalf("expected fuzzy subsequence to match within StyledCell data")
+	}
+}
+
+func TestFuzzyFilter_NonStringValuesFormatted(t *testing.T) {
+	cols := []Column{
+		NewColumn("id", "ID", 6).WithFiltered(true),
+	}
+	row := NewRow(RowData{
+		"id": 12345, // should be formatted via fmt.Sprintf("%v", v)
+	})
+
+	ff := NewFuzzyFilter(cols)
+
+	if !ff(row, "245") { // subsequence of "12345"
+		t.Fatalf("expected matcher to format non-strings and match subsequence")
+	}
+}
