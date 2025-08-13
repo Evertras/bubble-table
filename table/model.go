@@ -78,7 +78,7 @@ type Model struct {
 	// Filter
 	filtered        bool
 	filterTextInput textinput.Model
-	filterFunc      func(Row, string) bool
+	filterFunc      func([]Column, Row, string) bool
 
 	// For flex columns
 	targetTotalWidth int
@@ -126,7 +126,7 @@ func New(columns []Column) Model {
 		unselectedText: "[ ]",
 
 		filterTextInput: filterInput,
-		filterFunc:      nil,
+		filterFunc:      isRowMatched,
 		baseStyle:       lipgloss.NewStyle().Align(lipgloss.Right),
 
 		paginationWrapping: true,

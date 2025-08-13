@@ -368,7 +368,7 @@ func (m Model) WithFilterInputValue(value string) Model {
 // true, the row will be included in the filtered results. If the function
 // is nil, the function won't be used. The filter input is passed as the second
 // argument to the function.
-func (m Model) WithFilterFunc(shouldInclude func(row Row, filterInput string) bool) Model {
+func (m Model) WithFilterFunc(shouldInclude func(columns []Column, row Row, filterInput string) bool) Model {
 	m.filterFunc = shouldInclude
 
 	m.visibleRowCacheUpdated = false
@@ -376,11 +376,9 @@ func (m Model) WithFilterFunc(shouldInclude func(row Row, filterInput string) bo
 	return m
 }
 
-func (m Model) WithFuzzyFilter(activate bool) Model {
-	if activate {
-		return m.WithFilterFunc(newFuzzyFilter(m.columns))
-	}
-	return m.WithFilterFunc(nil)
+// WithFuzzyFilter permanently enables fuzzy filtering for the table.
+func (m Model) WithFuzzyFilter() Model {
+	return m.WithFilterFunc(newFuzzyFilter)
 }
 
 // WithFooterVisibility sets the visibility of the footer.
