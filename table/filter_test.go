@@ -16,37 +16,37 @@ func TestIsRowMatched(t *testing.T) {
 		NewColumn("title", "title", 10).WithFiltered(true),
 		NewColumn("description", "description", 10)}
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), ""))
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "AA"))
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "A"))
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "a"))
 
-	assert.False(t, isRowMatched(columns,
+	assert.False(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "B"))
 
-	assert.False(t, isRowMatched(columns,
+	assert.False(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "BBB",
@@ -54,14 +54,14 @@ func TestIsRowMatched(t *testing.T) {
 
 	timeFrom2020 := time.Date(2020, time.July, 1, 1, 1, 1, 1, time.UTC)
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title": timeFrom2020,
 		}),
 		"2020",
 	))
 
-	assert.False(t, isRowMatched(columns,
+	assert.False(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title": timeFrom2020,
 		}),
@@ -75,13 +75,13 @@ func TestIsRowMatchedForStyled(t *testing.T) {
 		NewColumn("description", "description", 10),
 	}
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "AA"))
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"title":       NewStyledCell("AAA", lipgloss.NewStyle()),
 			"description": "",
@@ -93,22 +93,22 @@ func TestIsRowMatchedForNonStringer(t *testing.T) {
 		NewColumn("val", "val", 10).WithFiltered(true),
 	}
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "12"))
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "1"))
 
-	assert.True(t, isRowMatched(columns,
+	assert.True(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "2"))
 
-	assert.False(t, isRowMatched(columns,
+	assert.False(t, newContainsFilter(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "3"))

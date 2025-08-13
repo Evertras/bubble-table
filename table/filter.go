@@ -19,7 +19,7 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 		if m.filterFunc != nil {
 			availableFilterFunc = m.filterFunc
 		} else {
-			availableFilterFunc = isRowMatched
+			availableFilterFunc = newContainsFilter
 		}
 
 		if availableFilterFunc(m.columns, row, filterInputValue) {
@@ -30,7 +30,7 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 	return filteredRows
 }
 
-func isRowMatched(columns []Column, row Row, filter string) bool {
+func newContainsFilter(columns []Column, row Row, filter string) bool {
 	if filter == "" {
 		return true
 	}
