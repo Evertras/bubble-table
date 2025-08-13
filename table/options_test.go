@@ -177,7 +177,7 @@ func TestSelectRowsProgramatically(t *testing.T) {
 
 	tests := map[string]struct {
 		rows        []Row
-		selectedIds []int
+		selectedIDs []int
 	}{
 		"no rows selected": {
 			[]Row{
@@ -225,8 +225,8 @@ func TestSelectRowsProgramatically(t *testing.T) {
 			model := baseModel.WithRows(test.rows)
 			sel := model.SelectedRows()
 
-			assert.Equal(t, len(test.selectedIds), len(sel))
-			for i, id := range test.selectedIds {
+			assert.Equal(t, len(test.selectedIDs), len(sel))
+			for i, id := range test.selectedIDs {
 				assert.Equal(t, id, sel[i].Data[col], "expecting row %d to have same %s column value", i)
 			}
 

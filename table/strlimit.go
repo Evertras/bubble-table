@@ -18,6 +18,7 @@ func limitStr(str string, maxLen int) string {
 	}
 
 	if ansi.PrintableRuneWidth(str) > maxLen {
+		// #nosec: G115
 		return truncate.StringWithTail(str, uint(maxLen), "…")
 	}
 

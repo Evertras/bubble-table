@@ -14,7 +14,7 @@ import (
 
 // This is long because of test cases
 //
-//nolint:funlen,gocognit,cyclop
+//nolint:funlen,cyclop
 func FuzzHorizontalScrollingStopEdgeCases(f *testing.F) {
 	const (
 		minNameWidth = 2

@@ -53,24 +53,25 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-//nolint:nestif,cyclop // This has many ifs, but they're short
+//nolint:cyclop // This has many ifs, but they're short
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
 	var str string
 
-	if column.key == columnKeySelect {
+	switch column.key {
+	case columnKeySelect:
 		if row.selected {
 			str = m.selectedText
 		} else {
 			str = m.unselectedText
 		}
-	} else if column.key == columnKeyOverflowRight {
+	case columnKeyOverflowRight:
 		cellStyle = cellStyle.Align(lipgloss.Right)
 		str = ">"
-	} else if column.key == columnKeyOverflowLeft {
+	case columnKeyOverflowLeft:
 		str = "<"
-	} else {
+	default:
 		fmtString := "%v"
 
 		var data interface{}
@@ -137,7 +138,7 @@ func (m Model) renderBlankRow(last bool) string {
 // This is long and could use some refactoring in the future, but not quite sure
 // how to pick it apart yet.
 //
-//nolint:funlen, cyclop, gocognit
+//nolint:funlen, cyclop
 func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string {
 	numColumns := len(m.columns)
 
