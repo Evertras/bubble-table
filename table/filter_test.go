@@ -430,7 +430,7 @@ func TestFuzzyFilter_EmptyFilterMatchesAll(t *testing.T) {
 		NewRow(RowData{"name": "Globex"}),
 	}
 
-	ff := NewFuzzyFilter(cols)
+	ff := newFuzzyFilter(cols)
 
 	for i, r := range rows {
 		if !ff(r, "") {
@@ -449,18 +449,18 @@ func TestFuzzyFilter_SubsequenceAcrossColumns(t *testing.T) {
 		"city": "Stuttgart",
 	})
 
-	ff := NewFuzzyFilter(cols)
+	fuzzyFilter := newFuzzyFilter(cols)
 
 	// subsequence match: "agt" appears in order inside "stuttgart"
-	if !ff(row, "agt") {
+	if !fuzzyFilter(row, "agt") {
 		t.Fatalf("expected subsequence 'agt' to match 'Stuttgart'")
 	}
 	// case-insensitive
-	if !ff(row, "ACM") {
+	if !fuzzyFilter(row, "ACM") {
 		t.Fatalf("expected case-insensitive subsequence to match 'Acme'")
 	}
 	// not a subsequence
-	if ff(row, "zzt") {
+	if fuzzyFilter(row, "zzt") {
 		t.Fatalf("did not expect 'zzt' to match")
 	}
 }
@@ -475,13 +475,13 @@ func TestFuzzyFilter_MultiToken_AND(t *testing.T) {
 		"dept": "R&D",
 	})
 
-	ff := NewFuzzyFilter(cols)
+	fuzzyFilter := newFuzzyFilter(cols)
 
 	// Both tokens must match as subsequences somewhere in the concatenated haystack
-	if !ff(row, "wy ent") { // "wy" in Wayne, "ent" in Enterprises
+	if !fuzzyFilter(row, "wy ent") { // "wy" in Wayne, "ent" in Enterprises
 		t.Fatalf("expected multi-token AND to match")
 	}
-	if ff(row, "wy zzz") {
+	if fuzzyFilter(row, "wy zzz") {
 		t.Fatalf("expected multi-token AND to fail when a token doesn't match")
 	}
 }
@@ -496,7 +496,7 @@ func TestFuzzyFilter_IgnoresNonFilterableColumns(t *testing.T) {
 		"secret": "topsecretpattern",
 	})
 
-	ff := NewFuzzyFilter(cols)
+	ff := newFuzzyFilter(cols)
 
 	if ff(row, "topsecret") {
 		t.Fatalf("should not match on non-filterable column content")
@@ -511,7 +511,7 @@ func TestFuzzyFilter_UnwrapsStyledCell(t *testing.T) {
 		"name": NewStyledCell("Nakatomi Plaza", lipgloss.NewStyle()),
 	})
 
-	ff := NewFuzzyFilter(cols)
+	ff := newFuzzyFilter(cols)
 
 	if !ff(row, "nak plz") {
 		t.Fatalf("expected fuzzy subsequence to match within StyledCell data")
@@ -526,7 +526,7 @@ func TestFuzzyFilter_NonStringValuesFormatted(t *testing.T) {
 		"id": 12345, // should be formatted via fmt.Sprintf("%v", v)
 	})
 
-	ff := NewFuzzyFilter(cols)
+	ff := newFuzzyFilter(cols)
 
 	if !ff(row, "245") { // subsequence of "12345"
 		t.Fatalf("expected matcher to format non-strings and match subsequence")
