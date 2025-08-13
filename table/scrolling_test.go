@@ -179,9 +179,7 @@ func TestHorizontalScrollingWithFooterAndFrozenCols(t *testing.T) {
 	assert.Equal(t, expectedTableOriginal, model.View())
 }
 
-// This is long due to literal strings
-//
-//nolint:funlen
+// This is long due to literal strings.
 func TestHorizontalScrollStopsAtLastColumnBeingVisible(t *testing.T) {
 	model := New([]Column{
 		NewColumn("Name", "Name", 4),

@@ -23,6 +23,7 @@ func asInt(data interface{}) (int64, bool) {
 		return val, true
 
 	case uint:
+		// #nosec: G115
 		return int64(val), true
 
 	case uint8:
@@ -35,6 +36,7 @@ func asInt(data interface{}) (int64, bool) {
 		return int64(val), true
 
 	case uint64:
+		// #nosec: G115
 		return int64(val), true
 
 	case time.Duration:

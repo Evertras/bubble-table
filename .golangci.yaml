@@ -1,6 +1,4 @@
-# https://golangci-lint.run/usage/linters/
-issues:
-  exclude-use-default: false
+version: "2"
 linters:
   enable:
     - asciicheck
@@ -12,36 +10,28 @@ linters:
     - dogsled
     - dupl
     - durationcheck
-    - errcheck
+    - err113
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
     - forbidigo
     - forcetypeassert
     - funlen
-    - gci
     - gocognit
     - goconst
     - gocyclo
     - godot
-    - goerr113
-    - gofmt
     - goheader
-    - goimports
-    - gomnd
     - gomoddirectives
     - gomodguard
     - goprintffuncname
     - gosec
-    - gosimple
-    - govet
     - importas
-    - ineffassign
     - ireturn
     - lll
     - makezero
     - misspell
+    - mnd
     - nakedret
     - nestif
     - nilerr
@@ -56,16 +46,38 @@ linters:
     - rowserrcheck
     - sqlclosecheck
     - staticcheck
-    - stylecheck
     - tagliatelle
-    - tenv
     - thelper
     - tparallel
-    - typecheck
     - unconvert
     - unparam
-    - unused
     - varnamelen
     - wastedassign
     - whitespace
     - wrapcheck
+  settings:
+    depguard:
+      rules:
+        main:
+          list-mode: lax
+          allow:
+            - github.com/stretchr/testify/assert
+            - github.com/charmbracelet/lipgloss
+            - github.com/muesli/reflow/wordwrap
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

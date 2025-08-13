@@ -79,7 +79,7 @@ fmt: ./bin/gci
 	@./bin/gci write --skip-generated ./table/*.go
 
 ./bin/golangci-lint:
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v1.51.1
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v2.3.1
 
 ./bin/gci:
 	GOBIN=$(shell pwd)/bin go install github.com/daixiang0/gci@v0.9.1

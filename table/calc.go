@@ -1,5 +1,8 @@
 package table
 
+// Keep compatibility with Go 1.21 by re-declaring min.
+//
+//nolint:predeclared
 func min(x, y int) int {
 	if x < y {
 		return x
@@ -8,6 +11,9 @@ func min(x, y int) int {
 	return y
 }
 
+// Keep compatibility with Go 1.21 by re-declaring max.
+//
+//nolint:predeclared
 func max(x, y int) int {
 	if x > y {
 		return x
