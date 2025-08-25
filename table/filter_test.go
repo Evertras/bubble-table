@@ -461,6 +461,32 @@ func TestFuzzyFilter_SubsequenceAcrossColumns(t *testing.T) {
 	}
 }
 
+func TestFuzzyFilter_ColumnNotInRow(t *testing.T) {
+	cols := []Column{
+		NewColumn("column_name_doesnt_match", "Name", 10).WithFiltered(true),
+	}
+	row := NewRow(RowData{
+		"name": "Acme Steel",
+	})
+
+	if filterFuncFuzzy(cols, row, "steel") {
+		t.Fatalf("did not expect 'steel' to match")
+	}
+}
+
+func TestFuzzyFilter_RowHasEmptyHaystack(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+	}
+	row := NewRow(RowData{"name": ""})
+
+	// literally any value other than an empty string
+	// should not match
+	if filterFuncFuzzy(cols, row, "a") {
+		t.Fatalf("did not expect 'a' to match")
+	}
+}
+
 func TestFuzzyFilter_MultiToken_AND(t *testing.T) {
 	cols := []Column{
 		NewColumn("name", "Name", 10).WithFiltered(true),
@@ -518,5 +544,17 @@ func TestFuzzyFilter_NonStringValuesFormatted(t *testing.T) {
 
 	if !filterFuncFuzzy(cols, row, "245") { // subsequence of "12345"
 		t.Fatalf("expected matcher to format non-strings and match subsequence")
+	}
+}
+
+func TestFuzzySubSequenceMatch_EmptyString(t *testing.T) {
+	if !fuzzySubsequenceMatch("anything", "") {
+		t.Fatalf("empty needle should match anything")
+	}
+	if fuzzySubsequenceMatch("", "a") {
+		t.Fatalf("non-empty needle should not match empty haystack")
+	}
+	if !fuzzySubsequenceMatch("", "") {
+		t.Fatalf("empty needle should match empty haystack")
 	}
 }
