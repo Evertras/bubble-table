@@ -376,9 +376,9 @@ func (m Model) WithFilterFunc(shouldInclude func(columns []Column, row Row, filt
 	return m
 }
 
-// WithFuzzyFilter permanently enables fuzzy filtering for the table.
+// WithFuzzyFilter enables fuzzy filtering for the table.
 func (m Model) WithFuzzyFilter() Model {
-	return m.WithFilterFunc(newFuzzyFilter)
+	return m.WithFilterFunc(filterFuncFuzzy)
 }
 
 // WithFooterVisibility sets the visibility of the footer.

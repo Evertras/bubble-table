@@ -16,37 +16,37 @@ func TestIsRowMatched(t *testing.T) {
 		NewColumn("title", "title", 10).WithFiltered(true),
 		NewColumn("description", "description", 10)}
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), ""))
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "AA"))
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "A"))
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "a"))
 
-	assert.False(t, newContainsFilter(columns,
+	assert.False(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "B"))
 
-	assert.False(t, newContainsFilter(columns,
+	assert.False(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "BBB",
@@ -54,14 +54,14 @@ func TestIsRowMatched(t *testing.T) {
 
 	timeFrom2020 := time.Date(2020, time.July, 1, 1, 1, 1, 1, time.UTC)
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title": timeFrom2020,
 		}),
 		"2020",
 	))
 
-	assert.False(t, newContainsFilter(columns,
+	assert.False(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title": timeFrom2020,
 		}),
@@ -75,13 +75,13 @@ func TestIsRowMatchedForStyled(t *testing.T) {
 		NewColumn("description", "description", 10),
 	}
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       "AAA",
 			"description": "",
 		}), "AA"))
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"title":       NewStyledCell("AAA", lipgloss.NewStyle()),
 			"description": "",
@@ -93,22 +93,22 @@ func TestIsRowMatchedForNonStringer(t *testing.T) {
 		NewColumn("val", "val", 10).WithFiltered(true),
 	}
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "12"))
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "1"))
 
-	assert.True(t, newContainsFilter(columns,
+	assert.True(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "2"))
 
-	assert.False(t, newContainsFilter(columns,
+	assert.False(t, filterFuncContains(columns,
 		NewRow(RowData{
 			"val": 12,
 		}), "3"))
@@ -431,7 +431,7 @@ func TestFuzzyFilter_EmptyFilterMatchesAll(t *testing.T) {
 	}
 
 	for i, r := range rows {
-		if !newFuzzyFilter(cols, r, "") {
+		if !filterFuncFuzzy(cols, r, "") {
 			t.Fatalf("row %d should match empty filter", i)
 		}
 	}
@@ -448,15 +448,15 @@ func TestFuzzyFilter_SubsequenceAcrossColumns(t *testing.T) {
 	})
 
 	// subsequence match: "agt" appears in order inside "stuttgart"
-	if !newFuzzyFilter(cols, row, "agt") {
+	if !filterFuncFuzzy(cols, row, "agt") {
 		t.Fatalf("expected subsequence 'agt' to match 'Stuttgart'")
 	}
 	// case-insensitive
-	if !newFuzzyFilter(cols, row, "ACM") {
+	if !filterFuncFuzzy(cols, row, "ACM") {
 		t.Fatalf("expected case-insensitive subsequence to match 'Acme'")
 	}
 	// not a subsequence
-	if newFuzzyFilter(cols, row, "zzt") {
+	if filterFuncFuzzy(cols, row, "zzt") {
 		t.Fatalf("did not expect 'zzt' to match")
 	}
 }
@@ -472,10 +472,10 @@ func TestFuzzyFilter_MultiToken_AND(t *testing.T) {
 	})
 
 	// Both tokens must match as subsequences somewhere in the concatenated haystack
-	if !newFuzzyFilter(cols, row, "wy ent") { // "wy" in Wayne, "ent" in Enterprises
+	if !filterFuncFuzzy(cols, row, "wy ent") { // "wy" in Wayne, "ent" in Enterprises
 		t.Fatalf("expected multi-token AND to match")
 	}
-	if newFuzzyFilter(cols, row, "wy zzz") {
+	if filterFuncFuzzy(cols, row, "wy zzz") {
 		t.Fatalf("expected multi-token AND to fail when a token doesn't match")
 	}
 }
@@ -490,7 +490,7 @@ func TestFuzzyFilter_IgnoresNonFilterableColumns(t *testing.T) {
 		"secret": "topsecretpattern",
 	})
 
-	if newFuzzyFilter(cols, row, "topsecret") {
+	if filterFuncFuzzy(cols, row, "topsecret") {
 		t.Fatalf("should not match on non-filterable column content")
 	}
 }
@@ -503,7 +503,7 @@ func TestFuzzyFilter_UnwrapsStyledCell(t *testing.T) {
 		"name": NewStyledCell("Nakatomi Plaza", lipgloss.NewStyle()),
 	})
 
-	if !newFuzzyFilter(cols, row, "nak plz") {
+	if !filterFuncFuzzy(cols, row, "nak plz") {
 		t.Fatalf("expected fuzzy subsequence to match within StyledCell data")
 	}
 }
@@ -516,7 +516,7 @@ func TestFuzzyFilter_NonStringValuesFormatted(t *testing.T) {
 		"id": 12345, // should be formatted via fmt.Sprintf("%v", v)
 	})
 
-	if !newFuzzyFilter(cols, row, "245") { // subsequence of "12345"
+	if !filterFuncFuzzy(cols, row, "245") { // subsequence of "12345"
 		t.Fatalf("expected matcher to format non-strings and match subsequence")
 	}
 }

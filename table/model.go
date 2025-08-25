@@ -126,7 +126,7 @@ func New(columns []Column) Model {
 		unselectedText: "[ ]",
 
 		filterTextInput: filterInput,
-		filterFunc:      newContainsFilter,
+		filterFunc:      filterFuncContains,
 		baseStyle:       lipgloss.NewStyle().Align(lipgloss.Right),
 
 		paginationWrapping: true,

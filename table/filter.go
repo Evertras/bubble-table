@@ -19,7 +19,7 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 		if m.filterFunc != nil {
 			availableFilterFunc = m.filterFunc
 		} else {
-			availableFilterFunc = newContainsFilter
+			availableFilterFunc = filterFuncContains
 		}
 
 		if availableFilterFunc(m.columns, row, filterInputValue) {
@@ -30,7 +30,9 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 	return filteredRows
 }
 
-func newContainsFilter(columns []Column, row Row, filter string) bool {
+// filterFuncContains returns a filterFunc that performs case-insensitive
+// "contains" matching over all filterable columns in a row.
+func filterFuncContains(columns []Column, row Row, filter string) bool {
 	if filter == "" {
 		return true
 	}
@@ -78,9 +80,9 @@ func newContainsFilter(columns []Column, row Row, filter string) bool {
 	return !checkedAny
 }
 
-// newFuzzyFilter returns a filterFunc that performs case-insensitive fuzzy
+// filterFuncFuzzy returns a filterFunc that performs case-insensitive fuzzy
 // matching (subsequence) over the concatenation of all filterable column values.
-func newFuzzyFilter(columns []Column, row Row, filter string) bool {
+func filterFuncFuzzy(columns []Column, row Row, filter string) bool {
 	filter = strings.TrimSpace(filter)
 	if filter == "" {
 		return true
