@@ -253,8 +253,8 @@ func TestDefaultBorderIsDefault(t *testing.T) {
 	model = model.BorderDefault()
 	renderedDefault := model.View()
 
-	assert.NotEqual(t, renderedInitial, renderedRounded)
-	assert.Equal(t, renderedInitial, renderedDefault)
+	assert.NotEqual(t, renderedInitial, renderedRounded, "Rounded border should differ from default")
+	assert.Equal(t, renderedInitial, renderedDefault, "Default border should match initial state")
 }
 
 func BenchmarkSelectedRows(b *testing.B) {
