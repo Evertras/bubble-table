@@ -236,6 +236,27 @@ func TestSelectRowsProgramatically(t *testing.T) {
 	}
 }
 
+func TestDefaultBorderIsDefault(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 1),
+	}).WithRows([]Row{
+		NewRow(RowData{"id": 1}),
+		NewRow(RowData{"id": 2}),
+		NewRow(RowData{"id": 3}),
+	})
+
+	renderedInitial := model.View()
+
+	model = model.BorderRounded()
+	renderedRounded := model.View()
+
+	model = model.BorderDefault()
+	renderedDefault := model.View()
+
+	assert.NotEqual(t, renderedInitial, renderedRounded, "Rounded border should differ from default")
+	assert.Equal(t, renderedInitial, renderedDefault, "Default border should match initial state")
+}
+
 func BenchmarkSelectedRows(b *testing.B) {
 	const N = 1000
 
