@@ -54,6 +54,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 }
 
 //nolint:cyclop // This has many ifs, but they're short
+//nolint:funlen // This function is just barely over the limit
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
