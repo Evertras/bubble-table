@@ -78,7 +78,7 @@ type Model struct {
 	// Filter
 	filtered        bool
 	filterTextInput textinput.Model
-	filterFunc      func([]Column, Row, string) bool
+	filterFunc      FilterFunc
 
 	// For flex columns
 	targetTotalWidth int
