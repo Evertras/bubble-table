@@ -16,10 +16,10 @@ const (
 	columnKeyNegativeSentiment = "negative"
 
 	colorNormal   = "#fa0"
-	colorFire     = "#f64"
 	colorElectric = "#ff0"
-	colorWater    = "#44f"
+	colorFire     = "#f64"
 	colorPlant    = "#8b8"
+	colorWater    = "#44f"
 )
 
 var (
@@ -35,21 +35,24 @@ type Model struct {
 	pokeTable table.Model
 }
 
+var colorMap = map[any]string{
+	"Electric": colorElectric,
+	"Fire":     colorFire,
+	"Plant":    colorPlant,
+	"Water":    colorWater,
+}
+
 func makeRow(name, element string, numConversations int, positiveSentiment, negativeSentiment float32) table.Row {
 	elementStyleFunc := func(input table.StyledCellFuncInput) lipgloss.Style {
-		switch input.Data.(string) {
-		case "Fire":
-			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorFire))
-		case "Water":
-			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorWater))
-		case "Plant":
-			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorPlant))
-		case "Electric":
-			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorElectric))
-		default:
-			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorNormal))
+		color := colorNormal
+
+		if val, ok := colorMap[input.Data]; ok {
+			color = val
 		}
+
+		return lipgloss.NewStyle().Foreground(lipgloss.Color(color))
 	}
+
 	return table.NewRow(table.RowData{
 		columnKeyName:              name,
 		columnKeyElement:           table.NewStyledCellWithStyleFunc(element, elementStyleFunc),
