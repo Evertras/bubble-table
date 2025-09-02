@@ -798,7 +798,55 @@ func TestSimple3x3StyleOverridesAsBaseColumnRowCell(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestStyleFuncAppliesAfterBaseStyleAndColStylesAndBeforeRowStyle(t *testing.T) {
+func TestSimple3x3CellStyleFuncOverridesAsBaseColumnRowCell(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 6),
+		NewColumn("2", "2", 6).WithStyle(lipgloss.NewStyle().Align(lipgloss.Left)),
+		NewColumn("3", "3", 6),
+	}).WithBaseStyle(lipgloss.NewStyle().Align(lipgloss.Center))
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	// Test overrides with alignment because it's easy to check output string
+	rows[0] = rows[0].WithStyle(lipgloss.NewStyle().Align(lipgloss.Left))
+	rows[0].Data["2"] = NewStyledCellWithStyleFunc("R", func(input StyledCellFuncInput) lipgloss.Style {
+		// Do some checks to make sure we're given the right information as a bonus test
+		assert.Equal(t, "2", input.Column.Key(), "Wrong column key given to style func")
+		assert.Equal(t, "R", input.Data, "Wrong data given to style func")
+
+		return lipgloss.NewStyle().Align(lipgloss.Right)
+	})
+
+	rows[2] = rows[2].WithStyle(lipgloss.NewStyle().Align(lipgloss.Right))
+
+	model = model.WithRows(rows)
+
+	const expectedTable = `┏━━━━━━┳━━━━━━┳━━━━━━┓
+┃  1   ┃2     ┃  3   ┃
+┣━━━━━━╋━━━━━━╋━━━━━━┫
+┃1,1   ┃     R┃3,1   ┃
+┃ 1,2  ┃2,2   ┃ 3,2  ┃
+┃   1,3┃   2,3┃   3,3┃
+┗━━━━━━┻━━━━━━┻━━━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestRowStyleFuncAppliesAfterBaseStyleAndColStylesAndBeforeRowStyle(t *testing.T) {
 	styleFunc := func(input RowStyleFuncInput) lipgloss.Style {
 		if input.Index%2 == 0 {
 			return lipgloss.NewStyle().Align(lipgloss.Left)
@@ -849,7 +897,7 @@ func TestStyleFuncAppliesAfterBaseStyleAndColStylesAndBeforeRowStyle(t *testing.
 	assert.Equal(t, expectedTable, rendered)
 }
 
-func TestStyleFuncAppliesHighlighted(t *testing.T) {
+func TestRowStyleFuncAppliesHighlighted(t *testing.T) {
 	styleFunc := func(input RowStyleFuncInput) lipgloss.Style {
 		if input.IsHighlighted {
 			return lipgloss.NewStyle().Align(lipgloss.Center)
