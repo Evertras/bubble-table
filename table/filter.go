@@ -14,21 +14,25 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 	filteredRows := make([]Row, 0)
 
 	for _, row := range rows {
+		var availableFilterFunc func([]Column, Row, string) bool
+
 		if m.filterFunc != nil {
-			if m.filterFunc(row, filterInputValue) {
-				filteredRows = append(filteredRows, row)
-			}
+			availableFilterFunc = m.filterFunc
 		} else {
-			if isRowMatched(m.columns, row, filterInputValue) {
-				filteredRows = append(filteredRows, row)
-			}
+			availableFilterFunc = filterFuncContains
+		}
+
+		if availableFilterFunc(m.columns, row, filterInputValue) {
+			filteredRows = append(filteredRows, row)
 		}
 	}
 
 	return filteredRows
 }
 
-func isRowMatched(columns []Column, row Row, filter string) bool {
+// filterFuncContains returns a filterFunc that performs case-insensitive
+// "contains" matching over all filterable columns in a row.
+func filterFuncContains(columns []Column, row Row, filter string) bool {
 	if filter == "" {
 		return true
 	}
@@ -74,4 +78,62 @@ func isRowMatched(columns []Column, row Row, filter string) bool {
 	}
 
 	return !checkedAny
+}
+
+// filterFuncFuzzy returns a filterFunc that performs case-insensitive fuzzy
+// matching (subsequence) over the concatenation of all filterable column values.
+func filterFuncFuzzy(columns []Column, row Row, filter string) bool {
+	filter = strings.TrimSpace(filter)
+	if filter == "" {
+		return true
+	}
+
+	var builder strings.Builder
+	for _, col := range columns {
+		if !col.filterable {
+			continue
+		}
+		value, ok := row.Data[col.key]
+		if !ok {
+			continue
+		}
+		if sc, ok := value.(StyledCell); ok {
+			value = sc.Data
+		}
+		builder.WriteString(fmt.Sprint(value)) // uses Stringer if implemented
+		builder.WriteByte(' ')
+	}
+
+	haystack := strings.ToLower(builder.String())
+	if haystack == "" {
+		return false
+	}
+
+	for _, token := range strings.Fields(strings.ToLower(filter)) {
+		if !fuzzySubsequenceMatch(haystack, token) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// fuzzySubsequenceMatch returns true if all runes in needle appear in order
+// within haystack (not necessarily contiguously). Case must be normalized by caller.
+func fuzzySubsequenceMatch(haystack, needle string) bool {
+	if needle == "" {
+		return true
+	}
+	haystackIndex, needleIndex := 0, 0
+	haystackRunes := []rune(haystack)
+	needleRunes := []rune(needle)
+
+	for haystackIndex < len(haystackRunes) && needleIndex < len(needleRunes) {
+		if haystackRunes[haystackIndex] == needleRunes[needleIndex] {
+			needleIndex++
+		}
+		haystackIndex++
+	}
+
+	return needleIndex == len(needleRunes)
 }
