@@ -368,7 +368,7 @@ func (m Model) WithFilterInputValue(value string) Model {
 // true, the row will be included in the filtered results. If the function
 // is nil, the function won't be used. The filter input is passed as the second
 // argument to the function.
-func (m Model) WithFilterFunc(shouldInclude func(columns []Column, row Row, filterInput string) bool) Model {
+func (m Model) WithFilterFunc(shouldInclude FilterFunc) Model {
 	m.filterFunc = shouldInclude
 
 	m.visibleRowCacheUpdated = false

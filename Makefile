@@ -1,5 +1,12 @@
+ifeq ($(OS), Windows_NT)
+	EXE_EXT=.exe
+else
+	EXE_EXT=
+endif
+
 .PHONY: example-pokemon
 example-pokemon:
+	echo $(OS)
 	@go run ./examples/pokemon/*.go
 
 .PHONY: example-metadata
@@ -67,19 +74,19 @@ benchmark:
 	@go test -run=XXX -bench=. -benchmem ./table
 
 .PHONY: lint
-lint: ./bin/golangci-lint
-	@./bin/golangci-lint run ./table
+lint: ./bin/golangci-lint$(EXE_EXT)
+	@./bin/golangci-lint$(EXE_EXT) run ./table
 
 coverage.out: table/*.go go.*
 	@go test -coverprofile=coverage.out ./table
 
 .PHONY: fmt
-fmt: ./bin/gci
+fmt: ./bin/gci$(EXE_EXT)
 	@go fmt ./...
-	@./bin/gci write --skip-generated ./table/*.go
+	@./bin/gci$(EXE_EXT) write --skip-generated ./table/*.go
 
-./bin/golangci-lint:
+./bin/golangci-lint$(EXE_EXT):
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v2.3.1
 
-./bin/gci:
+./bin/gci$(EXE_EXT):
 	GOBIN=$(shell pwd)/bin go install github.com/daixiang0/gci@v0.9.1

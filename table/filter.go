@@ -5,6 +5,18 @@ import (
 	"strings"
 )
 
+// FilterFuncInput is the input to a FilterFunc. It's a struct so we can add more things later
+// without breaking compatibility.
+type FilterFuncInput struct {
+	Columns []Column
+	Row     Row
+	Filter  string
+}
+
+// FilterFunc takes a FilterFuncInput and returns true if the row should be visible,
+// or false if the row should be hidden.
+type FilterFunc func(FilterFuncInput) bool
+
 func (m Model) getFilteredRows(rows []Row) []Row {
 	filterInputValue := m.filterTextInput.Value()
 	if !m.filtered || filterInputValue == "" {
@@ -14,7 +26,7 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 	filteredRows := make([]Row, 0)
 
 	for _, row := range rows {
-		var availableFilterFunc func([]Column, Row, string) bool
+		var availableFilterFunc FilterFunc
 
 		if m.filterFunc != nil {
 			availableFilterFunc = m.filterFunc
@@ -22,7 +34,11 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 			availableFilterFunc = filterFuncContains
 		}
 
-		if availableFilterFunc(m.columns, row, filterInputValue) {
+		if availableFilterFunc(FilterFuncInput{
+			Columns: m.columns,
+			Row:     row,
+			Filter:  filterInputValue,
+		}) {
 			filteredRows = append(filteredRows, row)
 		}
 	}
@@ -32,23 +48,23 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 
 // filterFuncContains returns a filterFunc that performs case-insensitive
 // "contains" matching over all filterable columns in a row.
-func filterFuncContains(columns []Column, row Row, filter string) bool {
-	if filter == "" {
+func filterFuncContains(input FilterFuncInput) bool {
+	if input.Filter == "" {
 		return true
 	}
 
 	checkedAny := false
 
-	filterLower := strings.ToLower(filter)
+	filterLower := strings.ToLower(input.Filter)
 
-	for _, column := range columns {
+	for _, column := range input.Columns {
 		if !column.filterable {
 			continue
 		}
 
 		checkedAny = true
 
-		data, ok := row.Data[column.key]
+		data, ok := input.Row.Data[column.key]
 
 		if !ok {
 			continue
@@ -82,18 +98,18 @@ func filterFuncContains(columns []Column, row Row, filter string) bool {
 
 // filterFuncFuzzy returns a filterFunc that performs case-insensitive fuzzy
 // matching (subsequence) over the concatenation of all filterable column values.
-func filterFuncFuzzy(columns []Column, row Row, filter string) bool {
-	filter = strings.TrimSpace(filter)
+func filterFuncFuzzy(input FilterFuncInput) bool {
+	filter := strings.TrimSpace(input.Filter)
 	if filter == "" {
 		return true
 	}
 
 	var builder strings.Builder
-	for _, col := range columns {
+	for _, col := range input.Columns {
 		if !col.filterable {
 			continue
 		}
-		value, ok := row.Data[col.key]
+		value, ok := input.Row.Data[col.key]
 		if !ok {
 			continue
 		}
