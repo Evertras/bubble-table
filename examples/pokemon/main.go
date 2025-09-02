@@ -35,10 +35,24 @@ type Model struct {
 	pokeTable table.Model
 }
 
-func makeRow(name, element, colorStr string, numConversations int, positiveSentiment, negativeSentiment float32) table.Row {
+func makeRow(name, element string, numConversations int, positiveSentiment, negativeSentiment float32) table.Row {
+	elementStyleFunc := func(input table.StyledCellFuncInput) lipgloss.Style {
+		switch input.Data.(string) {
+		case "Fire":
+			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorFire))
+		case "Water":
+			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorWater))
+		case "Plant":
+			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorPlant))
+		case "Electric":
+			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorElectric))
+		default:
+			return lipgloss.NewStyle().Foreground(lipgloss.Color(colorNormal))
+		}
+	}
 	return table.NewRow(table.RowData{
 		columnKeyName:              name,
-		columnKeyElement:           table.NewStyledCell(element, lipgloss.NewStyle().Foreground(lipgloss.Color(colorStr))),
+		columnKeyElement:           table.NewStyledCellWithStyleFunc(element, elementStyleFunc),
 		columnKeyConversations:     numConversations,
 		columnKeyPositiveSentiment: positiveSentiment,
 		columnKeyNegativeSentiment: negativeSentiment,
@@ -58,13 +72,13 @@ func NewModel() Model {
 				WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#c88"))).
 				WithFormatString("%.1f%%"),
 		}).WithRows([]table.Row{
-			makeRow("Pikachu", "Electric", colorElectric, 2300648, 21.9, 8.54),
-			makeRow("Eevee", "Normal", colorNormal, 636373, 26.4, 7.37),
-			makeRow("Bulbasaur", "Plant", colorPlant, 352190, 25.7, 9.02),
-			makeRow("Squirtle", "Water", colorWater, 241259, 25.6, 5.96),
-			makeRow("Blastoise", "Water", colorWater, 162794, 19.5, 6.04),
-			makeRow("Charmander", "Fire", colorFire, 265760, 31.2, 5.25),
-			makeRow("Charizard", "Fire", colorFire, 567763, 25.6, 7.56),
+			makeRow("Pikachu", "Electric", 2300648, 21.9, 8.54),
+			makeRow("Eevee", "Normal", 636373, 26.4, 7.37),
+			makeRow("Bulbasaur", "Plant", 352190, 25.7, 9.02),
+			makeRow("Squirtle", "Water", 241259, 25.6, 5.96),
+			makeRow("Blastoise", "Water", 162794, 19.5, 6.04),
+			makeRow("Charmander", "Fire", 265760, 31.2, 5.25),
+			makeRow("Charizard", "Fire", 567763, 25.6, 7.56),
 		}).
 			BorderRounded().
 			WithBaseStyle(styleBase).

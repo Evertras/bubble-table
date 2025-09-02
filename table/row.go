@@ -53,7 +53,7 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
-//nolint:cyclop // This has many ifs, but they're short
+//nolint:cyclop,funlen // Breaking this up will be more complicated than it's worth for now
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
 
@@ -91,7 +91,15 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		switch entry := data.(type) {
 		case StyledCell:
 			str = fmt.Sprintf(fmtString, entry.Data)
-			cellStyle = entry.Style.Copy().Inherit(cellStyle)
+
+			if entry.StyleFunc != nil {
+				cellStyle = entry.StyleFunc(StyledCellFuncInput{
+					Column: column,
+					Data:   entry.Data,
+				}).Copy().Inherit(cellStyle)
+			} else {
+				cellStyle = entry.Style.Copy().Inherit(cellStyle)
+			}
 		default:
 			str = fmt.Sprintf(fmtString, entry)
 		}
