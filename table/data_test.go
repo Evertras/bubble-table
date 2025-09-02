@@ -8,7 +8,7 @@ import (
 )
 
 func TestAsInt(t *testing.T) {
-	check := func(data interface{}, isInt bool, expectedValue int64) {
+	check := func(data any, isInt bool, expectedValue int64) {
 		val, ok := asInt(data)
 		assert.Equal(t, isInt, ok)
 		assert.Equal(t, expectedValue, val)
@@ -30,7 +30,7 @@ func TestAsInt(t *testing.T) {
 }
 
 func TestAsNumber(t *testing.T) {
-	check := func(data interface{}, isFloat bool, expectedValue float64) {
+	check := func(data any, isFloat bool, expectedValue float64) {
 		val, ok := asNumber(data)
 		assert.Equal(t, isFloat, ok)
 		assert.InDelta(t, expectedValue, val, 0.001)

@@ -26,7 +26,7 @@ type Model struct {
 	visibleRowCache        []Row
 
 	// Shown when data is missing from a row
-	missingDataIndicator interface{}
+	missingDataIndicator any
 
 	// Interaction
 	focused bool

@@ -83,4 +83,3 @@ fmt: ./bin/gci
 
 ./bin/gci:
 	GOBIN=$(shell pwd)/bin go install github.com/daixiang0/gci@v0.9.1
-
