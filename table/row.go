@@ -8,12 +8,12 @@ import (
 	"github.com/muesli/reflow/wordwrap"
 )
 
-// RowData is a map of string column keys to interface{} data.  Data with a key
+// RowData is a map of string column keys to arbitrary data.  Data with a key
 // that matches a column key will be displayed.  Data with a key that does not
 // match a column key will not be displayed, but will remain attached to the Row.
 // This can be useful for attaching hidden metadata for future reference when
 // retrieving rows.
-type RowData map[string]interface{}
+type RowData map[string]any
 
 // Row represents a row in the table with some data keyed to the table columns>
 // Can have a style applied to it such as color/bold.  Create using NewRow().
@@ -32,7 +32,7 @@ var lastRowID uint32 = 1
 // NewRow creates a new row and copies the given row data.
 func NewRow(data RowData) Row {
 	row := Row{
-		Data: make(map[string]interface{}),
+		Data: make(map[string]any),
 		id:   lastRowID,
 	}
 
@@ -74,7 +74,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	default:
 		fmtString := "%v"
 
-		var data interface{}
+		var data any
 
 		if entry, exists := row.Data[column.key]; exists {
 			data = entry

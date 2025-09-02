@@ -3,7 +3,7 @@ package table
 // UserEvent is some state change that has occurred due to user input.  These will
 // ONLY be generated when a user has interacted directly with the table.  These
 // will NOT be generated when code programmatically changes values in the table.
-type UserEvent interface{}
+type UserEvent any
 
 func (m *Model) appendUserEvent(e UserEvent) {
 	m.lastUpdateUserEvents = append(m.lastUpdateUserEvents, e)

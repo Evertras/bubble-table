@@ -64,7 +64,7 @@ func (c Column) WithFiltered(filterable bool) Column {
 // If not set, the default is "%v" for all data types.  Intended mainly for
 // numeric formatting.
 //
-// Since data is of the interface{} type, make sure that all data in the column
+// Since data is of the any type, make sure that all data in the column
 // is of the expected type or the format may fail.  For example, hardcoding '3'
 // instead of '3.0' and using '%.2f' will fail because '3' is an integer.
 func (c Column) WithFormatString(fmtString string) Column {

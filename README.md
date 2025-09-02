@@ -76,7 +76,7 @@ A table is defined by a list of `Column` values that define the columns in the
 table.  Each `Column` is associated with a unique string key.
 
 A table contains a list of `Row`s.  Each `Row` contains a `RowData` object which
-is simply a map of string column IDs to arbitrary `interface{}` data values.
+is simply a map of string column IDs to arbitrary `any` data values.
 When the table is rendered, each `Row` is checked for each `Column` key.  If the
 key exists in the `Row`'s `RowData`, it is rendered with `fmt.Sprintf("%v")`.
 If it does not exist, nothing is rendered.
