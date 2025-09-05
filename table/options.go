@@ -501,8 +501,8 @@ func (m Model) WithAdditionalFullHelpKeys(keys []key.Binding) Model {
 }
 
 // WithGlobalMetadata applies the given metadata to the table. This metadata is passed to
-// some functions such as FilterFuncInput and StyleFuncInput to enable more advanced decisions,
-// such as setting some global theme variable to reference, etc.
+// some functions in FilterFuncInput and StyleFuncInput to enable more advanced decisions,
+// such as setting some global theme variable to reference, etc. Has no effect otherwise.
 func (m Model) WithGlobalMetadata(metadata map[string]any) Model {
 	m.metadata = metadata
 
