@@ -8,10 +8,17 @@ import (
 // FilterFuncInput is the input to a FilterFunc. It's a struct so we can add more things later
 // without breaking compatibility.
 type FilterFuncInput struct {
-	Columns        []Column
-	Row            Row
+	// Columns is a list of the columns of the table
+	Columns []Column
+
+	// Row is the row that's being considered for filtering
+	Row Row
+
+	// GlobalMetadata is an arbitrary set of metadata from the table set by WithGlobalMetadata
 	GlobalMetadata map[string]any
-	Filter         string
+
+	// Filter is the filter string input to consider
+	Filter string
 }
 
 // FilterFunc takes a FilterFuncInput and returns true if the row should be visible,
