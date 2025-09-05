@@ -825,6 +825,7 @@ func TestSimple3x3CellStyleFuncOverridesAsBaseColumnRowCell(t *testing.T) {
 		// Do some checks to make sure we're given the right information as a bonus test
 		assert.Equal(t, "2", input.Column.Key(), "Wrong column key given to style func")
 		assert.Equal(t, "R", input.Data, "Wrong data given to style func")
+		assert.Equal(t, "1,1", input.Row.Data["1"], "Wrong row given to style func")
 
 		return lipgloss.NewStyle().Align(lipgloss.Right)
 	})

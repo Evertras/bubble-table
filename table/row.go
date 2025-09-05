@@ -96,6 +96,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 				cellStyle = entry.StyleFunc(StyledCellFuncInput{
 					Column: column,
 					Data:   entry.Data,
+					Row:    row,
 				}).Copy().Inherit(cellStyle)
 			} else {
 				cellStyle = entry.Style.Copy().Inherit(cellStyle)
