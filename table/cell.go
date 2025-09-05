@@ -28,6 +28,9 @@ type StyledCellFuncInput struct {
 
 	// Column is the column that the cell belongs to.
 	Column Column
+
+	// Row is the row that the cell belongs to.
+	Row Row
 }
 
 // StyledCellFunc is a function that takes various information about the cell and
