@@ -31,6 +31,9 @@ type StyledCellFuncInput struct {
 
 	// Row is the row that the cell belongs to.
 	Row Row
+
+	// GlobalMetadata is the global table metadata that's been set by WithGlobalMetadata
+	GlobalMetadata map[string]any
 }
 
 // StyledCellFunc is a function that takes various information about the cell and

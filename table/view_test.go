@@ -803,7 +803,10 @@ func TestSimple3x3CellStyleFuncOverridesAsBaseColumnRowCell(t *testing.T) {
 		NewColumn("1", "1", 6),
 		NewColumn("2", "2", 6).WithStyle(lipgloss.NewStyle().Align(lipgloss.Left)),
 		NewColumn("3", "3", 6),
-	}).WithBaseStyle(lipgloss.NewStyle().Align(lipgloss.Center))
+	}).WithBaseStyle(lipgloss.NewStyle().Align(lipgloss.Center)).
+		WithGlobalMetadata(map[string]any{
+			"testValue": 37,
+		})
 
 	rows := []Row{}
 
@@ -826,6 +829,7 @@ func TestSimple3x3CellStyleFuncOverridesAsBaseColumnRowCell(t *testing.T) {
 		assert.Equal(t, "2", input.Column.Key(), "Wrong column key given to style func")
 		assert.Equal(t, "R", input.Data, "Wrong data given to style func")
 		assert.Equal(t, "1,1", input.Row.Data["1"], "Wrong row given to style func")
+		assert.Equal(t, 37, input.GlobalMetadata["testValue"], "Wrong table metadata given to style func")
 
 		return lipgloss.NewStyle().Align(lipgloss.Right)
 	})

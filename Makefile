@@ -6,7 +6,6 @@ endif
 
 .PHONY: example-pokemon
 example-pokemon:
-	echo $(OS)
 	@go run ./examples/pokemon/*.go
 
 .PHONY: example-metadata

@@ -18,8 +18,9 @@ var (
 // Model is the main table model.  Create using New().
 type Model struct {
 	// Data
-	columns []Column
-	rows    []Row
+	columns  []Column
+	rows     []Row
+	metadata map[string]any
 
 	// Caches for optimizations
 	visibleRowCacheUpdated bool
@@ -116,6 +117,7 @@ func New(columns []Column) Model {
 	filterInput.Prompt = "/"
 	model := Model{
 		columns:        make([]Column, len(columns)),
+		metadata:       make(map[string]any),
 		highlightStyle: defaultHighlightStyle.Copy(),
 		border:         borderDefault,
 		headerVisible:  true,

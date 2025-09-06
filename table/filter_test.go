@@ -302,11 +302,13 @@ func TestFilterFunc(t *testing.T) {
 		// Completely arbitrary check for testing purposes
 		title := fmt.Sprintf("%v", input.Row.Data["title"])
 
-		return title == "AAA" && input.Filter == "x"
+		return title == "AAA" && input.Filter == "x" && input.GlobalMetadata["testValue"] == 3
 	}
 
 	// First check that the table won't match with different case
-	model := New(columns).WithRows(rows).Filtered(true)
+	model := New(columns).WithRows(rows).Filtered(true).WithGlobalMetadata(map[string]any{
+		"testValue": 3,
+	})
 	model = model.WithFilterInputValue("x")
 
 	filteredRows := model.getFilteredRows(rows)

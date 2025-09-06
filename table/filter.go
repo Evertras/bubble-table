@@ -8,9 +8,17 @@ import (
 // FilterFuncInput is the input to a FilterFunc. It's a struct so we can add more things later
 // without breaking compatibility.
 type FilterFuncInput struct {
+	// Columns is a list of the columns of the table
 	Columns []Column
-	Row     Row
-	Filter  string
+
+	// Row is the row that's being considered for filtering
+	Row Row
+
+	// GlobalMetadata is an arbitrary set of metadata from the table set by WithGlobalMetadata
+	GlobalMetadata map[string]any
+
+	// Filter is the filter string input to consider
+	Filter string
 }
 
 // FilterFunc takes a FilterFuncInput and returns true if the row should be visible,
@@ -35,9 +43,10 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 		}
 
 		if availableFilterFunc(FilterFuncInput{
-			Columns: m.columns,
-			Row:     row,
-			Filter:  filterInputValue,
+			Columns:        m.columns,
+			Row:            row,
+			Filter:         filterInputValue,
+			GlobalMetadata: m.metadata,
 		}) {
 			filteredRows = append(filteredRows, row)
 		}

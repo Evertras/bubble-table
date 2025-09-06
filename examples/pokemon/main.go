@@ -32,7 +32,16 @@ var (
 )
 
 type Model struct {
-	pokeTable table.Model
+	pokeTable            table.Model
+	favoriteElementIndex int
+}
+
+var elementList = []string{
+	"Normal",
+	"Electric",
+	"Fire",
+	"Plant",
+	"Water",
 }
 
 var colorMap = map[any]string{
@@ -50,7 +59,13 @@ func makeRow(name, element string, numConversations int, positiveSentiment, nega
 			color = val
 		}
 
-		return lipgloss.NewStyle().Foreground(lipgloss.Color(color))
+		style := lipgloss.NewStyle().Foreground(lipgloss.Color(color))
+
+		if input.GlobalMetadata["favoriteElement"] == input.Data {
+			style = style.Italic(true)
+		}
+
+		return style
 	}
 
 	return table.NewRow(table.RowData{
@@ -62,8 +77,16 @@ func makeRow(name, element string, numConversations int, positiveSentiment, nega
 	})
 }
 
+func genMetadata(favoriteElementIndex int) map[string]any {
+	return map[string]any{
+		"favoriteElement": elementList[favoriteElementIndex],
+	}
+}
+
 func NewModel() Model {
+	initialFavoriteElementIndex := 0
 	return Model{
+		favoriteElementIndex: initialFavoriteElementIndex,
 		pokeTable: table.New([]table.Column{
 			table.NewColumn(columnKeyName, "Name", 13),
 			table.NewColumn(columnKeyElement, "Element", 10),
@@ -87,7 +110,8 @@ func NewModel() Model {
 			WithBaseStyle(styleBase).
 			WithPageSize(6).
 			SortByDesc(columnKeyConversations).
-			Focused(true),
+			Focused(true).
+			WithGlobalMetadata(genMetadata(initialFavoriteElementIndex)),
 	}
 }
 
@@ -109,6 +133,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
 			cmds = append(cmds, tea.Quit)
+
+		case "e":
+			m.favoriteElementIndex++
+			if m.favoriteElementIndex >= len(elementList) {
+				m.favoriteElementIndex = 0
+			}
+
+			m.pokeTable = m.pokeTable.WithGlobalMetadata(genMetadata(m.favoriteElementIndex))
 		}
 	}
 
@@ -121,6 +153,7 @@ func (m Model) View() string {
 		lipgloss.Left,
 		styleSubtle.Render("Press q or ctrl+c to quit - Sorted by # Conversations"),
 		styleSubtle.Render("Highlighted: "+selected),
+		styleSubtle.Render("Favorite element: "+elementList[m.favoriteElementIndex]),
 		styleSubtle.Render("https://www.nintendolife.com/news/2021/11/these-are-the-most-loved-and-most-hated-pokemon-according-to-a-new-study"),
 		m.pokeTable.View(),
 	) + "\n"
