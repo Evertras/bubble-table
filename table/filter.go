@@ -3,6 +3,8 @@ package table
 import (
 	"fmt"
 	"strings"
+
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 // FilterFuncInput is the input to a FilterFunc. It's a struct so we can add more things later
@@ -107,6 +109,8 @@ func filterFuncContains(input FilterFuncInput) bool {
 
 // filterFuncFuzzy returns a filterFunc that performs case-insensitive fuzzy
 // matching (subsequence) over the concatenation of all filterable column values.
+// it supports multiple filter tokens separated by space which must all match.
+// also, if a filter token starts with the quote character (') it has to match literally.
 func filterFuncFuzzy(input FilterFuncInput) bool {
 	filter := strings.TrimSpace(input.Filter)
 	if filter == "" {
@@ -135,30 +139,16 @@ func filterFuncFuzzy(input FilterFuncInput) bool {
 	}
 
 	for _, token := range strings.Fields(strings.ToLower(filter)) {
-		if !fuzzySubsequenceMatch(haystack, token) {
+		if token[0] == '\'' {
+			// compare literally
+			if !strings.Contains(haystack, strings.ToLower(token[1:])) {
+				return false
+			}
+		} else if !fuzzy.MatchFold(token, haystack) {
 			return false
 		}
+
 	}
 
 	return true
-}
-
-// fuzzySubsequenceMatch returns true if all runes in needle appear in order
-// within haystack (not necessarily contiguously). Case must be normalized by caller.
-func fuzzySubsequenceMatch(haystack, needle string) bool {
-	if needle == "" {
-		return true
-	}
-	haystackIndex, needleIndex := 0, 0
-	haystackRunes := []rune(haystack)
-	needleRunes := []rune(needle)
-
-	for haystackIndex < len(haystackRunes) && needleIndex < len(needleRunes) {
-		if haystackRunes[haystackIndex] == needleRunes[needleIndex] {
-			needleIndex++
-		}
-		haystackIndex++
-	}
-
-	return needleIndex == len(needleRunes)
 }
