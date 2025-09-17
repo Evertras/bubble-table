@@ -555,3 +555,34 @@ func TestFuzzySubSequenceMatch_EmptyString(t *testing.T) {
 	assert.False(t, fuzzySubsequenceMatch("", "a"), "non-empty needle should not match empty haystack")
 	assert.True(t, fuzzySubsequenceMatch("", ""), "empty needle should match empty haystack")
 }
+
+func TestFuzzyFilter_LiteralMatches(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+		NewColumn("city", "City", 10).WithFiltered(true),
+	}
+	row := NewRow(RowData{
+		"name": "Acme",
+		"city": "Stuttgart",
+	})
+
+	type testCase struct {
+		name        string
+		filter      string
+		shouldMatch bool
+	}
+
+	testCases := []testCase{
+		{"literal match", "'Stutt", true},
+		{"failing literal match", "'Stutgar", false},
+		{"combined literal match", "'Stut tat", true},
+	}
+
+	for _, tc := range testCases {
+		assert.Equal(t, tc.shouldMatch, filterFuncFuzzy(FilterFuncInput{
+			Columns: cols,
+			Row:     row,
+			Filter:  tc.filter,
+		}))
+	}
+}
