@@ -3,8 +3,6 @@ package table
 import (
 	"fmt"
 	"strings"
-
-	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 // FilterFuncInput is the input to a FilterFunc. It's a struct so we can add more things later
@@ -144,11 +142,31 @@ func filterFuncFuzzy(input FilterFuncInput) bool {
 			if !strings.Contains(haystack, strings.ToLower(token[1:])) {
 				return false
 			}
-		} else if !fuzzy.MatchFold(token, haystack) {
+		} else if !fuzzySubsequenceMatch(haystack, token) {
 			return false
 		}
 
 	}
 
 	return true
+}
+
+// fuzzySubsequenceMatch returns true if all runes in needle appear in order
+// within haystack (not necessarily contiguously). Case must be normalized by caller.
+func fuzzySubsequenceMatch(haystack, needle string) bool {
+	if needle == "" {
+		return true
+	}
+	haystackIndex, needleIndex := 0, 0
+	haystackRunes := []rune(haystack)
+	needleRunes := []rune(needle)
+
+	for haystackIndex < len(haystackRunes) && needleIndex < len(needleRunes) {
+		if haystackRunes[haystackIndex] == needleRunes[needleIndex] {
+			needleIndex++
+		}
+		haystackIndex++
+	}
+
+	return needleIndex == len(needleRunes)
 }
