@@ -137,15 +137,18 @@ func filterFuncFuzzy(input FilterFuncInput) bool {
 	}
 
 	for _, token := range strings.Fields(strings.ToLower(filter)) {
-		if token[0] == '\'' {
+		if token[0] == '\'' && len(token) > 1 {
 			// compare literally
 			if !strings.Contains(haystack, strings.ToLower(token[1:])) {
 				return false
 			}
-		} else if !fuzzySubsequenceMatch(haystack, token) {
-			return false
+
+			continue
 		}
 
+		if !fuzzySubsequenceMatch(haystack, token) {
+			return false
+		}
 	}
 
 	return true

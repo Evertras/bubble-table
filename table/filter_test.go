@@ -584,6 +584,8 @@ func TestFuzzyFilter_LiteralMatches(t *testing.T) {
 		{"literal match", "'Stutt", true},
 		{"failing literal match", "'Stutgar", false},
 		{"combined literal match", "'Stut tat", true},
+		{"invalid literal filter", "'", false},
+		{"invalid literal filter plus fuzzy", "' z", false},
 	}
 
 	for _, tc := range testCases {
