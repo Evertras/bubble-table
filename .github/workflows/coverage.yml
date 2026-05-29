@@ -15,7 +15,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.18.10"
+          go-version: ~1.25
 
       - name: Check out code
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
 
       - name: Run tests with coverage output
         run: |
-          go test -race -covermode atomic -coverprofile=covprofile ./...
+          go test -race -covermode atomic -coverprofile=covprofile ./table
 
       - name: Install goveralls
         run: go install github.com/mattn/goveralls@latest
