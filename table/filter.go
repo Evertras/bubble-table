@@ -125,7 +125,7 @@ func filterFuncFuzzy(input FilterFuncInput) bool {
 		if sc, ok := value.(StyledCell); ok {
 			value = sc.Data
 		}
-		builder.WriteString(fmt.Sprint(value)) // uses Stringer if implemented
+		fmt.Fprint(&builder, value) // uses Stringer if implemented
 		builder.WriteByte(' ')
 	}
 

@@ -1,9 +1,11 @@
 package table
 
 import (
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/charmbracelet/lipgloss"
+	"image/color"
+
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/textinput"
+	"charm.land/lipgloss/v2"
 )
 
 // RowStyleFuncInput is the input to the style function that can
@@ -53,7 +55,7 @@ func (m Model) WithHighlightedRow(index int) Model {
 
 // HeaderStyle sets the style to apply to the header text, such as color or bold.
 func (m Model) HeaderStyle(style lipgloss.Style) Model {
-	m.headerStyle = style.Copy()
+	m.headerStyle = style
 
 	return m
 }
@@ -242,6 +244,16 @@ func (m Model) WithSelectedText(unselected, selected string) Model {
 // This is useful for border colors, default alignment, default color, etc.
 func (m Model) WithBaseStyle(style lipgloss.Style) Model {
 	m.baseStyle = style
+
+	return m
+}
+
+// WithBorderForeground sets the foreground colour for the plain-string
+// horizontal border lines (top border, header/data separator, bottom border).
+// The left and right cell border characters are coloured via WithBaseStyle;
+// this option covers the horizontal lines that are rendered as plain strings.
+func (m Model) WithBorderForeground(c color.Color) Model {
+	m.border.foreground = c
 
 	return m
 }

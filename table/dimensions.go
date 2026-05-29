@@ -1,7 +1,7 @@
 package table
 
 import (
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/lipgloss/v2"
 )
 
 func (m *Model) recalculateWidth() {
@@ -29,10 +29,12 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 	totalFlexFactor := 0
 	flexGCD := 0
 
-	for index, col := range cols {
+	for _, col := range cols {
 		if !col.isFlex() {
 			totalFlexWidth -= col.width
-			cols[index].style = col.style.Width(col.width)
+			// Do not set Width on col.style here; the rendering functions apply
+			// Width(column.width + borderOverhead) at render time to correctly
+			// account for lipgloss v2's total-outer-width semantics.
 		} else {
 			totalFlexFactor += col.flexFactor
 			flexGCD = gcd(flexGCD, col.flexFactor)
@@ -71,8 +73,8 @@ func updateColumnWidths(cols []Column, totalWidth int) {
 
 		cols[index].width = width
 
-		// Take borders into account for the actual style
-		cols[index].style = cols[index].style.Width(width)
+		// Do not set Width on the style; rendering functions apply
+		// Width(column.width + borderOverhead) at render time.
 	}
 }
 

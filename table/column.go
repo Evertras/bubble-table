@@ -1,7 +1,7 @@
 package table
 
 import (
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/lipgloss/v2"
 )
 
 // Column is a column in the table.
@@ -47,7 +47,7 @@ func NewFlexColumn(key, title string, flexFactor int) Column {
 
 // WithStyle applies a style to the column as a whole.
 func (c Column) WithStyle(style lipgloss.Style) Column {
-	c.style = style.Copy().Width(c.width)
+	c.style = style.Width(c.width)
 
 	return c
 }

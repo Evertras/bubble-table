@@ -1,6 +1,6 @@
 package table
 
-import "github.com/charmbracelet/lipgloss"
+import "charm.land/lipgloss/v2"
 
 // StyledCell represents a cell in the table that has a particular style applied.
 // The cell style takes highest precedence and will overwrite more general styles

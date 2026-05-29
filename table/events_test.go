@@ -3,7 +3,7 @@ package table
 import (
 	"testing"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,11 +38,11 @@ func TestUserEventHighlightedIndexChanged(t *testing.T) {
 		)
 
 	hitDown := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyDown})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyDown})
 	}
 
 	hitUp := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyUp})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyUp})
 	}
 
 	checkEvent := func(events []UserEvent, expectedPreviousIndex, expectedCurrentIndex int) {
@@ -116,11 +116,11 @@ func TestUserEventRowSelectToggled(t *testing.T) {
 		SelectableRows(true)
 
 	hitDown := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyDown})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyDown})
 	}
 
 	hitSelectToggle := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeySpace})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeySpace})
 	}
 
 	checkEvent := func(events []UserEvent, expectedRowIndex int, expectedSelectionState bool) {
@@ -181,10 +181,7 @@ func TestFilterFocusEvents(t *testing.T) {
 	assert.Empty(t, events, "Unexpected events to start")
 
 	// Start filter
-	model, _ = model.Update(tea.KeyMsg{
-		Type:  tea.KeyRunes,
-		Runes: []rune{'/'},
-	})
+	model, _ = model.Update(tea.KeyPressMsg{Code: '/', Text: "/"})
 	events = model.GetLastUpdateUserEvents()
 	assert.Len(t, events, 1, "Only expected one event")
 	switch events[0].(type) {
@@ -194,9 +191,7 @@ func TestFilterFocusEvents(t *testing.T) {
 	}
 
 	// Stop filter
-	model, _ = model.Update(tea.KeyMsg{
-		Type: tea.KeyEnter,
-	})
+	model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 	events = model.GetLastUpdateUserEvents()
 	assert.Len(t, events, 1, "Only expected one event")
 	switch events[0].(type) {

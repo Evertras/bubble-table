@@ -3,7 +3,7 @@ package table
 import (
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/lipgloss/v2"
 )
 
 // View renders the table. It does not end in a newline, so that it can be

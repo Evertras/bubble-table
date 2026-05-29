@@ -3,8 +3,8 @@ package table
 import (
 	"testing"
 
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	"charm.land/bubbles/v2/key"
+	tea "charm.land/bubbletea/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,9 +22,7 @@ func TestUnfocusedDoesntMove(t *testing.T) {
 		}),
 	})
 
-	model, _ = model.Update(tea.KeyMsg{
-		Type: tea.KeyUp,
-	})
+	model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyUp})
 
 	highlighted := model.HighlightedRow()
 
@@ -53,10 +51,10 @@ func TestPageKeysDoNothingWhenNoPages(t *testing.T) {
 	}).Focused(true)
 
 	pageMoveKeys := []tea.Msg{
-		tea.KeyMsg{Type: tea.KeyLeft},
-		tea.KeyMsg{Type: tea.KeyRight},
-		tea.KeyMsg{Type: tea.KeyHome},
-		tea.KeyMsg{Type: tea.KeyEnd},
+		tea.KeyPressMsg{Code: tea.KeyLeft},
+		tea.KeyPressMsg{Code: tea.KeyRight},
+		tea.KeyPressMsg{Code: tea.KeyHome},
+		tea.KeyPressMsg{Code: tea.KeyEnd},
 	}
 
 	checkNoMove := func() string {
@@ -97,12 +95,12 @@ func TestFocusedMovesWhenMoveKeysPressedPaged(t *testing.T) {
 	}).Focused(true).WithPageSize(2)
 
 	// Note that this is assuming default keymap
-	keyUp := tea.KeyMsg{Type: tea.KeyUp}
-	keyDown := tea.KeyMsg{Type: tea.KeyDown}
-	keyLeft := tea.KeyMsg{Type: tea.KeyLeft}
-	keyRight := tea.KeyMsg{Type: tea.KeyRight}
-	keyHome := tea.KeyMsg{Type: tea.KeyHome}
-	keyEnd := tea.KeyMsg{Type: tea.KeyEnd}
+	keyUp := tea.KeyPressMsg{Code: tea.KeyUp}
+	keyDown := tea.KeyPressMsg{Code: tea.KeyDown}
+	keyLeft := tea.KeyPressMsg{Code: tea.KeyLeft}
+	keyRight := tea.KeyPressMsg{Code: tea.KeyRight}
+	keyHome := tea.KeyPressMsg{Code: tea.KeyHome}
+	keyEnd := tea.KeyPressMsg{Code: tea.KeyEnd}
 
 	curID := func() string {
 		str, ok := model.HighlightedRow().Data["id"].(string)
@@ -187,10 +185,10 @@ func TestFocusedMovesWithCustomKeyMap(t *testing.T) {
 		}),
 	}).Focused(true).WithKeyMap(customKeys)
 
-	keyUp := tea.KeyMsg{Type: tea.KeyUp}
-	keyDown := tea.KeyMsg{Type: tea.KeyDown}
-	keyCtrlA := tea.KeyMsg{Type: tea.KeyCtrlA}
-	keyCtrlB := tea.KeyMsg{Type: tea.KeyCtrlB}
+	keyUp := tea.KeyPressMsg{Code: tea.KeyUp}
+	keyDown := tea.KeyPressMsg{Code: tea.KeyDown}
+	keyCtrlA := tea.KeyPressMsg{Code: 'a', Mod: tea.ModCtrl}
+	keyCtrlB := tea.KeyPressMsg{Code: 'b', Mod: tea.ModCtrl}
 
 	assert.Equal(t, "ctrl+a", keyCtrlA.String(), "Test sanity check failed for ctrl+a")
 	assert.Equal(t, "ctrl+b", keyCtrlB.String(), "Test sanity check failed for ctrl+b")
@@ -237,7 +235,7 @@ func TestSelectingRowWhenTableUnselectableDoesNothing(t *testing.T) {
 
 	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected to start")
 
-	model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 
 	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected after key press")
 }
@@ -259,8 +257,8 @@ func TestSelectingRowToggles(t *testing.T) {
 		}),
 	}).Focused(true).SelectableRows(true)
 
-	keyEnter := tea.KeyMsg{Type: tea.KeyEnter}
-	keyDown := tea.KeyMsg{Type: tea.KeyDown}
+	keyEnter := tea.KeyPressMsg{Code: tea.KeyEnter}
+	keyDown := tea.KeyPressMsg{Code: tea.KeyDown}
 
 	assert.False(t, model.GetVisibleRows()[0].selected, "Row shouldn't be selected to start")
 	assert.Len(t, model.SelectedRows(), 0)
@@ -289,18 +287,15 @@ func TestFilterWithKeypresses(t *testing.T) {
 	}).Focused(true).Filtered(true)
 
 	hitKey := func(key rune) {
-		model, _ = model.Update(tea.KeyMsg{
-			Type:  tea.KeyRunes,
-			Runes: []rune{key},
-		})
+		model, _ = model.Update(tea.KeyPressMsg{Code: key, Text: string(key)})
 	}
 
 	hitEnter := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 	}
 
 	hitEscape := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEscape})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEscape})
 	}
 
 	visible := model.GetVisibleRows()
@@ -332,9 +327,7 @@ func TestFilterWithKeypresses(t *testing.T) {
 }
 
 // This is a long test with a lot of movement keys pressed, that's okay because
-// it's simply repetitive and tracking the same kind of state change many times
-//
-//nolint:funlen
+// it's simply repetitive and tracking the same kind of state change many times.
 func TestSelectOnFilteredTableDoesntLoseRows(t *testing.T) {
 	// Issue: https://github.com/Evertras/bubble-table/issues/170
 	//
@@ -351,22 +344,19 @@ func TestSelectOnFilteredTableDoesntLoseRows(t *testing.T) {
 	}).Focused(true).Filtered(true).SelectableRows(true)
 
 	hitKey := func(key rune) {
-		model, _ = model.Update(tea.KeyMsg{
-			Type:  tea.KeyRunes,
-			Runes: []rune{key},
-		})
+		model, _ = model.Update(tea.KeyPressMsg{Code: key, Text: string(key)})
 	}
 
 	hitEnter := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 	}
 
 	hitEscape := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEscape})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEscape})
 	}
 
 	hitSpacebar := func() {
-		model, _ = model.Update(tea.KeyMsg{Type: tea.KeySpace})
+		model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeySpace})
 	}
 
 	// First, apply the filter

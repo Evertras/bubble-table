@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/charmbracelet/bubbles/textinput"
+	"charm.land/bubbles/v2/textinput"
 	"log"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/evertras/bubble-table/table"
 )
 
@@ -71,7 +71,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		// global
 		if msg.String() == "ctrl+c" {
 			cmds = append(cmds, tea.Quit)
@@ -106,7 +106,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	body := strings.Builder{}
 
 	body.WriteString("A filtered simple default table\n" +
@@ -116,13 +116,13 @@ func (m Model) View() string {
 	body.WriteString(m.filterTextInput.View() + "\n")
 	body.WriteString(m.table.View())
 
-	return body.String()
+	return tea.NewView(body.String())
 }
 
 func main() {
 	p := tea.NewProgram(NewModel())
 
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

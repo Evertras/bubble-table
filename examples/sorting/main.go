@@ -4,7 +4,7 @@ import (
 	"log"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/evertras/bubble-table/table"
 )
 
@@ -77,7 +77,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
 			cmds = append(cmds, tea.Quit)
@@ -100,20 +100,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	body := strings.Builder{}
 
 	body.WriteString("A sorted simple default table\nSort by (n)ame, (t)ype->wins combo, or (w)ins\nCurrently sorting by: " + m.columnSortKey + "\nPress q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.simpleTable.View())
 
-	return body.String()
+	return tea.NewView(body.String())
 }
 
 func main() {
 	p := tea.NewProgram(NewModel())
 
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

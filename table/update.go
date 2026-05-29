@@ -1,8 +1,8 @@
 package table
 
 import (
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	"charm.land/bubbles/v2/key"
+	tea "charm.land/bubbletea/v2"
 )
 
 func (m *Model) moveHighlightUp() {
@@ -54,7 +54,7 @@ func (m *Model) toggleSelect() {
 func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		if key.Matches(msg, m.keyMap.FilterBlur) {
 			m.filterTextInput.Blur()
 		}
@@ -69,7 +69,7 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 // This is a series of Matches tests with minimal logic
 //
 //nolint:cyclop
-func (m *Model) handleKeypress(msg tea.KeyMsg) {
+func (m *Model) handleKeypress(msg tea.KeyPressMsg) {
 	previousRowIndex := m.rowCursorIndex
 
 	if key.Matches(msg, m.keyMap.RowDown) {
@@ -146,7 +146,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	}
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		m.handleKeypress(msg)
 	}
 
