@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/lipgloss/v2"
 	"github.com/muesli/reflow/wordwrap"
 )
 
@@ -48,14 +48,14 @@ func NewRow(data RowData) Row {
 
 // WithStyle uses the given style for the text in the row.
 func (r Row) WithStyle(style lipgloss.Style) Row {
-	r.Style = style.Copy()
+	r.Style = style
 
 	return r
 }
 
 //nolint:cyclop,funlen // Breaking this up will be more complicated than it's worth for now
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
-	cellStyle := rowStyle.Copy().Inherit(column.style).Inherit(m.baseStyle)
+	cellStyle := rowStyle.Inherit(column.style).Inherit(m.baseStyle)
 
 	var str string
 
@@ -98,9 +98,9 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 					Data:           entry.Data,
 					Row:            row,
 					GlobalMetadata: m.metadata,
-				}).Copy().Inherit(cellStyle)
+				}).Inherit(cellStyle)
 			} else {
-				cellStyle = entry.Style.Copy().Inherit(cellStyle)
+				cellStyle = entry.Style.Inherit(cellStyle)
 			}
 		default:
 			str = fmt.Sprintf(fmtString, entry)
@@ -114,7 +114,11 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		str = limitStr(str, column.width)
 	}
 
-	cellStyle = cellStyle.Inherit(borderStyle)
+	// In lipgloss v2, Width() sets the *total* outer width (including borders).
+	// Use the border size accessors so that any Width already set on borderStyle
+	// (e.g. from genOverflowStyle) does not pollute the overhead calculation.
+	borderOverhead := borderStyle.GetBorderLeftSize() + borderStyle.GetBorderRightSize()
+	cellStyle = cellStyle.Inherit(borderStyle).Width(column.width + borderOverhead)
 	cellStr := cellStyle.Render(str)
 
 	return cellStr
@@ -124,7 +128,7 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
 
-	rowStyle := row.Style.Copy()
+	rowStyle := row.Style
 
 	if m.rowStyleFunc != nil {
 		styleResult := m.rowStyleFunc(RowStyleFuncInput{
@@ -153,6 +157,8 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 	numColumns := len(m.columns)
 
 	columnStrings := []string{}
+	// Track content-only column widths for building the bottom border line.
+	renderedColWidths := []int{}
 	totalRenderedWidth := 0
 
 	stylesInner, stylesLast := m.styleRows()
@@ -165,31 +171,32 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		}
 	}
 
+	// We always use the "inner" styles for cell borders; the bottom border line
+	// is rendered as a plain string below when last==true.
+	rowStyles := stylesInner
+	_ = stylesLast // kept for potential future use
+
 	for columnIndex, column := range m.columns {
 		var borderStyle lipgloss.Style
-		var rowStyles borderStyleRow
 
-		if !last {
-			rowStyles = stylesInner
-		} else {
-			rowStyles = stylesLast
-		}
-		rowStyle = rowStyle.Copy().Height(maxCellHeight)
+		rowStyle = rowStyle.Height(maxCellHeight)
 
 		if m.horizontalScrollOffsetCol > 0 && columnIndex == m.horizontalScrollFreezeColumnsCount {
 			var borderStyle lipgloss.Style
 
 			if columnIndex == 0 {
-				borderStyle = rowStyles.left.Copy()
+				borderStyle = rowStyles.left
 			} else {
-				borderStyle = rowStyles.inner.Copy()
+				borderStyle = rowStyles.inner
 			}
 
-			rendered := m.renderRowColumnData(row, genOverflowColumnLeft(1), rowStyle, borderStyle)
+			overflowCol := genOverflowColumnLeft(1)
+			rendered := m.renderRowColumnData(row, overflowCol, rowStyle, borderStyle)
 
 			totalRenderedWidth += lipgloss.Width(rendered)
 
 			columnStrings = append(columnStrings, rendered)
+			renderedColWidths = append(renderedColWidths, overflowCol.width)
 		}
 
 		if columnIndex >= m.horizontalScrollFreezeColumnsCount &&
@@ -230,6 +237,7 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 				overflowStr := m.renderRowColumnData(row, overflowColumn, rowStyle, overflowStyle)
 
 				columnStrings = append(columnStrings, overflowStr)
+				renderedColWidths = append(renderedColWidths, overflowColumn.width)
 
 				break
 			}
@@ -238,9 +246,19 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 		}
 
 		columnStrings = append(columnStrings, cellStr)
+		renderedColWidths = append(renderedColWidths, column.width)
 	}
 
-	return lipgloss.JoinHorizontal(lipgloss.Bottom, columnStrings...)
+	rowLine := lipgloss.JoinHorizontal(lipgloss.Bottom, columnStrings...)
+
+	if last {
+		// Append the bottom border line as a plain string.
+		bottomLine := m.border.buildBottomBorderLine(renderedColWidths, m.hasFooter())
+
+		return rowLine + "\n" + bottomLine
+	}
+
+	return rowLine
 }
 
 // Selected returns a copy of the row that's set to be selected or deselected.

@@ -1,6 +1,11 @@
 package table
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"image/color"
+	"strings"
+
+	"charm.land/lipgloss/v2"
+)
 
 // Border defines the borders in and around the table.
 type Border struct {
@@ -48,6 +53,10 @@ type Border struct {
 
 	// Style for the footer
 	styleFooter lipgloss.Style
+
+	// foreground is the colour applied to plain-string border lines (top,
+	// separator, bottom).  nil means use the terminal default.
+	foreground color.Color
 }
 
 var (
@@ -105,13 +114,81 @@ func (b *Border) generateStyles() {
 	b.generateSingleRowStyles()
 	b.generateSingleCellStyle()
 
-	// The footer is a single cell with the top taken off... usually.  We can
-	// re-enable the top if needed this way for certain format configurations.
-	b.styleFooter = b.styleSingleCell.Copy().
+	// The footer is a full-width single cell with a bottom border.  It needs
+	// the actual border characters for all edges because renderFooter may
+	// optionally add a top border (when there are no data rows above).
+	b.styleFooter = lipgloss.NewStyle().
+		BorderStyle(lipgloss.Border{
+			Left:  b.Left,
+			Right: b.Right,
+
+			Top:      b.Top,
+			TopLeft:  b.TopLeft,
+			TopRight: b.TopRight,
+
+			Bottom:      b.Bottom,
+			BottomLeft:  b.BottomLeft,
+			BottomRight: b.BottomRight,
+		}).
 		Align(lipgloss.Right).
 		BorderBottom(true).
 		BorderRight(true).
 		BorderLeft(true)
+}
+
+// buildBorderLine constructs a horizontal border line for the given column
+// widths. leftChar is the leftmost character, midChar fills each column,
+// junctionChar separates columns, and rightChar closes the line.
+// If b.foreground is set the line is wrapped in a lipgloss Foreground style
+// so that it renders in the same colour as the cell border characters.
+func (b *Border) buildBorderLine(columnWidths []int, leftChar, midChar, junctionChar, rightChar string) string {
+	var buf strings.Builder
+
+	buf.WriteString(leftChar)
+
+	for i, w := range columnWidths {
+		buf.WriteString(strings.Repeat(midChar, w))
+
+		if i < len(columnWidths)-1 {
+			buf.WriteString(junctionChar)
+		}
+	}
+
+	buf.WriteString(rightChar)
+
+	line := buf.String()
+
+	if b.foreground != nil {
+		line = lipgloss.NewStyle().Foreground(b.foreground).Render(line)
+	}
+
+	return line
+}
+
+// buildTopBorderLine builds the top border line for a multi-column table.
+func (b *Border) buildTopBorderLine(columnWidths []int) string {
+	return b.buildBorderLine(columnWidths, b.TopLeft, b.Top, b.TopJunction, b.TopRight)
+}
+
+// buildSeparatorLine builds the separator line between the header and first
+// data row for a multi-column table.
+func (b *Border) buildSeparatorLine(columnWidths []int) string {
+	return b.buildBorderLine(columnWidths, b.LeftJunction, b.Bottom, b.InnerJunction, b.RightJunction)
+}
+
+// buildBottomBorderLine builds the bottom border line for a multi-column
+// table. When hasFooter is true the corners are replaced with junctions so
+// the footer can attach below.
+func (b *Border) buildBottomBorderLine(columnWidths []int, hasFooter bool) string {
+	left := b.BottomLeft
+	right := b.BottomRight
+
+	if hasFooter {
+		left = b.LeftJunction
+		right = b.RightJunction
+	}
+
+	return b.buildBorderLine(columnWidths, left, b.Bottom, b.BottomJunction, right)
 }
 
 func (b *Border) styleLeftWithFooter(original lipgloss.Style) lipgloss.Style {
@@ -119,7 +196,7 @@ func (b *Border) styleLeftWithFooter(original lipgloss.Style) lipgloss.Style {
 
 	border.BottomLeft = b.LeftJunction
 
-	return original.Copy().BorderStyle(border)
+	return original.BorderStyle(border)
 }
 
 func (b *Border) styleRightWithFooter(original lipgloss.Style) lipgloss.Style {
@@ -127,7 +204,7 @@ func (b *Border) styleRightWithFooter(original lipgloss.Style) lipgloss.Style {
 
 	border.BottomRight = b.RightJunction
 
-	return original.Copy().BorderStyle(border)
+	return original.BorderStyle(border)
 }
 
 func (b *Border) styleBothWithFooter(original lipgloss.Style) lipgloss.Style {
@@ -136,47 +213,32 @@ func (b *Border) styleBothWithFooter(original lipgloss.Style) lipgloss.Style {
 	border.BottomLeft = b.LeftJunction
 	border.BottomRight = b.RightJunction
 
-	return original.Copy().BorderStyle(border)
+	return original.BorderStyle(border)
 }
 
-// This function is long, but it's just repetitive...
-//
-//nolint:funlen
 func (b *Border) generateMultiStyles() {
+	// All cell styles have ONLY left and/or right borders.
+	// Top, bottom, and separator lines are rendered as plain strings by
+	// the header/row rendering functions, not by these styles.
+
 	b.styleMultiTopLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			TopLeft:     b.TopLeft,
-			Top:         b.Top,
-			TopRight:    b.TopJunction,
-			Right:       b.InnerDivider,
-			BottomRight: b.InnerJunction,
-			Bottom:      b.Bottom,
-			BottomLeft:  b.LeftJunction,
-			Left:        b.Left,
+			Left:  b.Left,
+			Right: b.InnerDivider,
 		},
-	)
+	).BorderLeft(true).BorderRight(true)
 
 	b.styleMultiTop = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Right:  b.InnerDivider,
-			Bottom: b.Bottom,
-
-			TopRight:    b.TopJunction,
-			BottomRight: b.InnerJunction,
+			Right: b.InnerDivider,
 		},
-	).BorderTop(true).BorderBottom(true).BorderRight(true)
+	).BorderRight(true)
 
 	b.styleMultiTopRight = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Right:  b.Right,
-			Bottom: b.Bottom,
-
-			TopRight:    b.TopRight,
-			BottomRight: b.RightJunction,
+			Right: b.Right,
 		},
-	).BorderTop(true).BorderBottom(true).BorderRight(true)
+	).BorderRight(true)
 
 	b.styleMultiLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
@@ -199,48 +261,34 @@ func (b *Border) generateMultiStyles() {
 
 	b.styleMultiBottomLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Left:   b.Left,
-			Right:  b.InnerDivider,
-			Bottom: b.Bottom,
-
-			BottomLeft:  b.BottomLeft,
-			BottomRight: b.BottomJunction,
+			Left:  b.Left,
+			Right: b.InnerDivider,
 		},
-	).BorderLeft(true).BorderBottom(true).BorderRight(true)
+	).BorderLeft(true).BorderRight(true)
 
 	b.styleMultiBottom = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Right:  b.InnerDivider,
-			Bottom: b.Bottom,
-
-			BottomRight: b.BottomJunction,
+			Right: b.InnerDivider,
 		},
-	).BorderBottom(true).BorderRight(true)
+	).BorderRight(true)
 
 	b.styleMultiBottomRight = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Right:  b.Right,
-			Bottom: b.Bottom,
-
-			BottomRight: b.BottomRight,
+			Right: b.Right,
 		},
-	).BorderBottom(true).BorderRight(true)
+	).BorderRight(true)
 }
 
 func (b *Border) generateSingleColumnStyles() {
+	// Cell styles have only left/right borders; top/bottom border lines are
+	// built as plain strings by the rendering functions.
+
 	b.styleSingleColumnTop = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Left:   b.Left,
-			Right:  b.Right,
-			Bottom: b.Bottom,
-
-			TopLeft:     b.TopLeft,
-			TopRight:    b.TopRight,
-			BottomLeft:  b.LeftJunction,
-			BottomRight: b.RightJunction,
+			Left:  b.Left,
+			Right: b.Right,
 		},
-	)
+	).BorderLeft(true).BorderRight(true)
 
 	b.styleSingleColumnInner = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
@@ -251,83 +299,62 @@ func (b *Border) generateSingleColumnStyles() {
 
 	b.styleSingleColumnBottom = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Left:   b.Left,
-			Right:  b.Right,
-			Bottom: b.Bottom,
-
-			BottomLeft:  b.BottomLeft,
-			BottomRight: b.BottomRight,
+			Left:  b.Left,
+			Right: b.Right,
 		},
-	).BorderRight(true).BorderLeft(true).BorderBottom(true)
+	).BorderRight(true).BorderLeft(true)
 }
 
 func (b *Border) generateSingleRowStyles() {
+	// Cell styles have only left/right borders; top/bottom border lines are
+	// built as plain strings by the rendering functions.
+
 	b.styleSingleRowLeft = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Left:   b.Left,
-			Right:  b.InnerDivider,
-			Bottom: b.Bottom,
-
-			BottomLeft:  b.BottomLeft,
-			BottomRight: b.BottomJunction,
-			TopRight:    b.TopJunction,
-			TopLeft:     b.TopLeft,
+			Left:  b.Left,
+			Right: b.InnerDivider,
 		},
-	)
+	).BorderLeft(true).BorderRight(true)
 
 	b.styleSingleRowInner = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Right:  b.InnerDivider,
-			Bottom: b.Bottom,
-
-			BottomRight: b.BottomJunction,
-			TopRight:    b.TopJunction,
+			Right: b.InnerDivider,
 		},
-	).BorderTop(true).BorderBottom(true).BorderRight(true)
+	).BorderRight(true)
 
 	b.styleSingleRowRight = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Right:  b.Right,
-			Bottom: b.Bottom,
-
-			BottomRight: b.BottomRight,
-			TopRight:    b.TopRight,
+			Right: b.Right,
 		},
-	).BorderTop(true).BorderBottom(true).BorderRight(true)
+	).BorderRight(true)
 }
 
 func (b *Border) generateSingleCellStyle() {
+	// Cell style has only left/right borders; top/bottom border lines are
+	// built as plain strings by the rendering functions.
 	b.styleSingleCell = lipgloss.NewStyle().BorderStyle(
 		lipgloss.Border{
-			Top:    b.Top,
-			Left:   b.Left,
-			Right:  b.Right,
-			Bottom: b.Bottom,
-
-			BottomLeft:  b.BottomLeft,
-			BottomRight: b.BottomRight,
-			TopRight:    b.TopRight,
-			TopLeft:     b.TopLeft,
+			Left:  b.Left,
+			Right: b.Right,
 		},
-	)
+	).BorderLeft(true).BorderRight(true)
 }
 
 // BorderDefault uses the basic square border, useful to reset the border if
 // it was changed somehow.
 func (m Model) BorderDefault() Model {
-	// Already generated styles
+	fg := m.border.foreground
 	m.border = borderDefault
+	m.border.foreground = fg
 
 	return m
 }
 
 // BorderRounded uses a thin, rounded border.
 func (m Model) BorderRounded() Model {
-	// Already generated styles
+	fg := m.border.foreground
 	m.border = borderRounded
+	m.border.foreground = fg
 
 	return m
 }
@@ -348,9 +375,9 @@ type borderStyleRow struct {
 }
 
 func (b *borderStyleRow) inherit(s lipgloss.Style) {
-	b.left = b.left.Copy().Inherit(s)
-	b.inner = b.inner.Copy().Inherit(s)
-	b.right = b.right.Copy().Inherit(s)
+	b.left = b.left.Inherit(s)
+	b.inner = b.inner.Inherit(s)
+	b.right = b.right.Inherit(s)
 }
 
 // There's a lot of branches here, but splitting it up further would make it

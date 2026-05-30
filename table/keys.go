@@ -1,6 +1,6 @@
 package table
 
-import "github.com/charmbracelet/bubbles/key"
+import "charm.land/bubbles/v2/key"
 
 // KeyMap defines the keybindings for the table when it's focused.
 type KeyMap struct {
@@ -42,7 +42,7 @@ func DefaultKeyMap() KeyMap {
 			key.WithHelp("↑/k", "move up"),
 		),
 		RowSelectToggle: key.NewBinding(
-			key.WithKeys(" ", "enter"),
+			key.WithKeys("space", "enter"),
 			key.WithHelp("<space>/enter", "select row"),
 		),
 		PageDown: key.NewBinding(

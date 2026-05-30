@@ -9,14 +9,34 @@ func (m Model) hasFooter() bool {
 	return m.footerVisible && (m.staticFooter != "" || m.pageSize != 0 || m.filtered)
 }
 
+func (m Model) footerFilterSection() string {
+	if !m.filtered {
+		return ""
+	}
+
+	if m.filterTextInput.Focused() {
+		return m.filterTextInput.View()
+	}
+
+	if m.filterTextInput.Value() != "" {
+		// When not focused, show only the prompt + value without the
+		// cursor character that bubbles v2 renders in its View().
+		return m.filterTextInput.Prompt + m.filterTextInput.Value()
+	}
+
+	return ""
+}
+
 func (m Model) renderFooter(width int, includeTop bool) string {
 	if !m.hasFooter() {
 		return ""
 	}
 
-	const borderAdjustment = 2
-
-	styleFooter := m.baseStyle.Copy().Inherit(m.border.styleFooter).Width(width - borderAdjustment)
+	// In lipgloss v2, Width(n) sets the *total* outer width including borders.
+	// The footer style has left and right borders (overhead = 2) plus a bottom
+	// border.  We pass the full row width directly so that content gets
+	// width-2 chars, matching the inner width of the data rows.
+	styleFooter := m.baseStyle.Inherit(m.border.styleFooter).Width(width)
 
 	if includeTop {
 		styleFooter = styleFooter.BorderTop(true)
@@ -28,8 +48,8 @@ func (m Model) renderFooter(width int, includeTop bool) string {
 
 	sections := []string{}
 
-	if m.filtered && (m.filterTextInput.Focused() || m.filterTextInput.Value() != "") {
-		sections = append(sections, m.filterTextInput.View())
+	if section := m.footerFilterSection(); section != "" {
+		sections = append(sections, section)
 	}
 
 	// paged feature enabled

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/mattn/go-runewidth"
 	"github.com/stretchr/testify/assert"
 )
@@ -994,11 +994,7 @@ func Test3x3WithFilterFooter(t *testing.T) {
 	assert.Equal(t, expectedTable, model.View())
 
 	hitKey := func(key rune) {
-		model, _ = model.Update(
-			tea.KeyMsg{
-				Type:  tea.KeyRunes,
-				Runes: []rune{key},
-			})
+		model, _ = model.Update(tea.KeyPressMsg{Code: key, Text: string(key)})
 	}
 
 	hitKey('/')
@@ -1010,7 +1006,7 @@ func Test3x3WithFilterFooter(t *testing.T) {
 ┣━━━━╋━━━━╋━━━━┫
 ┃ 1,3┃ 2,3┃ 3,3┃
 ┣━━━━┻━━━━┻━━━━┫
-┃           /3` + "\x1b[7m \x1b[0m" + `┃
+┃           /3` + "\x1b[7m \x1b[m" + `┃
 ┗━━━━━━━━━━━━━━┛`
 
 	assert.Equal(t, expectedFilteredTypingTable, model.View())
@@ -1023,7 +1019,7 @@ func Test3x3WithFilterFooter(t *testing.T) {
 ┃            /3┃
 ┗━━━━━━━━━━━━━━┛`
 
-	model, _ = model.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	model, _ = model.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 
 	assert.Equal(t, expectedFilteredDoneTable, model.View())
 }

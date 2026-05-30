@@ -1,10 +1,10 @@
 package table
 
 import (
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 const (
@@ -12,7 +12,11 @@ const (
 )
 
 var (
-	defaultHighlightStyle = lipgloss.NewStyle().Background(lipgloss.Color("#334"))
+	// defaultHighlightStyle has no visual effect; users opt into highlight colors
+	// via WithHighlightStyle.  This matches the historical rendering behavior
+	// where the table background color was not automatically applied to focused
+	// rows.
+	defaultHighlightStyle = lipgloss.NewStyle()
 )
 
 // Model is the main table model.  Create using New().
@@ -115,10 +119,19 @@ type Model struct {
 func New(columns []Column) Model {
 	filterInput := textinput.New()
 	filterInput.Prompt = "/"
+	// Use plain styles without foreground colors so that the filter text
+	// renders without ANSI color codes, keeping the output predictable.
+	plainStyles := textinput.DefaultDarkStyles()
+	plainStyles.Focused.Prompt = lipgloss.NewStyle()
+	plainStyles.Focused.Text = lipgloss.NewStyle()
+	plainStyles.Blurred.Prompt = lipgloss.NewStyle()
+	plainStyles.Blurred.Text = lipgloss.NewStyle()
+	plainStyles.Cursor.Color = lipgloss.NoColor{}
+	filterInput.SetStyles(plainStyles)
 	model := Model{
 		columns:        make([]Column, len(columns)),
 		metadata:       make(map[string]any),
-		highlightStyle: defaultHighlightStyle.Copy(),
+		highlightStyle: defaultHighlightStyle,
 		border:         borderDefault,
 		headerVisible:  true,
 		footerVisible:  true,

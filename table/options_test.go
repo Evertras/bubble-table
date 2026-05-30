@@ -1,6 +1,7 @@
 package table
 
 import (
+	"image/color"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -283,3 +284,102 @@ func BenchmarkSelectedRows(b *testing.B) {
 }
 
 var Rows []Row
+
+func TestBuildBorderLineSingleColumn(t *testing.T) {
+	b := borderDefault
+	line := b.buildBorderLine([]int{4}, b.TopLeft, b.Top, b.TopJunction, b.TopRight)
+
+	assert.Equal(t, "┏━━━━┓", line, "Single column border line should have no junction")
+}
+
+func TestBuildBorderLineMultiColumn(t *testing.T) {
+	b := borderDefault
+	line := b.buildBorderLine([]int{4, 4}, b.TopLeft, b.Top, b.TopJunction, b.TopRight)
+
+	assert.Equal(t, "┏━━━━┳━━━━┓", line, "Multi-column border line should have a junction between columns")
+}
+
+func TestBuildBorderLineWithForeground(t *testing.T) {
+	b := borderDefault
+	b.foreground = color.RGBA{R: 255, G: 0, B: 0, A: 255}
+
+	plain := borderDefault.buildBorderLine([]int{4}, b.TopLeft, b.Top, b.TopJunction, b.TopRight)
+	colored := b.buildBorderLine([]int{4}, b.TopLeft, b.Top, b.TopJunction, b.TopRight)
+
+	assert.NotEqual(t, plain, colored, "Border line with foreground set should contain ANSI color codes")
+}
+
+func TestBuildTopBorderLine(t *testing.T) {
+	b := borderDefault
+	line := b.buildTopBorderLine([]int{4, 4})
+
+	assert.Equal(t, "┏━━━━┳━━━━┓", line, "Top border line should use TopLeft, Top, TopJunction, TopRight")
+}
+
+func TestBuildSeparatorLine(t *testing.T) {
+	b := borderDefault
+	line := b.buildSeparatorLine([]int{4, 4})
+
+	assert.Equal(t, "┣━━━━╋━━━━┫", line, "Separator line should use LeftJunction, Bottom, InnerJunction, RightJunction")
+}
+
+func TestBuildBottomBorderLineWithoutFooter(t *testing.T) {
+	b := borderDefault
+	line := b.buildBottomBorderLine([]int{4, 4}, false)
+
+	assert.Equal(t, "┗━━━━┻━━━━┛", line, "Bottom border without footer should use BottomLeft and BottomRight corners")
+}
+
+func TestBuildBottomBorderLineWithFooter(t *testing.T) {
+	b := borderDefault
+	line := b.buildBottomBorderLine([]int{4, 4}, true)
+
+	assert.Equal(t, "┣━━━━┻━━━━┫", line,
+		"Bottom border with footer should use LeftJunction and RightJunction instead of corners")
+}
+
+func TestBorderDefaultPreservesForeground(t *testing.T) {
+	red := color.RGBA{R: 255, G: 0, B: 0, A: 255}
+
+	model := New([]Column{NewColumn("id", "ID", 4)}).
+		WithBorderForeground(red).
+		BorderRounded().
+		BorderDefault()
+
+	assert.Equal(t, red, model.border.foreground, "BorderDefault should preserve the foreground color")
+}
+
+func TestBorderRoundedPreservesForeground(t *testing.T) {
+	red := color.RGBA{R: 255, G: 0, B: 0, A: 255}
+
+	model := New([]Column{NewColumn("id", "ID", 4)}).
+		WithBorderForeground(red).
+		BorderRounded()
+
+	assert.Equal(t, red, model.border.foreground, "BorderRounded should preserve the foreground color")
+}
+
+func TestWithBorderForeground(t *testing.T) {
+	model := New([]Column{
+		NewColumn("id", "ID", 4),
+	})
+
+	assert.Nil(t, model.border.foreground, "Border foreground should be nil by default")
+
+	red := color.RGBA{R: 255, G: 0, B: 0, A: 255}
+	model = model.WithBorderForeground(red)
+
+	assert.Equal(t, red, model.border.foreground, "Border foreground should be stored after WithBorderForeground")
+}
+
+func TestWithBorderForegroundChangesOutput(t *testing.T) {
+	cols := []Column{NewColumn("id", "ID", 4)}
+	rows := []Row{NewRow(RowData{"id": "1"})}
+
+	withoutColor := New(cols).WithRows(rows).View()
+	withColor := New(cols).WithRows(rows).
+		WithBorderForeground(color.RGBA{R: 255, G: 0, B: 0, A: 255}).
+		View()
+
+	assert.NotEqual(t, withoutColor, withColor, "Border foreground color should change the rendered output")
+}
