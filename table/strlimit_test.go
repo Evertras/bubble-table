@@ -3,7 +3,7 @@ package table
 import (
 	"testing"
 
-	"github.com/muesli/reflow/ansi"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -95,6 +95,18 @@ func TestLimitStr(t *testing.T) {
 			max:      3,
 			expected: "\x1b[31;41mte\x1b[0m\x1b[0m\x1b[0m…",
 		},
+		{
+			name:     "OSC 8 hyperlink fits within max",
+			input:    "\x1b]8;;https://example.com\x07Click me\x1b]8;;\x07",
+			max:      8,
+			expected: "\x1b]8;;https://example.com\x07Click me\x1b]8;;\x07",
+		},
+		{
+			name:     "OSC 8 hyperlink truncated",
+			input:    "\x1b]8;;https://example.com\x07Click me\x1b]8;;\x07",
+			max:      5,
+			expected: "\x1b]8;;https://example.com\x07Clic…\x1b]8;;\x07",
+		},
 	}
 
 	for _, test := range tests {
@@ -102,7 +114,7 @@ func TestLimitStr(t *testing.T) {
 			output := limitStr(test.input, test.max)
 
 			assert.Equal(t, test.expected, output)
-			assert.LessOrEqual(t, ansi.PrintableRuneWidth(output), test.max)
+			assert.LessOrEqual(t, ansi.StringWidth(output), test.max)
 		})
 	}
 }

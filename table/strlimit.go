@@ -3,8 +3,7 @@ package table
 import (
 	"strings"
 
-	"github.com/muesli/reflow/ansi"
-	"github.com/muesli/reflow/truncate"
+	"github.com/charmbracelet/x/ansi"
 )
 
 func limitStr(str string, maxLen int) string {
@@ -17,9 +16,8 @@ func limitStr(str string, maxLen int) string {
 		str = str[:newLineIndex] + "…"
 	}
 
-	if ansi.PrintableRuneWidth(str) > maxLen {
-		// #nosec: G115
-		return truncate.StringWithTail(str, uint(maxLen), "…")
+	if ansi.StringWidth(str) > maxLen {
+		return ansi.Truncate(str, maxLen, "…")
 	}
 
 	return str
