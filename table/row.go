@@ -124,7 +124,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	return cellStr
 }
 
-func (m Model) renderRow(rowIndex int, last bool) string {
+func (m Model) renderRow(rowIndex int, last bool, separatorBelow bool) string {
 	row := m.GetVisibleRows()[rowIndex]
 	highlighted := rowIndex == m.rowCursorIndex
 
@@ -142,18 +142,18 @@ func (m Model) renderRow(rowIndex int, last bool) string {
 		rowStyle = rowStyle.Inherit(m.highlightStyle)
 	}
 
-	return m.renderRowData(row, rowStyle, last)
+	return m.renderRowData(row, rowStyle, last, separatorBelow)
 }
 
 func (m Model) renderBlankRow(last bool) string {
-	return m.renderRowData(NewRow(nil), lipgloss.NewStyle(), last)
+	return m.renderRowData(NewRow(nil), lipgloss.NewStyle(), last, false)
 }
 
 // This is long and could use some refactoring in the future, but not quite sure
 // how to pick it apart yet.
 //
 //nolint:funlen, cyclop
-func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string {
+func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool, separatorBelow bool) string {
 	numColumns := len(m.columns)
 
 	columnStrings := []string{}
@@ -251,11 +251,29 @@ func (m Model) renderRowData(row Row, rowStyle lipgloss.Style, last bool) string
 
 	rowLine := lipgloss.JoinHorizontal(lipgloss.Bottom, columnStrings...)
 
-	if last {
-		// Append the bottom border line as a plain string.
-		bottomLine := m.border.buildBottomBorderLine(renderedColWidths, m.hasFooter())
+	return m.assembleRowOutput(rowLine, renderedColWidths, last, separatorBelow)
+}
 
-		return rowLine + "\n" + bottomLine
+func (m Model) assembleRowOutput(rowLine string, renderedColWidths []int, last, separatorBelow bool) string {
+	if last {
+		if m.outerBorder {
+			bottomLine := m.border.buildBottomBorderLine(renderedColWidths, m.hasFooter())
+
+			return rowLine + "\n" + bottomLine
+		}
+
+		return rowLine
+	}
+
+	if separatorBelow {
+		var sepLine string
+		if m.outerBorder {
+			sepLine = m.border.buildSeparatorLine(renderedColWidths)
+		} else {
+			sepLine = m.border.buildInnerSeparatorLine(renderedColWidths)
+		}
+
+		return rowLine + "\n" + sepLine
 	}
 
 	return rowLine

@@ -258,6 +258,22 @@ func (m Model) WithBorderForeground(c color.Color) Model {
 	return m
 }
 
+// WithOuterBorder controls whether the outer border of the table is rendered
+// (top line, bottom line, and left/right cell borders). Defaults to true.
+func (m Model) WithOuterBorder(show bool) Model {
+	m.outerBorder = show
+
+	return m
+}
+
+// WithRowBorder controls whether a horizontal separator line is drawn between
+// each pair of data rows, creating a grid-like appearance.
+func (m Model) WithRowBorder(show bool) Model {
+	m.rowSeparator = show
+
+	return m
+}
+
 // WithTargetWidth sets the total target width of the table, including borders.
 // This only takes effect when using flex columns.  When using flex columns,
 // columns will stretch to fill out to the total width given here.

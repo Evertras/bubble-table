@@ -36,7 +36,9 @@ func (m Model) View() string {
 	}
 
 	for i := startRowIndex; i <= endRowIndex; i++ {
-		rowStrs = append(rowStrs, m.renderRow(i, padding == 0 && i == endRowIndex))
+		isLast := padding == 0 && i == endRowIndex
+		separatorBelow := m.rowSeparator && i < endRowIndex
+		rowStrs = append(rowStrs, m.renderRow(i, isLast, separatorBelow))
 	}
 
 	for i := 1; i <= padding; i++ {
