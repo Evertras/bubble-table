@@ -176,6 +176,12 @@ func (b *Border) buildSeparatorLine(columnWidths []int) string {
 	return b.buildBorderLine(columnWidths, b.LeftJunction, b.Bottom, b.InnerJunction, b.RightJunction)
 }
 
+// buildInnerSeparatorLine builds a separator line with no outer junction
+// characters, used when the outer border is hidden.
+func (b *Border) buildInnerSeparatorLine(columnWidths []int) string {
+	return b.buildBorderLine(columnWidths, "", b.Bottom, b.InnerJunction, "")
+}
+
 // buildBottomBorderLine builds the bottom border line for a multi-column
 // table. When hasFooter is true the corners are replaced with junctions so
 // the footer can attach below.
@@ -430,6 +436,11 @@ func (m Model) styleHeaders() borderStyleRow {
 
 	styles.inherit(m.headerStyle)
 
+	if !m.outerBorder {
+		styles.left = styles.left.BorderLeft(false)
+		styles.right = styles.right.BorderRight(false)
+	}
+
 	return styles
 }
 
@@ -460,6 +471,13 @@ func (m Model) styleRows() (inner borderStyleRow, last borderStyleRow) {
 			last.left = m.border.styleLeftWithFooter(last.left)
 			last.right = m.border.styleRightWithFooter(last.right)
 		}
+	}
+
+	if !m.outerBorder {
+		inner.left = inner.left.BorderLeft(false)
+		inner.right = inner.right.BorderRight(false)
+		last.left = last.left.BorderLeft(false)
+		last.right = last.right.BorderRight(false)
 	}
 
 	return inner, last

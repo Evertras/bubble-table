@@ -106,23 +106,32 @@ func (m Model) renderHeaders() string {
 
 	headerBlock := lipgloss.JoinHorizontal(lipgloss.Bottom, headerStrings...)
 
-	// Build the top border line as a plain string using the recorded content widths.
-	topLine := m.border.buildTopBorderLine(renderedColWidths)
-
-	// Determine the last line of the header block:
-	//  - If data rows follow, use a separator (junction characters).
-	//  - If no rows follow and no footer, use the bottom border (corner characters).
-	//  - If no rows follow but a footer follows, use a separator so the footer
-	//    can attach cleanly.
 	hasRows := len(m.GetVisibleRows()) > 0 || m.calculatePadding(0) > 0
 
-	var lastLine string
+	return m.assembleHeaderOutput(headerBlock, renderedColWidths, hasRows)
+}
 
-	if hasRows {
-		lastLine = m.border.buildSeparatorLine(renderedColWidths)
-	} else {
-		lastLine = m.border.buildBottomBorderLine(renderedColWidths, m.hasFooter())
+func (m Model) assembleHeaderOutput(headerBlock string, renderedColWidths []int, hasRows bool) string {
+	if m.outerBorder {
+		var lastLine string
+		if hasRows {
+			lastLine = m.border.buildSeparatorLine(renderedColWidths)
+		} else {
+			lastLine = m.border.buildBottomBorderLine(renderedColWidths, m.hasFooter())
+		}
+		topLine := m.border.buildTopBorderLine(renderedColWidths)
+
+		return strings.Join([]string{topLine, headerBlock, lastLine}, "\n")
 	}
 
-	return strings.Join([]string{topLine, headerBlock, lastLine}, "\n")
+	var lastLine string
+	if hasRows {
+		lastLine = m.border.buildInnerSeparatorLine(renderedColWidths)
+	}
+
+	if lastLine != "" {
+		return strings.Join([]string{headerBlock, lastLine}, "\n")
+	}
+
+	return headerBlock
 }

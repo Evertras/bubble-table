@@ -1741,3 +1741,184 @@ func TestMultilineDisabledExplicite(t *testing.T) {
 	rendered := model.View()
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestRowBorder3x3(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	}).WithRowBorder(true)
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 3; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows)
+
+	const expectedTable = `┏━━━━┳━━━━┳━━━━┓
+┃   1┃   2┃   3┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,1┃ 2,1┃ 3,1┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,2┃ 2,2┃ 3,2┃
+┣━━━━╋━━━━╋━━━━┫
+┃ 1,3┃ 2,3┃ 3,3┃
+┗━━━━┻━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestRowBorderSingleRowNoSeparator(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+	}).WithRowBorder(true)
+
+	const expectedTable = `┏━━━━┳━━━━┓
+┃   1┃   2┃
+┣━━━━╋━━━━┫
+┃   a┃   b┃
+┗━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestRowBorderRounded(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+		NewRow(RowData{"1": "c", "2": "d"}),
+	}).WithRowBorder(true).BorderRounded()
+
+	const expectedTable = `╭────┬────╮
+│   1│   2│
+├────┼────┤
+│   a│   b│
+├────┼────┤
+│   c│   d│
+╰────┴────╯`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestOuterBorderHidden(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+		NewRow(RowData{"1": "c", "2": "d"}),
+	}).WithOuterBorder(false)
+
+	const expectedTable = "   1┃   2\n━━━━╋━━━━\n   a┃   b\n   c┃   d"
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestOuterBorderHiddenWithRowBorder(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+		NewRow(RowData{"1": "c", "2": "d"}),
+	}).WithOuterBorder(false).WithRowBorder(true)
+
+	const expectedTable = "   1┃   2\n━━━━╋━━━━\n   a┃   b\n━━━━╋━━━━\n   c┃   d"
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestOuterBorderHiddenRounded(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+		NewRow(RowData{"1": "c", "2": "d"}),
+	}).WithOuterBorder(false).BorderRounded()
+
+	const expectedTable = "   1│   2\n────┼────\n   a│   b\n   c│   d"
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestOuterBorderHiddenNoRows(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithOuterBorder(false)
+
+	const expectedTable = "   1┃   2"
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}
+
+func TestOuterBorderTrueMatchesDefault(t *testing.T) {
+	cols := []Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}
+	rows := []Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+		NewRow(RowData{"1": "c", "2": "d"}),
+	}
+
+	assert.Equal(t,
+		New(cols).WithRows(rows).View(),
+		New(cols).WithRows(rows).WithOuterBorder(true).View(),
+	)
+}
+
+func TestRowBorderNoSeparatorBeforePaddingRows(t *testing.T) {
+	// WithMinimumHeight(7) with 2 data rows produces 1 padding row.
+	// The separator should appear between the two data rows but NOT
+	// between the last data row and the blank padding row.
+	model := New([]Column{
+		NewColumn("1", "1", 4),
+		NewColumn("2", "2", 4),
+	}).WithRows([]Row{
+		NewRow(RowData{"1": "a", "2": "b"}),
+		NewRow(RowData{"1": "c", "2": "d"}),
+	}).WithRowBorder(true).WithMinimumHeight(7)
+
+	const expectedTable = `┏━━━━┳━━━━┓
+┃   1┃   2┃
+┣━━━━╋━━━━┫
+┃   a┃   b┃
+┣━━━━╋━━━━┫
+┃   c┃   d┃
+┃    ┃    ┃
+┗━━━━┻━━━━┛`
+
+	rendered := model.View()
+
+	assert.Equal(t, expectedTable, rendered)
+}

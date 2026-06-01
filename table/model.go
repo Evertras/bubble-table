@@ -113,6 +113,12 @@ type Model struct {
 
 	// If true, the table will be multiline
 	multiline bool
+
+	// If true, draw a horizontal separator line between each data row
+	rowSeparator bool
+
+	// If true, render the outer border (top line, bottom line, left/right cell borders)
+	outerBorder bool
 }
 
 // New creates a new table ready for further modifications.
@@ -133,6 +139,7 @@ func New(columns []Column) Model {
 		metadata:       make(map[string]any),
 		highlightStyle: defaultHighlightStyle,
 		border:         borderDefault,
+		outerBorder:    true,
 		headerVisible:  true,
 		footerVisible:  true,
 		keyMap:         DefaultKeyMap(),
