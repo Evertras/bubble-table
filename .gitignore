@@ -28,3 +28,4 @@ vendor/
 # Sandbox area for experimenting without worrying about git
 sandbox
 
+coverage.html

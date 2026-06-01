@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 
 	"charm.land/lipgloss/v2"
-	"github.com/muesli/reflow/wordwrap"
+	"github.com/charmbracelet/x/ansi"
 )
 
 // RowData is a map of string column keys to arbitrary data.  Data with a key
@@ -108,7 +108,7 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 	}
 
 	if m.multiline {
-		str = wordwrap.String(str, column.width)
+		str = ansi.Wordwrap(str, column.width, "")
 		cellStyle = cellStyle.Align(lipgloss.Top)
 	} else {
 		str = limitStr(str, column.width)
