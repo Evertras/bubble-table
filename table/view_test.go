@@ -7,7 +7,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/mattn/go-runewidth"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -1105,7 +1105,7 @@ func TestSimpleFlex3x3AtAllTargetWidths(t *testing.T) {
 		firstLine := strings.Split(rendered, "\n")[0]
 
 		assert.Equal(t, targetWidth, model.totalWidth)
-		assert.Equal(t, targetWidth, runewidth.StringWidth(firstLine))
+		assert.Equal(t, targetWidth, ansi.StringWidth(firstLine))
 
 		if t.Failed() {
 			return
