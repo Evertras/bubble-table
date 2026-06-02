@@ -2,6 +2,7 @@ package table
 
 import (
 	"testing"
+	"time"
 
 	"charm.land/lipgloss/v2"
 	"github.com/stretchr/testify/assert"
@@ -185,4 +186,68 @@ func TestGetSortedRows(t *testing.T) {
 	assert.Equal(t, "t-1", rows[1].Data["cb"])
 	assert.Equal(t, "t-3", rows[2].Data["cb"])
 	assert.Equal(t, "t-2", rows[3].Data["cb"])
+}
+
+func TestSortTimeColumnAscDesc(t *testing.T) {
+	const timeKey = "time"
+
+	base := time.Date(2024, 1, 1, 12, 0, 0, 0, time.UTC)
+
+	makeRow := func(t time.Time) Row { return NewRow(RowData{timeKey: t}) }
+
+	rows := []Row{
+		makeRow(base.Add(2 * time.Hour)),
+		makeRow(base),
+		makeRow(base.Add(time.Hour)),
+	}
+
+	model := New([]Column{NewColumn(timeKey, "Time", 20)}).
+		WithRows(rows).
+		SortByAsc(timeKey)
+
+	getTime := func(i int) time.Time {
+		v, ok := model.GetVisibleRows()[i].Data[timeKey].(time.Time)
+		assert.True(t, ok)
+
+		return v
+	}
+
+	assert.True(t, getTime(0).Equal(base))
+	assert.True(t, getTime(1).Equal(base.Add(time.Hour)))
+	assert.True(t, getTime(2).Equal(base.Add(2*time.Hour)))
+
+	model = model.SortByDesc(timeKey)
+
+	assert.True(t, getTime(0).Equal(base.Add(2*time.Hour)))
+	assert.True(t, getTime(1).Equal(base.Add(time.Hour)))
+	assert.True(t, getTime(2).Equal(base))
+}
+
+func TestSortTimeColumnTimezones(t *testing.T) {
+	const timeKey = "time"
+
+	// 8 AM EST is 1 PM UTC — later than 12 PM UTC
+	utc := time.UTC
+	est := time.FixedZone("EST", -5*60*60)
+
+	noon := time.Date(2024, 1, 1, 12, 0, 0, 0, utc) // 12:00 UTC
+	early := time.Date(2024, 1, 1, 8, 0, 0, 0, est) // 08:00 EST = 13:00 UTC (after noon)
+
+	rows := []Row{
+		NewRow(RowData{timeKey: early}), // chronologically later
+		NewRow(RowData{timeKey: noon}),  // chronologically earlier
+	}
+
+	model := New([]Column{NewColumn(timeKey, "Time", 30)}).
+		WithRows(rows).
+		SortByAsc(timeKey)
+
+	firstVal, ok := model.GetVisibleRows()[0].Data[timeKey].(time.Time)
+	assert.True(t, ok)
+
+	secondVal, ok := model.GetVisibleRows()[1].Data[timeKey].(time.Time)
+	assert.True(t, ok)
+
+	assert.True(t, firstVal.Before(secondVal) || firstVal.Equal(secondVal),
+		"ascending: first row (%v) should be before second (%v)", firstVal, secondVal)
 }
