@@ -57,6 +57,13 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Inherit(column.style).Inherit(m.baseStyle)
 
+	// lipgloss Inherit() explicitly skips padding/margin, so apply column
+	// padding directly to ensure it takes effect.
+	colPadTop, colPadRight, colPadBottom, colPadLeft := column.style.GetPadding()
+	if colPadTop != 0 || colPadRight != 0 || colPadBottom != 0 || colPadLeft != 0 {
+		cellStyle = cellStyle.Padding(colPadTop, colPadRight, colPadBottom, colPadLeft)
+	}
+
 	var str string
 
 	switch column.key {
@@ -107,11 +114,15 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 		}
 	}
 
+	// Reduce the available text width by any horizontal column padding so that
+	// content is truncated/wrapped to the inner content area, not the full cell.
+	contentWidth := max(column.width-colPadLeft-colPadRight, 0)
+
 	if m.multiline {
-		str = ansi.Wordwrap(str, column.width, "")
+		str = ansi.Wordwrap(str, contentWidth, "")
 		cellStyle = cellStyle.Align(lipgloss.Top)
 	} else {
-		str = limitStr(str, column.width)
+		str = limitStr(str, contentWidth)
 	}
 
 	// In lipgloss v2, Width() sets the *total* outer width (including borders).
