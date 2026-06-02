@@ -436,6 +436,14 @@ func (m Model) styleHeaders() borderStyleRow {
 
 	styles.inherit(m.headerStyle)
 
+	// HeaderStyle is for text styling only. Strip any border-side flags that
+	// may have been inherited: top/bottom border lines are rendered as separate
+	// plain strings, and inner/right cells never carry a left border (each
+	// column's left divider is provided by the previous column's right border).
+	styles.left = styles.left.BorderTop(false).BorderBottom(false)
+	styles.inner = styles.inner.BorderTop(false).BorderBottom(false).BorderLeft(false)
+	styles.right = styles.right.BorderTop(false).BorderBottom(false).BorderLeft(false)
+
 	if !m.outerBorder {
 		styles.left = styles.left.BorderLeft(false)
 		styles.right = styles.right.BorderRight(false)
