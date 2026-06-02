@@ -2,6 +2,18 @@ package table
 
 import "time"
 
+func asTime(data any) (time.Time, bool) {
+	switch val := data.(type) {
+	case time.Time:
+		return val, true
+
+	case StyledCell:
+		return asTime(val.Data)
+	}
+
+	return time.Time{}, false
+}
+
 // This is just a bunch of data type checks, so... no linting here
 //
 //nolint:cyclop

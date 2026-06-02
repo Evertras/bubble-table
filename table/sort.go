@@ -3,6 +3,7 @@ package table
 import (
 	"fmt"
 	"sort"
+	"time"
 )
 
 // SortDirection indicates whether a column should sort by ascending or descending.
@@ -130,6 +131,16 @@ func (s *sortableTable) extractNumber(i int, column string) (float64, bool) {
 	return asNumber(iData)
 }
 
+func (s *sortableTable) extractTime(i int, column string) (time.Time, bool) {
+	iData, exists := s.rows[i].Data[column]
+
+	if !exists {
+		return time.Time{}, false
+	}
+
+	return asTime(iData)
+}
+
 func (s *sortableTable) Less(first, second int) bool {
 	firstNum, firstNumIsValid := s.extractNumber(first, s.byColumn.ColumnKey)
 	secondNum, secondNumIsValid := s.extractNumber(second, s.byColumn.ColumnKey)
@@ -140,6 +151,17 @@ func (s *sortableTable) Less(first, second int) bool {
 		}
 
 		return firstNum > secondNum
+	}
+
+	firstTime, firstTimeIsValid := s.extractTime(first, s.byColumn.ColumnKey)
+	secondTime, secondTimeIsValid := s.extractTime(second, s.byColumn.ColumnKey)
+
+	if firstTimeIsValid && secondTimeIsValid {
+		if s.byColumn.Direction == SortDirectionAsc {
+			return firstTime.Before(secondTime)
+		}
+
+		return secondTime.Before(firstTime)
 	}
 
 	firstVal := s.extractString(first, s.byColumn.ColumnKey)
