@@ -1922,3 +1922,21 @@ func TestRowBorderNoSeparatorBeforePaddingRows(t *testing.T) {
 
 	assert.Equal(t, expectedTable, rendered)
 }
+
+func TestColumnStylePaddingAppliedToHeaderAndCells(t *testing.T) {
+	// Regression test for https://github.com/Evertras/bubble-table/issues/130.
+	// lipgloss Inherit() skips padding, so column padding was silently ignored.
+	cols := []Column{
+		NewColumn("a", "A", 10).
+			WithStyle(lipgloss.NewStyle().Padding(0, 1)),
+	}
+	rows := []Row{
+		NewRow(RowData{"a": "hello"}),
+		NewRow(RowData{"a": "very long text"}),
+	}
+
+	const expectedTable = "┏━━━━━━━━━━┓\n┃        A ┃\n┣━━━━━━━━━━┫\n┃    hello ┃\n┃ very lo… ┃\n┗━━━━━━━━━━┛"
+
+	rendered := New(cols).WithRows(rows).View()
+	assert.Equal(t, expectedTable, rendered)
+}

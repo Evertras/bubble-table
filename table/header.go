@@ -29,7 +29,15 @@ func (m Model) renderHeaders() string {
 		borderOverhead := borderStyle.GetBorderLeftSize() + borderStyle.GetBorderRightSize()
 		style := borderStyle.Inherit(column.style).Inherit(m.baseStyle).Width(column.width + borderOverhead)
 
-		headerSection := limitStr(column.title, column.width)
+		// lipgloss Inherit() explicitly skips padding/margin, so apply column
+		// padding directly to ensure it takes effect.
+		colPadTop, colPadRight, colPadBottom, colPadLeft := column.style.GetPadding()
+		if colPadTop != 0 || colPadRight != 0 || colPadBottom != 0 || colPadLeft != 0 {
+			style = style.Padding(colPadTop, colPadRight, colPadBottom, colPadLeft)
+		}
+
+		contentWidth := max(column.width-colPadLeft-colPadRight, 0)
+		headerSection := limitStr(column.title, contentWidth)
 
 		return style.Render(headerSection)
 	}
