@@ -107,7 +107,7 @@ func NewModel() Model {
 			WithKeyMap(keys).
 			WithStaticFooter("Footer!").
 			WithPageSize(3).
-			WithSelectedText(" ", "✓").
+			WithSelectedText(" ", "✅").
 			WithBaseStyle(
 				lipgloss.NewStyle().
 					BorderForeground(lipgloss.Color("#a38")).
