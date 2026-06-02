@@ -6,6 +6,7 @@ import (
 	"charm.land/bubbles/v2/key"
 	"charm.land/bubbles/v2/textinput"
 	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/x/ansi"
 )
 
 // RowStyleFuncInput is the input to the style function that can
@@ -106,8 +107,9 @@ func (m Model) SelectableRows(selectable bool) Model {
 
 	if hasSelectColumn != selectable {
 		if selectable {
+			selectColWidth := max(ansi.StringWidth(m.selectedText), ansi.StringWidth(m.unselectedText))
 			m.columns = append([]Column{
-				NewColumn(columnKeySelect, m.selectedText, len([]rune(m.selectedText))),
+				NewColumn(columnKeySelect, m.selectedText, selectColWidth),
 			}, m.columns...)
 		} else {
 			m.columns = m.columns[1:]
@@ -233,7 +235,8 @@ func (m Model) WithSelectedText(unselected, selected string) Model {
 	m.unselectedText = unselected
 
 	if len(m.columns) > 0 && m.columns[0].key == columnKeySelect {
-		m.columns[0] = NewColumn(columnKeySelect, m.selectedText, len([]rune(m.selectedText)))
+		selectColWidth := max(ansi.StringWidth(m.selectedText), ansi.StringWidth(m.unselectedText))
+		m.columns[0] = NewColumn(columnKeySelect, m.selectedText, selectColWidth)
 		m.recalculateWidth()
 	}
 
