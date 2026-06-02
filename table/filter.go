@@ -107,40 +107,58 @@ func filterFuncContains(input FilterFuncInput) bool {
 
 // filterFuncFuzzy returns a filterFunc that performs case-insensitive fuzzy
 // matching (subsequence) over the concatenation of all filterable column values.
+// it supports multiple filter tokens separated by space which must all match.
+// also, if a filter token starts with the quote character (') it has to match literally.
 func filterFuncFuzzy(input FilterFuncInput) bool {
 	filter := strings.TrimSpace(input.Filter)
 	if filter == "" {
 		return true
 	}
 
-	var builder strings.Builder
-	for _, col := range input.Columns {
-		if !col.filterable {
-			continue
-		}
-		value, ok := input.Row.Data[col.key]
-		if !ok {
-			continue
-		}
-		if sc, ok := value.(StyledCell); ok {
-			value = sc.Data
-		}
-		fmt.Fprint(&builder, value) // uses Stringer if implemented
-		builder.WriteByte(' ')
-	}
-
-	haystack := strings.ToLower(builder.String())
+	haystack := buildFuzzyHaystack(input)
 	if haystack == "" {
 		return false
 	}
 
 	for _, token := range strings.Fields(strings.ToLower(filter)) {
-		if !fuzzySubsequenceMatch(haystack, token) {
+		if !fuzzyTokenMatches(haystack, token) {
 			return false
 		}
 	}
 
 	return true
+}
+
+func buildFuzzyHaystack(input FilterFuncInput) string {
+	var builder strings.Builder
+
+	for _, col := range input.Columns {
+		if !col.filterable {
+			continue
+		}
+
+		value, ok := input.Row.Data[col.key]
+		if !ok {
+			continue
+		}
+
+		if sc, ok := value.(StyledCell); ok {
+			value = sc.Data
+		}
+
+		fmt.Fprint(&builder, value) // uses Stringer if implemented
+		builder.WriteByte(' ')
+	}
+
+	return strings.ToLower(builder.String())
+}
+
+func fuzzyTokenMatches(haystack, token string) bool {
+	if token[0] == '\'' && len(token) > 1 {
+		return strings.Contains(haystack, token[1:])
+	}
+
+	return fuzzySubsequenceMatch(haystack, token)
 }
 
 // fuzzySubsequenceMatch returns true if all runes in needle appear in order
