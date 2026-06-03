@@ -116,6 +116,7 @@ func NewModel() Model {
 					Foreground(lipgloss.Color("#a7a")).
 					Align(lipgloss.Left),
 			).
+			WithBorderForeground(lipgloss.Color("#a38")).
 			WithMultiline(true),
 	}
 

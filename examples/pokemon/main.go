@@ -108,6 +108,7 @@ func NewModel() Model {
 		}).
 			BorderRounded().
 			WithBaseStyle(styleBase).
+			WithBorderForeground(lipgloss.Color("#a38")).
 			WithPageSize(6).
 			SortByDesc(columnKeyConversations).
 			Focused(true).
