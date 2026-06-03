@@ -14,6 +14,16 @@ func (m *Model) CurrentPage() int {
 
 // MaxPages returns the maximum number of pages that are visible.
 func (m *Model) MaxPages() int {
+	if m.targetHeight != 0 {
+		m.ensurePageMap()
+
+		if len(m.pageStartIndices) == 0 {
+			return 1
+		}
+
+		return len(m.pageStartIndices)
+	}
+
 	totalRows := len(m.GetVisibleRows())
 
 	if m.pageSize == 0 || totalRows == 0 {
@@ -34,6 +44,24 @@ func (m *Model) TotalRows() int {
 func (m *Model) VisibleIndices() (start, end int) {
 	totalRows := len(m.GetVisibleRows())
 
+	if m.targetHeight != 0 {
+		m.ensurePageMap()
+
+		if totalRows == 0 || len(m.pageStartIndices) == 0 {
+			return 0, -1
+		}
+
+		start = m.pageStartIndices[m.currentPage]
+
+		if m.currentPage+1 < len(m.pageStartIndices) {
+			end = m.pageStartIndices[m.currentPage+1] - 1
+		} else {
+			end = totalRows - 1
+		}
+
+		return start, end
+	}
+
 	if m.pageSize == 0 {
 		start = 0
 		end = totalRows - 1
@@ -51,43 +79,75 @@ func (m *Model) VisibleIndices() (start, end int) {
 	return start, end
 }
 
+func (m *Model) wrappedOrClamped(wrappedValue, clampedValue int) int {
+	if m.paginationWrapping {
+		return wrappedValue
+	}
+
+	return clampedValue
+}
+
+func (m *Model) clampCurrentPage(maxPageIndex int) {
+	if m.currentPage > maxPageIndex {
+		m.currentPage = m.wrappedOrClamped(0, maxPageIndex)
+	} else if m.currentPage < 0 {
+		m.currentPage = m.wrappedOrClamped(maxPageIndex, 0)
+	}
+}
+
+func (m *Model) pageDownTargetHeight() {
+	m.ensurePageMap()
+
+	if len(m.pageStartIndices) <= 1 {
+		return
+	}
+
+	m.currentPage++
+	m.clampCurrentPage(len(m.pageStartIndices) - 1)
+	m.rowCursorIndex = m.pageStartIndices[m.currentPage]
+}
+
+func (m *Model) pageUpTargetHeight() {
+	m.ensurePageMap()
+
+	if len(m.pageStartIndices) <= 1 {
+		return
+	}
+
+	m.currentPage--
+	m.clampCurrentPage(len(m.pageStartIndices) - 1)
+	m.rowCursorIndex = m.pageStartIndices[m.currentPage]
+}
+
 func (m *Model) pageDown() {
+	if m.targetHeight != 0 {
+		m.pageDownTargetHeight()
+
+		return
+	}
+
 	if m.pageSize == 0 || len(m.GetVisibleRows()) <= m.pageSize {
 		return
 	}
 
 	m.currentPage++
-
-	maxPageIndex := m.MaxPages() - 1
-
-	if m.currentPage > maxPageIndex {
-		if m.paginationWrapping {
-			m.currentPage = 0
-		} else {
-			m.currentPage = maxPageIndex
-		}
-	}
-
+	m.clampCurrentPage(m.MaxPages() - 1)
 	m.rowCursorIndex = m.currentPage * m.pageSize
 }
 
 func (m *Model) pageUp() {
+	if m.targetHeight != 0 {
+		m.pageUpTargetHeight()
+
+		return
+	}
+
 	if m.pageSize == 0 || len(m.GetVisibleRows()) <= m.pageSize {
 		return
 	}
 
 	m.currentPage--
-
-	maxPageIndex := m.MaxPages() - 1
-
-	if m.currentPage < 0 {
-		if m.paginationWrapping {
-			m.currentPage = maxPageIndex
-		} else {
-			m.currentPage = 0
-		}
-	}
-
+	m.clampCurrentPage(m.MaxPages() - 1)
 	m.rowCursorIndex = m.currentPage * m.pageSize
 }
 
@@ -97,16 +157,45 @@ func (m *Model) pageFirst() {
 }
 
 func (m *Model) pageLast() {
+	if m.targetHeight != 0 {
+		m.ensurePageMap()
+
+		if len(m.pageStartIndices) == 0 {
+			return
+		}
+
+		m.currentPage = len(m.pageStartIndices) - 1
+		m.rowCursorIndex = m.pageStartIndices[m.currentPage]
+
+		return
+	}
+
 	m.currentPage = m.MaxPages() - 1
 	m.rowCursorIndex = m.currentPage * m.pageSize
 }
 
 func (m *Model) expectedPageForRowIndex(rowIndex int) int {
+	if m.targetHeight != 0 {
+		m.ensurePageMap()
+
+		// Binary search: find the last page whose start index <= rowIndex.
+		low, high := 0, len(m.pageStartIndices)-1
+
+		for low < high {
+			mid := (low + high + 1) / 2 //nolint:mnd // standard ceiling-midpoint formula
+			if m.pageStartIndices[mid] <= rowIndex {
+				low = mid
+			} else {
+				high = mid - 1
+			}
+		}
+
+		return low
+	}
+
 	if m.pageSize == 0 {
 		return 0
 	}
 
-	expectedPage := rowIndex / m.pageSize
-
-	return expectedPage
+	return rowIndex / m.pageSize
 }

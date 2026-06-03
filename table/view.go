@@ -6,6 +6,30 @@ import (
 	"charm.land/lipgloss/v2"
 )
 
+// visibleDataLines returns the total terminal lines occupied by visible rows in
+// the range [startRowIndex, endRowIndex]. When multiline is disabled every row
+// is one line, so the result equals endRowIndex - startRowIndex + 1.
+func (m *Model) visibleDataLines(startRowIndex, endRowIndex int) int {
+	numRows := endRowIndex - startRowIndex + 1
+
+	if !m.multiline || numRows <= 0 {
+		return numRows
+	}
+
+	total := 0
+	visibleRows := m.GetVisibleRows()
+
+	for rowIdx := startRowIndex; rowIdx <= endRowIndex; rowIdx++ {
+		total += m.rowLineCount(visibleRows[rowIdx])
+
+		if m.rowSeparator && rowIdx > startRowIndex {
+			total++
+		}
+	}
+
+	return total
+}
+
 // View renders the table. It does not end in a newline, so that it can be
 // composed with other elements more consistently.
 //
@@ -23,9 +47,10 @@ func (m Model) View() string {
 	headers := m.renderHeaders()
 
 	startRowIndex, endRowIndex := m.VisibleIndices()
-	numRows := endRowIndex - startRowIndex + 1
 
-	padding := m.calculatePadding(numRows)
+	padding := m.calculatePadding(m.visibleDataLines(startRowIndex, endRowIndex))
+
+	numRows := endRowIndex - startRowIndex + 1
 
 	if m.headerVisible {
 		rowStrs = append(rowStrs, headers)

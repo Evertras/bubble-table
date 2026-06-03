@@ -1024,6 +1024,43 @@ func Test3x3WithFilterFooter(t *testing.T) {
 	assert.Equal(t, expectedFilteredDoneTable, model.View())
 }
 
+func Test3x3WithFilterFooterAndPageSize(t *testing.T) {
+	model := New([]Column{
+		NewColumn("1", "1", 4).WithFiltered(true),
+		NewColumn("2", "2", 4),
+		NewColumn("3", "3", 4),
+	})
+
+	rows := []Row{}
+
+	for rowIndex := 1; rowIndex <= 6; rowIndex++ {
+		rowData := RowData{}
+
+		for columnIndex := 1; columnIndex <= 3; columnIndex++ {
+			id := fmt.Sprintf("%d", columnIndex)
+			rowData[id] = fmt.Sprintf("%d,%d", columnIndex, rowIndex)
+		}
+
+		rows = append(rows, NewRow(rowData))
+	}
+
+	model = model.WithRows(rows).WithPageSize(3).Filtered(true).Focused(true)
+
+	hitKey := func(key rune) {
+		model, _ = model.Update(tea.KeyPressMsg{Code: key, Text: string(key)})
+	}
+
+	// Start typing a filter — this focuses the filter input and should
+	// render the page count using the inline style alongside the filter text.
+	hitKey('/')
+	hitKey('1')
+
+	rendered := model.View()
+
+	// The page count must appear in the footer while the filter is active.
+	assert.Contains(t, rendered, "1/")
+}
+
 func TestSingleCellFlexView(t *testing.T) {
 	model := New([]Column{
 		NewFlexColumn("id", "ID", 1),

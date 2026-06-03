@@ -60,9 +60,20 @@ example-sorting:
 example-updates:
 	@go run ./examples/updates/*.go
 
+COVERAGE_THRESHOLD := 98.3
+
 .PHONY: test
 test:
 	@go test -race -cover ./table
+
+.PHONY: check-coverage
+check-coverage:
+	@go test -coverprofile=coverage.out ./table
+	@awk -v min="$(COVERAGE_THRESHOLD)" \
+		'NR>1 { stmts += $$2; if ($$3>0) hit += $$2 } \
+		 END { cov = 100*hit/stmts; \
+		       if (cov < min+0) { printf "coverage %.4f%% is below minimum %.1f%%\n", cov, min+0; exit 1 } \
+		       else              { printf "coverage %.4f%%\n", cov } }' coverage.out
 
 .PHONY: test-coverage
 test-coverage: coverage.out
@@ -78,6 +89,12 @@ lint: ./bin/golangci-lint$(EXE_EXT)
 
 coverage.out: table/*.go go.*
 	@go test -coverprofile=coverage.out ./table
+
+.PHONY: install-hooks
+install-hooks:
+	@printf '#!/bin/sh\nset -e\necho "→ linting..."\nmake lint\necho "→ checking coverage..."\nmake check-coverage\necho "→ all checks passed"\n' > .git/hooks/pre-push
+	@chmod +x .git/hooks/pre-push
+	@echo "pre-push hook installed"
 
 .PHONY: fmt
 fmt: ./bin/gci$(EXE_EXT)

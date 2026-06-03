@@ -24,47 +24,61 @@ for a few helpful tips!
 For a code reference of most available features, please see the [full feature example](./examples/features).
 If you want to get started with a simple default table, [check the simplest example](./examples/simplest).
 
-Displays a table with a header, rows, footer, and borders.  The header can be
+Displays a table with a header, rows, footer, and borders. The header can be
 hidden, and the footer can be set to automatically show page information, use
 custom text, or be hidden by default.
 
-Columns can be fixed-width [or flexible width](./examples/flex).  A maximum
+Columns can be fixed-width [or flexible width](./examples/flex). A maximum
 width can be specified which enables [horizontal scrolling](./examples/scrolling),
 and left-most columns can be frozen for easier reference.
 
-Border shape is customizable with a basic thick square default.  The color can
+Border shape is customizable with a basic thick square default. The color can
 be modified by applying a base style with `lipgloss.NewStyle().BorderForeground(...)`.
 
 Styles can be applied globally and to columns, rows, and individual cells.
 The base style is applied first, then column, then row, then cell when
-determining overrides.  The default base style is a basic right-alignment.
+determining overrides. The default base style is a basic right-alignment.
 [See the main feature example](./examples/features) to see styles and
 how they override each other.
 
 Styles can also be applied via a style function which can be used to apply
 zebra striping, data-specific formatting, etc.
 
-Can be focused to highlight a row and navigate with up/down (and j/k).  These
+Can be focused to highlight a row and navigate with up/down (and j/k). These
 keys can be customized with a KeyMap.
 
 Can make rows selectable, and fetch the current selections.
 
 Events can be checked for user interactions.
 
-Pagination can be set with a given page size, which automatically generates a
-simple footer to show the current page and total pages.
+Pagination and footer quick reference:
+
+| Goal                                        | Options                                                                                                                                         |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fixed row count per page                    | `WithPageSize(n)` — auto footer shows `current/total`                                                                                           |
+| Fixed terminal-line height                  | `WithTargetHeight(n)` — rows per page calculated from actual rendered height; footer shown only when multi-page                                 |
+| Truly fixed height (never grows or shrinks) | `WithTargetHeight(n).WithMinimumHeight(n)` — `WithTargetHeight` caps the top, `WithMinimumHeight` pads the bottom when rows don't fill the page |
+| Custom footer text                          | `WithStaticFooter(text)` — replaces the auto page-count footer                                                                                  |
+| Hide footer                                 | `WithFooterVisibility(false)`                                                                                                                   |
+
+`WithPageSize` and `WithTargetHeight` are mutually exclusive. Prefer
+`WithTargetHeight` when `WithMultiline` is enabled, since it pages by actual
+rendered line count rather than row count.
+[See the pagination example](examples/pagination) and
+[the targetheight example](examples/targetheight) for demonstrations.
 
 Built-in filtering can be enabled by setting any columns as filterable, using
 a text box in the footer and `/` (customizable by keybind) to start filtering.
+[See the filter example](examples/filter).
 
 A missing indicator can be supplied to show missing data in rows.
 
-Columns can be sorted in either ascending or descending order.  Multiple columns
-can be specified in a row.  If multiple columns are specified, first the table
+Columns can be sorted in either ascending or descending order. Multiple columns
+can be specified in a row. If multiple columns are specified, first the table
 is sorted by the first specified column, then each group within that column is
-sorted in smaller and smaller groups.  [See the sorting example](examples/sorting)
-for more information.  If a column contains numbers (either ints or floats),
-the numbers will be sorted by numeric value.  Otherwise rendered string values
+sorted in smaller and smaller groups. [See the sorting example](examples/sorting)
+for more information. If a column contains numbers (either ints or floats),
+the numbers will be sorted by numeric value. Otherwise rendered string values
 will be compared.
 
 If a feature is confusing to use or could use a better example, please feel free
@@ -73,20 +87,20 @@ to open an issue.
 ## Defining table data
 
 A table is defined by a list of `Column` values that define the columns in the
-table.  Each `Column` is associated with a unique string key.
+table. Each `Column` is associated with a unique string key.
 
-A table contains a list of `Row`s.  Each `Row` contains a `RowData` object which
+A table contains a list of `Row`s. Each `Row` contains a `RowData` object which
 is simply a map of string column IDs to arbitrary `any` data values.
-When the table is rendered, each `Row` is checked for each `Column` key.  If the
+When the table is rendered, each `Row` is checked for each `Column` key. If the
 key exists in the `Row`'s `RowData`, it is rendered with `fmt.Sprintf("%v")`.
 If it does not exist, nothing is rendered.
 
-Extra data in the `RowData` object is ignored.  This can be helpful to simply
+Extra data in the `RowData` object is ignored. This can be helpful to simply
 dump data into `RowData` and create columns that select what is interesting to
 view, or to generate different columns based on view options on the fly (see the
 [metadata example](./examples/metadata) for an example of using this).
 
-An example is given below.  For more detailed examples, see
+An example is given below. For more detailed examples, see
 [the examples directory](./examples).
 
 ```golang
@@ -147,8 +161,8 @@ rows := []table.Row{
 ### A note on 'metadata'
 
 There may be cases where you wish to reference some kind of data object in the
-table.  For example, a table of users may display a user name, ID, etc., and you
-may wish to retrieve data about the user when the row is selected.  This can be
+table. For example, a table of users may display a user name, ID, etc., and you
+may wish to retrieve data about the user when the row is selected. This can be
 accomplished by attaching hidden 'metadata' to the row in the same way as any
 other data.
 
@@ -188,9 +202,9 @@ For a more detailed demonstration of this idea in action, please see the
 
 ## Demos
 
-Code examples are located in [the examples directory](./examples).  Run commands
+Code examples are located in [the examples directory](./examples). Run commands
 are added to the [Makefile](Makefile) for convenience but they should be as
-simple as `go run ./examples/features/main.go`, etc.  You can also view what
+simple as `go run ./examples/features/main.go`, etc. You can also view what
 they look like by checking the example's directory in each README here on
 Github.
 
@@ -206,4 +220,3 @@ make example-dimensions
 # Or run any of them directly
 go run ./examples/pagination/main.go
 ```
-

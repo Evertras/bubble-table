@@ -53,6 +53,23 @@ func (r Row) WithStyle(style lipgloss.Style) Row {
 	return r
 }
 
+// rowLineCount returns the number of terminal lines the row occupies when rendered.
+// For non-multiline tables this is always 1.
+func (m *Model) rowLineCount(row Row) int {
+	if !m.multiline {
+		return 1
+	}
+
+	maxLines := 1
+
+	for _, column := range m.columns {
+		cellStr := m.renderRowColumnData(row, column, row.Style, lipgloss.NewStyle())
+		maxLines = max(maxLines, lipgloss.Height(cellStr))
+	}
+
+	return maxLines
+}
+
 //nolint:cyclop,funlen // Breaking this up will be more complicated than it's worth for now
 func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Style, borderStyle lipgloss.Style) string {
 	cellStyle := rowStyle.Inherit(column.style).Inherit(m.baseStyle)
