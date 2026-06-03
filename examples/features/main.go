@@ -114,6 +114,7 @@ func NewModel() Model {
 					Foreground(lipgloss.Color("#a7a")).
 					Align(lipgloss.Left),
 			).
+			WithBorderForeground(lipgloss.Color("#a38")).
 			SortByAsc(columnKeyID).
 			WithMissingDataIndicatorStyled(table.StyledCell{
 				Style: lipgloss.NewStyle().Foreground(lipgloss.Color("#faa")),

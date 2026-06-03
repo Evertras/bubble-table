@@ -110,6 +110,7 @@ func NewModel() Model {
 		}).WithRows(rows).
 			BorderRounded().
 			WithBaseStyle(styleBase).
+			WithBorderForeground(lipgloss.Color("#a38")).
 			WithPageSize(4).
 			Focused(true).
 			SelectableRows(true),
