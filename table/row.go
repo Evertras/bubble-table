@@ -137,6 +137,10 @@ func (m Model) renderRowColumnData(row Row, column Column, rowStyle lipgloss.Sty
 
 	if m.multiline {
 		str = ansi.Wordwrap(str, contentWidth, "")
+		// a bug in Wordwrap means when hyphens are used as a breakpoint, the wrap is done AFTER the hyphen
+		// resulting in a line that exceeds the column width
+		// Hardwrap as a seconds step avoids this
+		str = ansi.Hardwrap(str, contentWidth, false)
 		cellStyle = cellStyle.Align(lipgloss.Top)
 	} else {
 		str = limitStr(str, contentWidth)
