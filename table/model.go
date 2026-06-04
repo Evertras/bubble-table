@@ -107,6 +107,16 @@ type Model struct {
 	// Minimum total height of the table
 	minimumHeight int
 
+	// Target total height of the table in terminal lines, including borders,
+	// header, and footer. When set, the table fits as many rows as possible
+	// per page. Mutually exclusive with pageSize.
+	targetHeight int
+
+	// Cached page boundary indices when targetHeight is set.
+	// pageStartIndices[i] is the index of the first visible row on page i.
+	// Nil means the cache needs rebuilding.
+	pageStartIndices []int
+
 	// Internal cached calculation, the height of the header and footer
 	// including borders. Used to determine how many padding rows to add.
 	metaHeight int

@@ -74,7 +74,16 @@ func (m Model) WithRows(rows []Row) Model {
 		m.rowCursorIndex = 0
 	}
 
-	if m.pageSize != 0 {
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+		m.ensurePageMap()
+
+		maxPage := m.MaxPages()
+
+		if maxPage <= m.currentPage {
+			m.pageLast()
+		}
+	} else if m.pageSize != 0 {
 		maxPage := m.MaxPages()
 
 		// MaxPages is 1-index, currentPage is 0 index
@@ -166,8 +175,12 @@ func (m Model) Filtered(filtered bool) Model {
 	m.filtered = filtered
 	m.visibleRowCacheUpdated = false
 
-	if m.minimumHeight > 0 {
+	if m.minimumHeight > 0 || m.targetHeight != 0 {
 		m.recalculateHeight()
+	}
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
 	}
 
 	return m
@@ -184,8 +197,12 @@ func (m Model) StartFilterTyping() Model {
 func (m Model) WithStaticFooter(footer string) Model {
 	m.staticFooter = footer
 
-	if m.minimumHeight > 0 {
+	if m.minimumHeight > 0 || m.targetHeight != 0 {
 		m.recalculateHeight()
+	}
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
 	}
 
 	return m
@@ -274,6 +291,10 @@ func (m Model) WithOuterBorder(show bool) Model {
 func (m Model) WithRowBorder(show bool) Model {
 	m.rowSeparator = show
 
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+	}
+
 	return m
 }
 
@@ -285,6 +306,10 @@ func (m Model) WithTargetWidth(totalWidth int) Model {
 
 	m.recalculateWidth()
 
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+	}
+
 	return m
 }
 
@@ -293,6 +318,20 @@ func (m Model) WithMinimumHeight(minimumHeight int) Model {
 	m.minimumHeight = minimumHeight
 
 	m.recalculateHeight()
+
+	return m
+}
+
+// WithTargetHeight sets the total target height of the table in terminal lines,
+// including borders, header, and footer. The table automatically fits as many
+// rows as possible within that height per page, with proper pagination for the
+// remainder. This is the correct way to constrain table height when
+// WithMultiline is enabled. Mutually exclusive with WithPageSize.
+func (m Model) WithTargetHeight(height int) Model {
+	m.targetHeight = height
+	m.pageSize = 0
+	m.pageStartIndices = nil
+	m.ensurePageMap()
 
 	return m
 }
@@ -331,6 +370,26 @@ func (m Model) PageFirst() Model {
 // table, bounded to the total number of pages.  The current selected row will
 // be set to the top row of the page if the page changed.
 func (m Model) WithCurrentPage(currentPage int) Model {
+	if m.targetHeight != 0 {
+		m.ensurePageMap()
+
+		maxPages := m.MaxPages()
+
+		if currentPage < 1 {
+			currentPage = 1
+		} else if currentPage > maxPages {
+			currentPage = maxPages
+		}
+
+		m.currentPage = currentPage - 1
+
+		if m.currentPage < len(m.pageStartIndices) {
+			m.rowCursorIndex = m.pageStartIndices[m.currentPage]
+		}
+
+		return m
+	}
+
 	if m.pageSize == 0 || currentPage == m.CurrentPage() {
 		return m
 	}
@@ -361,6 +420,10 @@ func (m Model) WithColumns(columns []Column) Model {
 	if m.selectableRows {
 		// Re-add the selectable column
 		m = m.SelectableRows(true)
+	}
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
 	}
 
 	return m
@@ -416,8 +479,12 @@ func (m Model) WithFuzzyFilter() Model {
 func (m Model) WithFooterVisibility(visibility bool) Model {
 	m.footerVisible = visibility
 
-	if m.minimumHeight > 0 {
+	if m.minimumHeight > 0 || m.targetHeight != 0 {
 		m.recalculateHeight()
+	}
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
 	}
 
 	return m
@@ -427,8 +494,12 @@ func (m Model) WithFooterVisibility(visibility bool) Model {
 func (m Model) WithHeaderVisibility(visibility bool) Model {
 	m.headerVisible = visibility
 
-	if m.minimumHeight > 0 {
+	if m.minimumHeight > 0 || m.targetHeight != 0 {
 		m.recalculateHeight()
+	}
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
 	}
 
 	return m
@@ -509,6 +580,10 @@ func (m Model) WithAllRowsDeselected() Model {
 // WithMultiline sets whether or not to wrap text in cells to multiple lines.
 func (m Model) WithMultiline(multiline bool) Model {
 	m.multiline = multiline
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+	}
 
 	return m
 }
