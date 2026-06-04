@@ -63,6 +63,10 @@ func (m Model) updateFilterTextInput(msg tea.Msg) (Model, tea.Cmd) {
 	m.pageFirst()
 	m.visibleRowCacheUpdated = false
 
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+	}
+
 	return m, cmd
 }
 
@@ -108,6 +112,10 @@ func (m *Model) handleKeypress(msg tea.KeyPressMsg) {
 	if key.Matches(msg, m.keyMap.FilterClear) {
 		m.visibleRowCacheUpdated = false
 		m.filterTextInput.Reset()
+
+		if m.targetHeight != 0 {
+			m.pageStartIndices = nil
+		}
 	}
 
 	if key.Matches(msg, m.keyMap.ScrollRight) {

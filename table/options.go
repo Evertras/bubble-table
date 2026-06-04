@@ -440,6 +440,10 @@ func (m Model) WithFilterInput(input textinput.Model) Model {
 	m.filterTextInput = input
 	m.visibleRowCacheUpdated = false
 
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+	}
+
 	return m
 }
 
@@ -454,6 +458,10 @@ func (m Model) WithFilterInputValue(value string) Model {
 	m.filterTextInput.SetValue(value)
 	m.filterTextInput.Blur()
 	m.visibleRowCacheUpdated = false
+
+	if m.targetHeight != 0 {
+		m.pageStartIndices = nil
+	}
 
 	return m
 }
