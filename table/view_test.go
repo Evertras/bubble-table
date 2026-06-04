@@ -1779,6 +1779,30 @@ func TestMultilineDisabledExplicite(t *testing.T) {
 	assert.Equal(t, expectedTable, rendered)
 }
 
+func TestMultilineHyphenDoesNotOverflowColumnWidth(t *testing.T) {
+	// Wordwrap treats hyphens as break points and places the hyphen at the END
+	// of the wrapped line (e.g. "abcdefgh-" = 9 chars for a width-8 column).
+	// The Hardwrap pass that follows must clip that back to the column width so
+	// the cell never overflows.
+	model := New([]Column{
+		NewColumn("content", "Content", 8),
+	}).
+		WithRows([]Row{
+			NewRow(RowData{"content": "abcdefgh-tail"}),
+		}).
+		WithMultiline(true)
+
+	const expected = `┏━━━━━━━━┓
+┃ Content┃
+┣━━━━━━━━┫
+┃abcdefgh┃
+┃-       ┃
+┃tail    ┃
+┗━━━━━━━━┛`
+
+	assert.Equal(t, expected, model.View())
+}
+
 func TestRowBorder3x3(t *testing.T) {
 	model := New([]Column{
 		NewColumn("1", "1", 4),
