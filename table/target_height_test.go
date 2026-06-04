@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -446,6 +448,113 @@ func TestTargetHeightPageMapInvalidatedByOptions(t *testing.T) {
 			assert.Greater(t, model.MaxPages(), 0, "MaxPages should be positive after %s", tc.name)
 		})
 	}
+}
+
+// TestTargetHeightFilterReducesRowsBelowOnePage is a regression test for a
+// panic caused by pageStartIndices not being invalidated when a filter is
+// applied in targetHeight mode.  The page map is built by pointer-receiver
+// navigation calls (e.g. pageDown) and cached on the model.  A subsequent
+// filter that shrinks visible rows leaves the stale map in place; ensurePageMap
+// then skips rebuilding, VisibleIndices returns an endRowIndex beyond the
+// filtered slice, and renderRow panics with an index out of range.
+func TestTargetHeightFilterReducesRowsBelowOnePage(t *testing.T) {
+	// targetHeight=10 gives 4 rows per page (metaHeight=5, 1 border line).
+	// 8 rows spans two pages; a navigation call seeds the stale page map;
+	// the filter then reduces visible rows to 1 (< one page).
+	rows := make([]Row, 8)
+	for i := range rows {
+		rows[i] = NewRow(RowData{
+			"id":      i + 1,
+			"content": fmt.Sprintf("item-%d", i+1),
+		})
+	}
+
+	model := New([]Column{
+		NewColumn("id", "ID", 3),
+		NewColumn("content", "Content", 20).WithFiltered(true),
+	}).
+		WithRows(rows).
+		WithTargetHeight(10).
+		Filtered(true)
+
+	// pageDown is a pointer receiver: it calls ensurePageMap on the model
+	// directly, seeding pageStartIndices for 8 unfiltered rows ([0, 4]).
+	model.pageDown()
+
+	// Applying the filter sets visibleRowCacheUpdated=false but (before the
+	// fix) leaves pageStartIndices=[0,4] intact.
+	model = model.WithFilterInputValue("item-3")
+
+	// View must not panic even though only 1 row is visible.
+	assert.NotPanics(t, func() {
+		_ = model.View()
+	})
+}
+
+// TestTargetHeightFilterViaWithFilterInput ensures View does not panic when
+// WithFilterInput reduces visible rows below one page in targetHeight mode.
+func TestTargetHeightFilterViaWithFilterInput(t *testing.T) {
+	rows := make([]Row, 8)
+	for i := range rows {
+		rows[i] = NewRow(RowData{"id": i + 1, "content": fmt.Sprintf("item-%d", i+1)})
+	}
+
+	model := New([]Column{
+		NewColumn("id", "ID", 3),
+		NewColumn("content", "Content", 20).WithFiltered(true),
+	}).WithRows(rows).WithTargetHeight(10).Filtered(true)
+
+	model.pageDown()
+
+	input := textinput.New()
+	input.SetValue("item-3")
+	model = model.WithFilterInput(input)
+
+	assert.NotPanics(t, func() { _ = model.View() })
+}
+
+// TestTargetHeightFilterViaUpdateFilterTextInput ensures View does not panic
+// when typing in the filter input reduces visible rows below one page in
+// targetHeight mode.
+func TestTargetHeightFilterViaUpdateFilterTextInput(t *testing.T) {
+	rows := make([]Row, 8)
+	for i := range rows {
+		rows[i] = NewRow(RowData{"id": i + 1, "content": fmt.Sprintf("item-%d", i+1)})
+	}
+
+	model := New([]Column{
+		NewColumn("id", "ID", 3),
+		NewColumn("content", "Content", 20).WithFiltered(true),
+	}).WithRows(rows).WithTargetHeight(10).Filtered(true)
+
+	model.pageDown()
+
+	model.filterTextInput.SetValue("item-3")
+	model, _ = model.updateFilterTextInput(tea.KeyPressMsg{})
+
+	assert.NotPanics(t, func() { _ = model.View() })
+}
+
+// TestTargetHeightFilterClearKey ensures View does not panic after the filter
+// is cleared via the FilterClear key in targetHeight mode.
+func TestTargetHeightFilterClearKey(t *testing.T) {
+	rows := make([]Row, 8)
+	for i := range rows {
+		rows[i] = NewRow(RowData{"id": i + 1, "content": fmt.Sprintf("item-%d", i+1)})
+	}
+
+	model := New([]Column{
+		NewColumn("id", "ID", 3),
+		NewColumn("content", "Content", 20).WithFiltered(true),
+	}).WithRows(rows).WithTargetHeight(10).Filtered(true)
+
+	model.filterTextInput.SetValue("item-3")
+	model.visibleRowCacheUpdated = false
+	model.pageDown()
+
+	model.handleKeypress(tea.KeyPressMsg{Code: tea.KeyEscape})
+
+	assert.NotPanics(t, func() { _ = model.View() })
 }
 
 // TestTargetHeightWithCurrentPageAboveMax checks that WithCurrentPage clamps
