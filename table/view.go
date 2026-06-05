@@ -7,12 +7,21 @@ import (
 )
 
 // visibleDataLines returns the total terminal lines occupied by visible rows in
-// the range [startRowIndex, endRowIndex]. When multiline is disabled every row
-// is one line, so the result equals endRowIndex - startRowIndex + 1.
+// the range [startRowIndex, endRowIndex], including any separator lines between
+// rows when WithRowBorder is active.
 func (m *Model) visibleDataLines(startRowIndex, endRowIndex int) int {
 	numRows := endRowIndex - startRowIndex + 1
 
-	if !m.multiline || numRows <= 0 {
+	if numRows <= 0 {
+		return numRows
+	}
+
+	if !m.multiline {
+		if m.rowSeparator {
+			// Each pair of adjacent rows has one separator line between them.
+			return 2*numRows - 1
+		}
+
 		return numRows
 	}
 
