@@ -1959,9 +1959,10 @@ func TestOuterBorderTrueMatchesDefault(t *testing.T) {
 }
 
 func TestRowBorderNoSeparatorBeforePaddingRows(t *testing.T) {
-	// WithMinimumHeight(7) with 2 data rows produces 1 padding row.
-	// The separator should appear between the two data rows but NOT
-	// between the last data row and the blank padding row.
+	// WithMinimumHeight(7) with 2 data rows and 1 separator between them
+	// occupies 3 data lines; header=3, bottom border=1 → total=7=minimumHeight.
+	// No blank padding row is needed because the separators are now counted
+	// as data lines, so the budget is already satisfied.
 	model := New([]Column{
 		NewColumn("1", "1", 4),
 		NewColumn("2", "2", 4),
@@ -1976,7 +1977,6 @@ func TestRowBorderNoSeparatorBeforePaddingRows(t *testing.T) {
 ┃   a┃   b┃
 ┣━━━━╋━━━━┫
 ┃   c┃   d┃
-┃    ┃    ┃
 ┗━━━━┻━━━━┛`
 
 	rendered := model.View()

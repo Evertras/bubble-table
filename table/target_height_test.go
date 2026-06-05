@@ -396,6 +396,37 @@ func TestTargetHeightVisibleDataLinesWithSeparator(t *testing.T) {
 	assert.Greater(t, len(lines), 0, "table should not be empty")
 }
 
+// TestTargetHeightWithRowBorderNoMultilineRespectsHeight checks that enabling
+// WithRowBorder on a non-multiline table does not cause the rendered output to
+// exceed targetHeight when WithMinimumHeight is also set. Previously,
+// visibleDataLines ignored separator lines in non-multiline mode, so
+// calculatePadding added too many blank rows and the table overflowed.
+func TestTargetHeightWithRowBorderNoMultilineRespectsHeight(t *testing.T) {
+	rows := []Row{
+		shortRow(1),
+		shortRow(2),
+		shortRow(3),
+	}
+
+	const target = 12
+
+	model := New([]Column{
+		NewColumn("id", "ID", 3),
+		NewColumn("content", "Content", 20),
+	}).
+		WithRows(rows).
+		WithRowBorder(true).
+		WithTargetHeight(target).
+		WithMinimumHeight(target)
+
+	rendered := model.View()
+	lines := strings.Split(rendered, "\n")
+
+	assert.LessOrEqual(t, len(lines), target,
+		"rendered height (%d lines) exceeded target (%d)", len(lines), target)
+	assert.Greater(t, len(lines), 0, "table should not be empty")
+}
+
 // TestTargetHeightNoFooterOnSinglePage checks that no page-count footer is
 // rendered when all rows fit on a single page.
 func TestTargetHeightNoFooterOnSinglePage(t *testing.T) {
