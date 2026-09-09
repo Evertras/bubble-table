@@ -48,7 +48,7 @@ func (m *Model) GetVisibleRows() []Row {
 	if m.filtered {
 		rows = m.getFilteredRows(rows)
 	}
-	rows = getSortedRows(m.sortOrder, rows)
+	rows = getSortedRows(m.sortOrder, rows, m.columns)
 
 	m.visibleRowCache = rows
 	m.visibleRowCacheUpdated = true

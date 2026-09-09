@@ -9,10 +9,24 @@ import (
 )
 
 const (
-	columnKeyName = "name"
-	columnKeyType = "type"
-	columnKeyWins = "wins"
+	columnKeyName   = "name"
+	columnKeyType   = "type"
+	columnKeyWins   = "wins"
+	columnKeyLevel  = "level"
+	columnKeyRarity = "rarity"
 )
+
+// rarityRank gives each rarity label its collector order. Neither plain
+// string sort nor SortTypeNatural could express this: alphabetically
+// "Common" < "Legendary" < "Rare" < "Uncommon", which isn't the order
+// anyone actually wants. A custom comparator via WithSortFunc is the only
+// way to sort by an arbitrary, domain-specific ordering like this.
+var rarityRank = map[string]int{
+	"Common":    0,
+	"Uncommon":  1,
+	"Rare":      2,
+	"Legendary": 3,
+}
 
 type Model struct {
 	simpleTable table.Model
@@ -28,36 +42,61 @@ func NewModel() Model {
 			table.NewColumn(columnKeyType, "Type", 13),
 			table.NewColumn(columnKeyWins, "Win %", 8).
 				WithFormatString("%.1f%%"),
+			// A plain string sort would order this "Level 1", "Level 10", "Level 100",
+			// "Level 2", ... since it compares character by character. SortTypeNatural
+			// compares the embedded numbers by value instead, so it sorts the way a
+			// human would expect.
+			table.NewColumn(columnKeyLevel, "Level", 10).
+				WithSortType(table.SortTypeNatural),
+			table.NewColumn(columnKeyRarity, "Rarity", 10).
+				WithSortFunc(func(a, b any) bool {
+					aStr, _ := a.(string)
+					bStr, _ := b.(string)
+
+					return rarityRank[aStr] < rarityRank[bStr]
+				}),
 		}).WithRows([]table.Row{
 			table.NewRow(table.RowData{
-				columnKeyName: "ピカピカ",
-				columnKeyType: "Pikachu",
-				columnKeyWins: 78.3,
+				columnKeyName:   "ピカピカ",
+				columnKeyType:   "Pikachu",
+				columnKeyWins:   78.3,
+				columnKeyLevel:  "Level 1",
+				columnKeyRarity: "Uncommon",
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName: "Zapmouse",
-				columnKeyType: "Pikachu",
-				columnKeyWins: 3.3,
+				columnKeyName:   "Zapmouse",
+				columnKeyType:   "Pikachu",
+				columnKeyWins:   3.3,
+				columnKeyLevel:  "Level 10",
+				columnKeyRarity: "Common",
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName: "Burninator",
-				columnKeyType: "Charmander",
-				columnKeyWins: 32.1,
+				columnKeyName:   "Burninator",
+				columnKeyType:   "Charmander",
+				columnKeyWins:   32.1,
+				columnKeyLevel:  "Level 2",
+				columnKeyRarity: "Legendary",
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName: "Alphonse",
-				columnKeyType: "Pikachu",
-				columnKeyWins: 13.8,
+				columnKeyName:   "Alphonse",
+				columnKeyType:   "Pikachu",
+				columnKeyWins:   13.8,
+				columnKeyLevel:  "Level 20",
+				columnKeyRarity: "Rare",
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName: "Trogdor",
-				columnKeyType: "Charmander",
-				columnKeyWins: 99.9,
+				columnKeyName:   "Trogdor",
+				columnKeyType:   "Charmander",
+				columnKeyWins:   99.9,
+				columnKeyLevel:  "Level 3",
+				columnKeyRarity: "Legendary",
 			}),
 			table.NewRow(table.RowData{
-				columnKeyName: "Dihydrogen Monoxide",
-				columnKeyType: "Squirtle",
-				columnKeyWins: 31.348,
+				columnKeyName:   "Dihydrogen Monoxide",
+				columnKeyType:   "Squirtle",
+				columnKeyWins:   31.348,
+				columnKeyLevel:  "Level 100",
+				columnKeyRarity: "Common",
 			}),
 		}),
 	}
@@ -94,6 +133,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "w":
 			m.columnSortKey = columnKeyWins
 			m.simpleTable = m.simpleTable.SortByDesc(m.columnSortKey)
+
+		case "l":
+			m.columnSortKey = columnKeyLevel
+			m.simpleTable = m.simpleTable.SortByAsc(m.columnSortKey)
+
+		case "r":
+			m.columnSortKey = columnKeyRarity
+			m.simpleTable = m.simpleTable.SortByAsc(m.columnSortKey)
 		}
 	}
 
@@ -103,7 +150,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() tea.View {
 	body := strings.Builder{}
 
-	body.WriteString("A sorted simple default table\nSort by (n)ame, (t)ype->wins combo, or (w)ins\nCurrently sorting by: " + m.columnSortKey + "\nPress q or ctrl+c to quit\n\n")
+	body.WriteString("A sorted simple default table\n")
+	body.WriteString("Sort by (n)ame, (t)ype->wins combo, (w)ins, (l)evel (natural sort), or (r)arity (custom sort func)\n")
+	body.WriteString("Currently sorting by: " + m.columnSortKey + "\n")
+	body.WriteString("Press q or ctrl+c to quit\n\n")
 
 	body.WriteString(m.simpleTable.View())
 
