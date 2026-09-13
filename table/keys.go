@@ -47,7 +47,7 @@ func DefaultKeyMap() KeyMap {
 		),
 		PageDown: key.NewBinding(
 			key.WithKeys("right", "l", "pgdown"),
-			key.WithHelp("→/h/page down", "next page"),
+			key.WithHelp("→/l/page down", "next page"),
 		),
 		PageUp: key.NewBinding(
 			key.WithKeys("left", "h", "pgup"),
