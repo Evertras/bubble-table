@@ -167,6 +167,7 @@ func (m Model) renderRow(rowIndex int, last bool, separatorBelow bool) string {
 			Index:         rowIndex,
 			Row:           row,
 			IsHighlighted: m.focused && highlighted,
+			IsSearchMatch: m.isSearchMatch(row),
 		})
 
 		rowStyle = rowStyle.Inherit(styleResult)

@@ -3,27 +3,30 @@ package table
 import (
 	"fmt"
 	"strings"
+
+	"charm.land/bubbles/v2/textinput"
 )
 
 func (m Model) hasFooter() bool {
 	multiPageTargetHeight := m.targetHeight != 0 && m.pageStartIndices != nil && len(m.pageStartIndices) > 1
 
-	return m.footerVisible && (m.staticFooter != "" || m.pageSize != 0 || multiPageTargetHeight || m.filtered)
+	return m.footerVisible &&
+		(m.staticFooter != "" || m.pageSize != 0 || multiPageTargetHeight || m.filtered || m.searchable)
 }
 
-func (m Model) footerFilterSection() string {
-	if !m.filtered {
+func footerInputSection(enabled bool, input textinput.Model) string {
+	if !enabled {
 		return ""
 	}
 
-	if m.filterTextInput.Focused() {
-		return m.filterTextInput.View()
+	if input.Focused() {
+		return input.View()
 	}
 
-	if m.filterTextInput.Value() != "" {
+	if input.Value() != "" {
 		// When not focused, show only the prompt + value without the
 		// cursor character that bubbles v2 renders in its View().
-		return m.filterTextInput.Prompt + m.filterTextInput.Value()
+		return input.Prompt + input.Value()
 	}
 
 	return ""
@@ -37,7 +40,7 @@ func (m Model) footerPageSection() string {
 
 	str := fmt.Sprintf("%d/%d", m.CurrentPage(), m.MaxPages())
 
-	if m.filtered && m.filterTextInput.Focused() {
+	if (m.filtered && m.filterTextInput.Focused()) || (m.searchable && m.searchTextInput.Focused()) {
 		// Need to apply inline style here in case of filter input cursor, because
 		// the input cursor resets the style after rendering.  Note that Inline(true)
 		// creates a copy, so it's safe to use here without mutating the underlying
@@ -69,7 +72,11 @@ func (m Model) renderFooter(width int, includeTop bool) string {
 
 	sections := []string{}
 
-	if section := m.footerFilterSection(); section != "" {
+	if section := footerInputSection(m.filtered, m.filterTextInput); section != "" {
+		sections = append(sections, section)
+	}
+
+	if section := footerInputSection(m.searchable, m.searchTextInput); section != "" {
 		sections = append(sections, section)
 	}
 

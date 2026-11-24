@@ -24,6 +24,9 @@ type RowStyleFuncInput struct {
 
 	// IsHighlighted is true if the row is currently highlighted.
 	IsHighlighted bool
+
+	// IsSearchMatch is true if the row matches the current search query.
+	IsSearchMatch bool
 }
 
 // WithRowStyleFunc sets a function that can be used to apply a style to each row

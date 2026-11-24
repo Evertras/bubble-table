@@ -85,6 +85,12 @@ type Model struct {
 	filterTextInput textinput.Model
 	filterFunc      FilterFunc
 
+	// Search
+	searchable        bool
+	searchTextInput   textinput.Model
+	searchFunc        FilterFunc
+	searchOriginIndex int
+
 	// For flex columns
 	targetTotalWidth int
 
@@ -144,6 +150,11 @@ func New(columns []Column) Model {
 	plainStyles.Blurred.Text = lipgloss.NewStyle()
 	plainStyles.Cursor.Color = lipgloss.NoColor{}
 	filterInput.SetStyles(plainStyles)
+
+	searchInput := textinput.New()
+	searchInput.Prompt = "?"
+	searchInput.SetStyles(plainStyles)
+
 	model := Model{
 		columns:        make([]Column, len(columns)),
 		metadata:       make(map[string]any),
@@ -159,6 +170,8 @@ func New(columns []Column) Model {
 
 		filterTextInput: filterInput,
 		filterFunc:      filterFuncContains,
+		searchTextInput: searchInput,
+		searchFunc:      searchFuncContains,
 		baseStyle:       lipgloss.NewStyle().Align(lipgloss.Right),
 
 		paginationWrapping: true,

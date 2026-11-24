@@ -37,6 +37,22 @@ func (m *Model) GetCurrentFilter() string {
 	return m.filterTextInput.Value()
 }
 
+// GetCanSearch returns true if the table's built-in search is enabled.
+func (m *Model) GetCanSearch() bool {
+	return m.searchable
+}
+
+// GetIsSearchInputFocused returns true if the table's built-in search input is
+// currently focused.
+func (m *Model) GetIsSearchInputFocused() bool {
+	return m.searchTextInput.Focused()
+}
+
+// GetCurrentSearch returns the current search query, or an empty string if none.
+func (m *Model) GetCurrentSearch() string {
+	return m.searchTextInput.Value()
+}
+
 // GetVisibleRows returns sorted and filtered rows.
 func (m *Model) GetVisibleRows() []Row {
 	if m.visibleRowCacheUpdated {
