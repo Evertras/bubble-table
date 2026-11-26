@@ -36,6 +36,14 @@ example-filter:
 example-filterapi:
 	@go run ./examples/filterapi/*.go
 
+.PHONY: example-search
+example-search:
+	@go run ./examples/search/*.go
+
+.PHONY: example-regexp
+example-regexp:
+	@go run ./examples/regexp/*.go
+
 .PHONY: example-flex
 example-flex:
 	@go run ./examples/flex/*.go

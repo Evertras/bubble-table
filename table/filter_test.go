@@ -520,6 +520,23 @@ func TestFuzzyFilter_IgnoresNonFilterableColumns(t *testing.T) {
 	}), "Shouldn't match on non-filterable")
 }
 
+func TestFuzzySearch_IncludesNonFilterableColumns(t *testing.T) {
+	cols := []Column{
+		NewColumn("name", "Name", 10).WithFiltered(true),
+		NewColumn("secret", "Secret", 10).WithFiltered(false), // search still checks this
+	}
+	row := NewRow(RowData{
+		"name":   "Acme",
+		"secret": "topsecretpattern",
+	})
+
+	assert.True(t, searchFuncFuzzy(FilterFuncInput{
+		Columns: cols,
+		Row:     row,
+		Filter:  "topsecret",
+	}), "search should match on non-filterable columns, unlike filtering")
+}
+
 func TestFuzzyFilter_UnwrapsStyledCell(t *testing.T) {
 	cols := []Column{
 		NewColumn("name", "Name", 10).WithFiltered(true),

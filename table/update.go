@@ -118,6 +118,8 @@ func (m *Model) handleKeypress(msg tea.KeyPressMsg) {
 		}
 	}
 
+	m.handleSearchKeypress(msg)
+
 	if key.Matches(msg, m.keyMap.ScrollRight) {
 		m.scrollRight()
 	}
@@ -151,6 +153,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		}
 
 		return m, cmd
+	}
+
+	if m.searchTextInput.Focused() {
+		return m.updateSearchTextInput(msg)
 	}
 
 	switch msg := msg.(type) {

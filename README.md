@@ -69,7 +69,24 @@ rendered line count rather than row count.
 
 Built-in filtering can be enabled by setting any columns as filterable, using
 a text box in the footer and `/` (customizable by keybind) to start filtering.
-[See the filter example](examples/filter).
+By default filtering matches case-insensitively on exact substrings;
+`WithFuzzyFilter` instead matches tokens as subsequences (so `"brd"` matches
+`"bread"`), with each space-separated token required to match and a leading
+`'` forcing a literal substring match for that token. Use `WithFilterFunc` for
+anything else, such as a regex. [See the filter example](examples/filter) and
+the [regexp example](examples/regexp).
+
+Built-in search can be enabled with `Searchable(true)`. Unlike filtering, it
+doesn't hide rows: press `ctrl+f` to type a query (the highlighted row jumps to the
+first match as you type), then `n` / `N` to move to the next / previous match.
+Press `esc` to clear the search (and any filter).
+By default it matches case-insensitively across all columns; `WithFuzzySearch`
+switches to the same subsequence matching as `WithFuzzyFilter`, and
+`WithSearchFunc` allows searching a single column or using a regex. Matching
+rows can be highlighted with `WithRowStyleFunc` by checking
+`RowStyleFuncInput.IsSearchMatch`. `SearchNext`, `SearchPrev` and
+`WithSearchInputValue` allow driving search from your own input.
+[See the search example](examples/search).
 
 A missing indicator can be supplied to show missing data in rows.
 

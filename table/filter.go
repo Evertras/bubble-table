@@ -58,6 +58,16 @@ func (m Model) getFilteredRows(rows []Row) []Row {
 // filterFuncContains returns a filterFunc that performs case-insensitive
 // "contains" matching over all filterable columns in a row.
 func filterFuncContains(input FilterFuncInput) bool {
+	return containsMatch(input, true)
+}
+
+// searchFuncContains performs case-insensitive "contains" matching over all
+// columns in a row, filterable or not.
+func searchFuncContains(input FilterFuncInput) bool {
+	return containsMatch(input, false)
+}
+
+func containsMatch(input FilterFuncInput, onlyFilterable bool) bool {
 	if input.Filter == "" {
 		return true
 	}
@@ -67,7 +77,7 @@ func filterFuncContains(input FilterFuncInput) bool {
 	filterLower := strings.ToLower(input.Filter)
 
 	for _, column := range input.Columns {
-		if !column.filterable {
+		if onlyFilterable && !column.filterable {
 			continue
 		}
 
@@ -80,24 +90,12 @@ func filterFuncContains(input FilterFuncInput) bool {
 		}
 
 		// Extract internal StyledCell data
-		switch dataV := data.(type) {
-		case StyledCell:
-			data = dataV.Data
+		if styled, ok := data.(StyledCell); ok {
+			data = styled.Data
 		}
 
-		var target string
-		switch dataV := data.(type) {
-		case string:
-			target = dataV
-
-		case fmt.Stringer:
-			target = dataV.String()
-
-		default:
-			target = fmt.Sprintf("%v", data)
-		}
-
-		if strings.Contains(strings.ToLower(target), filterLower) {
+		// Sprint uses fmt.Stringer when implemented
+		if strings.Contains(strings.ToLower(fmt.Sprint(data)), filterLower) {
 			return true
 		}
 	}
@@ -110,12 +108,22 @@ func filterFuncContains(input FilterFuncInput) bool {
 // it supports multiple filter tokens separated by space which must all match.
 // also, if a filter token starts with the quote character (') it has to match literally.
 func filterFuncFuzzy(input FilterFuncInput) bool {
+	return fuzzyMatch(input, true)
+}
+
+// searchFuncFuzzy performs the same fuzzy matching as filterFuncFuzzy, but over
+// all columns in a row, filterable or not.
+func searchFuncFuzzy(input FilterFuncInput) bool {
+	return fuzzyMatch(input, false)
+}
+
+func fuzzyMatch(input FilterFuncInput, onlyFilterable bool) bool {
 	filter := strings.TrimSpace(input.Filter)
 	if filter == "" {
 		return true
 	}
 
-	haystack := buildFuzzyHaystack(input)
+	haystack := buildFuzzyHaystack(input, onlyFilterable)
 	if haystack == "" {
 		return false
 	}
@@ -129,11 +137,11 @@ func filterFuncFuzzy(input FilterFuncInput) bool {
 	return true
 }
 
-func buildFuzzyHaystack(input FilterFuncInput) string {
+func buildFuzzyHaystack(input FilterFuncInput, onlyFilterable bool) string {
 	var builder strings.Builder
 
 	for _, col := range input.Columns {
-		if !col.filterable {
+		if onlyFilterable && !col.filterable {
 			continue
 		}
 

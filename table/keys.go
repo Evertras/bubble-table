@@ -23,6 +23,18 @@ type KeyMap struct {
 	// FilterClear will clear the filter while it's blurred.
 	FilterClear key.Binding
 
+	// Search allows the user to start typing a search query when Searchable is enabled.
+	Search key.Binding
+
+	// SearchBlur is the key that stops the user's input from typing into the search.
+	SearchBlur key.Binding
+
+	// SearchNext jumps to the next row matching the search query.
+	SearchNext key.Binding
+
+	// SearchPrev jumps to the previous row matching the search query.
+	SearchPrev key.Binding
+
 	// ScrollRight will move one column to the right when overflow occurs.
 	ScrollRight key.Binding
 
@@ -31,6 +43,8 @@ type KeyMap struct {
 }
 
 // DefaultKeyMap returns a set of sensible defaults for controlling a focused table with help text.
+//
+//nolint:funlen // Just a list of bindings
 func DefaultKeyMap() KeyMap {
 	return KeyMap{
 		RowDown: key.NewBinding(
@@ -73,6 +87,22 @@ func DefaultKeyMap() KeyMap {
 			key.WithKeys("esc"),
 			key.WithHelp("esc", "clear filter"),
 		),
+		Search: key.NewBinding(
+			key.WithKeys("ctrl+f"),
+			key.WithHelp("ctrl+f", "search"),
+		),
+		SearchBlur: key.NewBinding(
+			key.WithKeys("enter", "esc"),
+			key.WithHelp("enter/esc", "unfocus search"),
+		),
+		SearchNext: key.NewBinding(
+			key.WithKeys("n"),
+			key.WithHelp("n", "next match"),
+		),
+		SearchPrev: key.NewBinding(
+			key.WithKeys("N"),
+			key.WithHelp("N", "previous match"),
+		),
 		ScrollRight: key.NewBinding(
 			key.WithKeys("shift+right"),
 			key.WithHelp("shift+→", "scroll right"),
@@ -91,6 +121,11 @@ func (m Model) FullHelp() [][]key.Binding {
 		{m.keyMap.RowDown, m.keyMap.RowUp, m.keyMap.RowSelectToggle},
 		{m.keyMap.PageDown, m.keyMap.PageUp, m.keyMap.PageFirst, m.keyMap.PageLast},
 		{m.keyMap.Filter, m.keyMap.FilterBlur, m.keyMap.FilterClear, m.keyMap.ScrollRight, m.keyMap.ScrollLeft},
+	}
+	if m.searchable {
+		keyBinds = append(keyBinds, []key.Binding{
+			m.keyMap.Search, m.keyMap.SearchBlur, m.keyMap.SearchNext, m.keyMap.SearchPrev,
+		})
 	}
 	if m.additionalFullHelpKeys != nil {
 		keyBinds = append(keyBinds, m.additionalFullHelpKeys())
